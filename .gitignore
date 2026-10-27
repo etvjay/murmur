@@ -2,3 +2,4 @@ wallets/
 *.key
 *.identity
 node_modules/
+dist/
