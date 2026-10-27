@@ -1,10 +1,11 @@
 // Zcash bridge: assembles an offline payment from a local zcash-devtool
 // wallet and broadcasts it through a lightwalletd server. The "tx" artifact
-// that travels over the mesh is the fully combined PCZT: `pczt extract` prints
-// only the finalized transaction's txid (see
-// repos/zcash-devtool/src/commands/pczt/extract.rs), never the raw bytes, so
-// the last host on the receiving side feeds the combined PCZT to
-// `pczt send-without-storing`, which finalizes, extracts and submits it.
+// that travels over the mesh is the final raw transaction, never the PCZT: a
+// PCZT can carry the payer's viewing key, note plaintexts and derivation paths,
+// which relays must not see. Stock `pczt extract` prints only the txid, so this
+// relies on a local devtool patch: `pczt extract --raw` (raw tx bytes on
+// stdout, txid on stderr) and `pczt send-without-storing --raw` (submit raw
+// tx bytes as-is). Both are in repos/zcash-devtool/src/commands/pczt/.
 //
 // TESTNET ONLY: every path through this module expects a throwaway testnet
 // wallet directory created by scripts/wallet-setup.sh.
@@ -46,7 +47,7 @@ function run(devtool, args, { input } = {}) {
     child.on('error', (err) => reject({ code: 127, stderr: String(err), stdout: '' }));
     child.on('close', (code) => {
       if (code === 0) {
-        resolve(stdout);
+        resolve({ stdout, stderr: stderr.toString() });
         return;
       }
       reject({ code, stderr: stderr.toString(), stdout: stdout.toString() });
@@ -100,29 +101,26 @@ export async function buildOfflineTx({ devtool, walletDir, identityFile, address
     await run(devtool, ['pczt', 'combine', '-i', file('signed.pczt'), '-i', file('proven.pczt'), '--output', file('combined.pczt')])
       .catch((e) => { throw new BridgeError('combine', e.stderr, e); });
     const combined = await readFile(file('combined.pczt'));
-    await run(devtool, ['pczt', 'extract'], { input: combined }).then((stdout) => {
-      const txid = stdout.toString().trim();
-      if (!TXID_RE.test(txid)) throw new BridgeError('extract', `unexpected extract output: ${txid}`);
-    }).catch((e) => { throw e instanceof BridgeError ? e : new BridgeError('extract', e.stderr, e); });
+    const { stdout: rawTx, stderr: extractErr } = await run(devtool, ['pczt', 'extract', '--raw'], { input: combined })
+      .catch((e) => { throw new BridgeError('extract', e.stderr, e); });
+    const txid = extractErr.split('\n').map((l) => l.trim()).filter(Boolean).pop();
+    if (!txid || !TXID_RE.test(txid)) throw new BridgeError('extract', `no txid on stderr: ${extractErr}`);
+    if (rawTx.length === 0) throw new BridgeError('extract', 'empty raw transaction');
 
-    return { tx: combined, policyHash: decision.policyHash };
+    return { tx: rawTx, txid, policyHash: decision.policyHash };
   } finally {
     await rm(tmp, { recursive: true, force: true });
   }
 }
 
-// Send a combined PCZT artifact back to the chain through a lightwalletd
-// server. Returns { txid } taken from the tool's final stdout line.
-export async function broadcastTx({ devtool, walletDir, tx, server = 'zecrocks' }) {
+// Submit a raw transaction (from buildOfflineTx) through a lightwalletd
+// server. The txid is not recomputed here: pass the one buildOfflineTx
+// returned; a gateway that only holds the bytes gets txid: null.
+export async function broadcastTx({ devtool, walletDir, tx, txid = null, server = 'zecrocks' }) {
   if (typeof devtool !== 'string' || devtool.length === 0) throw new TypeError('devtool path is required');
   if (typeof walletDir !== 'string' || walletDir.length === 0) throw new TypeError('walletDir is required');
   if (!Buffer.isBuffer(tx) || tx.length === 0) throw new TypeError('tx must be a non-empty Buffer');
-  const stdout = await run(devtool, ['pczt', '-w', walletDir, 'send-without-storing', '-s', server], { input: tx })
+  await run(devtool, ['pczt', '-w', walletDir, 'send-without-storing', '--raw', '-s', server], { input: tx })
     .catch((e) => { throw new BridgeError('send-without-storing', e.stderr, e); });
-  const lines = stdout.toString().split('\n').map((l) => l.trim()).filter((l) => l.length > 0);
-  const txid = lines[lines.length - 1];
-  if (!txid || !TXID_RE.test(txid)) {
-    throw new BridgeError('send-without-storing', `no txid in devtool output: ${stdout.toString()}`);
-  }
   return { txid };
 }

@@ -29,8 +29,9 @@ function makeStub({ failAt } = {}) {
   script += 'out=""; prev=""; for a in "$@"; do if [ "$prev" = "--output" ]; then out="$a"; fi; prev="$a"; done\n';
   script += 'case "$step" in\n';
   script += '  create|prove|sign|combine) if [ -n "$out" ]; then printf stub-pczt > "$out"; else printf stub-pczt; fi;;\n';
-  script += '  extract) cat > /dev/null; echo ' + STUB_TXID + ';;\n';
-  script += '  send-without-storing) cat > /dev/null; printf "Sending transaction...\\n' + STUB_TXID + '\\n";;\n';
+  // `extract --raw` (local devtool patch): raw tx bytes on stdout, txid on stderr.
+  script += '  extract) cat > /dev/null; echo ' + STUB_TXID + ' >&2; printf stub-rawtx;;\n';
+  script += '  send-without-storing) cat > /dev/null; printf "Sending transaction...\\n";;\n';
   script += '  *) exit 64;;\n';
   script += 'esac\n';
   const devtool = path.join(dir, 'stub-devtool');
@@ -56,8 +57,13 @@ test('stub: runs create, prove, sign, combine, extract in order', async () => {
     });
     assert.ok(out.tx instanceof Buffer, 'tx must be a Buffer');
     assert.ok(out.tx.length > 0, 'tx must not be empty');
+    // The mesh must carry the public raw transaction, never the PCZT (which can hold
+    // viewing keys, note plaintexts and derivation paths).
+    assert.equal(out.tx.toString(), 'stub-rawtx');
+    assert.equal(out.txid, STUB_TXID);
     assert.equal(out.policyHash.length, 64);
     const log = fs.readFileSync(stub.log, 'utf8');
+    assert.match(log, /extract --raw/);
     const steps = log.split('\n').map((l) => {
       const tokens = l.split(' ');
       const known = ['create', 'prove', 'sign', 'combine', 'extract', 'send-without-storing'];
@@ -127,15 +133,16 @@ test('stub: BridgeError carries the failing step and stderr', async () => {
   }
 });
 
-test('stub: broadcastTx invokes send-without-storing with the tx and returns its txid', async () => {
+test('stub: broadcastTx sends the raw tx with --raw and echoes the txid it was given', async () => {
   const stub = makeStub();
   try {
     const { txid } = await broadcastTx({
-      devtool: stub.devtool, walletDir: stub.walletDir, tx: Buffer.from('stub-pczt'),
+      devtool: stub.devtool, walletDir: stub.walletDir, tx: Buffer.from('stub-rawtx'), txid: STUB_TXID,
     });
     assert.equal(txid, STUB_TXID);
     const log = fs.readFileSync(stub.log, 'utf8');
     assert.match(log, /send-without-storing/);
+    assert.match(log, /--raw/);
     assert.match(log, /-s zecrocks/);
     assert.match(log, /-w /);
   } finally {
