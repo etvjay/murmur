@@ -4,6 +4,8 @@
 // run it in-process. Exit codes: 0 ok, 1 usage, 2 policy denied, 3 no ack
 // before --wait-ms, 4 bridge failure.
 import { parseArgs } from 'node:util';
+import { createHash } from 'node:crypto';
+import fs from 'node:fs';
 import { seal } from './mesh.js';
 import { loadOrCreateIdentity, startDevice } from './runner.js';
 import { buildOfflineTx, broadcastTx, PolicyDenied, BridgeError } from './bridge.js';
@@ -14,9 +16,10 @@ const USAGE = `usage:
                [--gateway --devtool PATH --wallet DIR [--server NAME]]
   zmesh msg    --recipient-pub HEX --peer HOST:PORT --identity FILE --text TEXT
                [--port N] [--wait-ms N]
+  zmesh broadcast --tx FILE --devtool PATH --wallet DIR [--server NAME]
   zmesh pay    --to ADDRESS --amount ZAT --recipient-pub HEX --peer HOST:PORT
                --identity FILE --wallet DIR --wallet-key FILE --devtool PATH
-               [--port N] [--message TEXT] [--wait-ms N]
+               [--port N] [--message TEXT] [--wait-ms N] [--save-tx FILE]
                [--max-per-payment ZAT] [--max-offline-total ZAT] [--spent ZAT]
   Testnet only. --identity is the mesh key; --wallet-key is the wallet's age identity.`;
 
@@ -27,10 +30,11 @@ const OPTIONS = {
   'recipient-pub': { type: 'string' }, text: { type: 'string' }, to: { type: 'string' },
   amount: { type: 'string' }, message: { type: 'string' }, 'wait-ms': { type: 'string' },
   'max-per-payment': { type: 'string' }, 'max-offline-total': { type: 'string' }, spent: { type: 'string' },
-  'min-expiry': { type: 'string' },
+  'min-expiry': { type: 'string' }, tx: { type: 'string' }, 'save-tx': { type: 'string' },
 };
 
 const HEX64 = /^[0-9a-f]{64}$/;
+const sha256 = (b) => createHash('sha256').update(b).digest('hex');
 const int = (v, dflt) => (v === undefined ? dflt : Number(v));
 
 function parsePeers(list = []) {
@@ -50,12 +54,24 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
   const emit = (obj) => stdout.write(JSON.stringify(obj) + '\n');
   const fail = (code, msg) => { stderr.write(msg + '\n'); return code; };
   const [cmd, ...rest] = argv;
-  if (!['pubkey', 'listen', 'msg', 'pay'].includes(cmd)) return fail(1, USAGE);
+  if (!['pubkey', 'listen', 'msg', 'pay', 'broadcast'].includes(cmd)) return fail(1, USAGE);
   let v;
   try {
     v = parseArgs({ args: rest, options: OPTIONS, strict: true }).values;
   } catch (e) {
     return fail(1, `${e.message}\n${USAGE}`);
+  }
+  if (cmd === 'broadcast') {
+    for (const k of ['tx', 'devtool', 'wallet']) if (!v[k]) return fail(1, `--${k} is required\n${USAGE}`);
+    let tx;
+    try { tx = fs.readFileSync(v.tx); } catch (e) { return fail(1, `cannot read --tx: ${e.message}`); }
+    try {
+      await broadcastTx({ devtool: v.devtool, walletDir: v.wallet, tx, server: v.server });
+    } catch (e) {
+      return fail(4, e.message);
+    }
+    emit({ kind: 'broadcast', ok: true, bytes: tx.length, sha256: sha256(tx) });
+    return 0;
   }
   if (!v.identity) return fail(1, `--identity is required\n${USAGE}`);
   let identity;
@@ -78,7 +94,7 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
       }
     };
     const onTx = (body) => {
-      emit({ kind: 'tx', bytes: body.length });
+      emit({ kind: 'tx', bytes: body.length, sha256: sha256(body) });
       if (!v.gateway) return;
       broadcastTx({ devtool: v.devtool, walletDir: v.wallet, tx: body, server: v.server })
         .then(() => emit({ kind: 'broadcast', ok: true }))
@@ -135,7 +151,8 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
     const to = v['recipient-pub'];
     if (txArtifact) {
       device.send({ kind: 'tx', body: txArtifact.tx });
-      emit({ kind: 'sent', txid: txArtifact.txid, bytes: txArtifact.tx.length });
+      if (v['save-tx']) fs.writeFileSync(v['save-tx'], txArtifact.tx);
+      emit({ kind: 'sent', txid: txArtifact.txid, bytes: txArtifact.tx.length, sha256: sha256(txArtifact.tx) });
       device.send({ kind: 'sealed', body: sealJson(to, {
         kind: 'receipt', amountZat: txArtifact.valueZat, policyHash: txArtifact.policyHash, txid: txArtifact.txid, from: myPub,
       }) });

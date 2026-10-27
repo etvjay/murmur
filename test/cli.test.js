@@ -125,3 +125,34 @@ test('stub: pay sends tx + sealed receipt; gateway listener broadcasts once; mer
   assert.equal(broadcasts.length, 1, 'gateway broadcasts exactly once');
   assert.match(broadcasts[0], /--raw/);
 });
+
+test('stub: pay --save-tx writes the raw tx; broadcast submits it once with --raw', async () => {
+  const dir = tmp(); const { file, log } = stubDevtool(dir); const [pm, pp] = await grabPorts(2);
+  const pub = capture(); await main(['pubkey', '--identity', path.join(dir, 'm.json')], pub);
+  const ac = new AbortController(); const lc = capture();
+  const listening = main(['listen', '--port', String(pm), '--identity', path.join(dir, 'm.json'), '--peer', `127.0.0.1:${pp}`, '--ack'], { ...lc, signal: ac.signal });
+  await settle(100);
+  const saved = path.join(dir, 'out.tx'); const pc = capture();
+  const code = await main([
+    'pay', '--to', 'ztestsapling1abc', '--amount', '5000', '--recipient-pub', pub.out.join('').trim(),
+    '--port', String(pp), '--peer', `127.0.0.1:${pm}`, '--identity', path.join(dir, 'p.json'),
+    '--wallet', dir, '--wallet-key', path.join(dir, 'k'), '--devtool', file, '--wait-ms', '1500', '--save-tx', saved,
+  ], pc);
+  await settle(100); ac.abort(); await listening;
+  assert.equal(code, 0);
+  assert.equal(fs.statSync(saved).size, 5000);
+  // Same hash printed by the sender and the receiver: evidence that the bytes crossed unchanged.
+  const sentHash = json(pc).find((m) => m.kind === 'sent').sha256;
+  assert.match(sentHash, /^[0-9a-f]{64}$/);
+  assert.equal(json(lc).find((m) => m.kind === 'tx').sha256, sentHash);
+  const bc = capture();
+  assert.equal(await main(['broadcast', '--tx', saved, '--devtool', file, '--wallet', dir], bc), 0);
+  const calls = fs.readFileSync(log, 'utf8').split('\n').filter((l) => l.includes('send-without-storing'));
+  assert.equal(calls.length, 1);
+  assert.match(calls[0], /--raw/);
+});
+
+test('broadcast exits 1 when the tx file is missing', async () => {
+  const c = capture();
+  assert.equal(await main(['broadcast', '--tx', '/nonexistent/x.tx', '--devtool', 'd', '--wallet', 'w'], c), 1);
+});
