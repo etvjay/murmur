@@ -7,6 +7,4 @@ A drip of 0.1 TAZ or more would be plenty. Any of these testnet addresses works 
 Transparent: tmMwdGKxVKHboWeVjJ6PRWkqNWFm8bHJu1a
 Sapling: ztestsapling1cvge2ycqhv40jrdgr82qd7nv8q57urzeg83nkw07e20uwzf7j4h4nm344mmrht07nhfvx5uwlnc
 
-(Note: the Sapling line above should be re-copied in full from the wallet before posting; it was truncated in a terminal.)
-
 Thanks, and I'll send any spare back to the faucet when I'm done.
