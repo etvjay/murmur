@@ -174,12 +174,21 @@ export function startDevice({
     }
   });
 
-  // Retransmit held packets for a bounded number of rounds to beat loss.
-  let started = 0;
+  // Retransmit each held packet for a bounded number of rounds to beat loss.
+  // The budget is per packet, counted from when it was first held, so a payment
+  // sent long after the device started still gets all of its rounds.
+  const roundsUsed = new WeakMap();
   const timer = setInterval(() => {
-    node.retransmit(net);
-    stats.rounds = ++started;
-    if (started >= rounds) clearInterval(timer);
+    node.held = node.held.filter((p) => {
+      const used = roundsUsed.get(p) ?? 0;
+      if (used >= rounds) return false;
+      roundsUsed.set(p, used + 1);
+      return true;
+    });
+    if (node.held.length > 0) {
+      node.retransmit(net);
+      stats.rounds++;
+    }
   }, roundMs);
   timer.unref?.();
 

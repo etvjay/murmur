@@ -223,3 +223,21 @@ test('rejects a corrupt identity file instead of silently rotating keys', () => 
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test('retransmits a packet sent long after the device started', async () => {
+  const [pa, pb] = await grabPorts(2);
+  const a = startDevice({
+    port: pa, peers: [{ host: '127.0.0.1', port: pb }], identity: newIdentity(),
+    retransmitRounds: 3, retransmitMs: 30,
+  });
+  try {
+    await settle(300); // well past the first 3 rounds counted from startup
+    const before = a.stats.sent;
+    a.send({ kind: 'tx', body: Buffer.from('late payment') });
+    await settle(300);
+    // one initial transmit + 3 retransmit rounds to the single peer
+    assert.equal(a.stats.sent - before, 4, 'late send must still get its retransmit rounds');
+  } finally {
+    a.close();
+  }
+});
