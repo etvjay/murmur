@@ -1,0 +1,12 @@
+[2m2026-10-27T12:46:58.341195Z[0m [32m INFO[0m [2mzcash_devtool::remote[0m[2m:[0m Connecting to testnet.zec.rocks:443
+[2m2026-10-27T12:46:58.449834Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Sapling tree has 6 subtrees
+[2m2026-10-27T12:46:58.495863Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Orchard tree has 3 subtrees
+[2m2026-10-27T12:46:58.544683Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Ironwood tree has 11 subtrees
+[2m2026-10-27T12:46:58.589915Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Latest block height is 4547472
+[2m2026-10-27T12:46:58.602829Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Refreshing UTXOs for AccountUuid(e7e5c8b7-6382-4103-a6dd-3635f252e41e) from height 0
+[2m2026-10-27T12:46:58.646193Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Fetching scan ranges
+[2m2026-10-27T12:46:58.646422Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Fetched 1 scan ranges
+[2m2026-10-27T12:46:58.646472Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Fetching ChainTip(4547371..4547473)
+[2m2026-10-27T12:46:58.795836Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Scanning ChainTip(4547371..4547473)
+[2m2026-10-27T12:46:58.950734Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Scan complete for range ChainTip(4547371..4547473); progress is 0/0
+[2m2026-10-27T12:46:58.950887Z[0m [32m INFO[0m [2mzcash_devtool::commands::wallet::sync[0m[2m:[0m Waiting for cached blocks to be deleted...

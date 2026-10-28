@@ -1,0 +1,123 @@
+WalletSummary {
+    account_balances: {
+        AccountUuid(
+            e7e5c8b7-6382-4103-a6dd-3635f252e41e,
+        ): AccountBalance {
+            sapling_balance: Balance {
+                spendable_value: Zatoshis(
+                    0,
+                ),
+                locked_value: Zatoshis(
+                    0,
+                ),
+                change_pending_confirmation: Zatoshis(
+                    0,
+                ),
+                value_pending_spendability: Zatoshis(
+                    0,
+                ),
+                uneconomic_value: Zatoshis(
+                    0,
+                ),
+            },
+            orchard_balance: Balance {
+                spendable_value: Zatoshis(
+                    0,
+                ),
+                locked_value: Zatoshis(
+                    0,
+                ),
+                change_pending_confirmation: Zatoshis(
+                    0,
+                ),
+                value_pending_spendability: Zatoshis(
+                    0,
+                ),
+                uneconomic_value: Zatoshis(
+                    0,
+                ),
+            },
+            ironwood_balance: Balance {
+                spendable_value: Zatoshis(
+                    0,
+                ),
+                locked_value: Zatoshis(
+                    0,
+                ),
+                change_pending_confirmation: Zatoshis(
+                    0,
+                ),
+                value_pending_spendability: Zatoshis(
+                    0,
+                ),
+                uneconomic_value: Zatoshis(
+                    0,
+                ),
+            },
+            unshielded_regular_balance: Balance {
+                spendable_value: Zatoshis(
+                    0,
+                ),
+                locked_value: Zatoshis(
+                    0,
+                ),
+                change_pending_confirmation: Zatoshis(
+                    0,
+                ),
+                value_pending_spendability: Zatoshis(
+                    0,
+                ),
+                uneconomic_value: Zatoshis(
+                    0,
+                ),
+            },
+            unshielded_coinbase_balance: Balance {
+                spendable_value: Zatoshis(
+                    0,
+                ),
+                locked_value: Zatoshis(
+                    0,
+                ),
+                change_pending_confirmation: Zatoshis(
+                    0,
+                ),
+                value_pending_spendability: Zatoshis(
+                    0,
+                ),
+                uneconomic_value: Zatoshis(
+                    0,
+                ),
+            },
+        },
+    },
+    chain_tip_height: BlockHeight(
+        4547472,
+    ),
+    fully_scanned_height: BlockHeight(
+        4547472,
+    ),
+    progress: Progress {
+        scan: Ratio {
+            numerator: 0,
+            denominator: 0,
+        },
+        recovery: Some(
+            Ratio {
+                numerator: 0,
+                denominator: 0,
+            },
+        ),
+    },
+    next_sapling_subtree_index: 5,
+    next_orchard_subtree_index: 2,
+    next_ironwood_subtree_index: 10,
+}
+Some("utest19n84cdlcpyze9zjfunqrp5znf4eqw2jj4m3semls6w5e953yk7tjs4tdweh2heag85rtvq2qfax7schzcljwyhn9qz02uguw3lmy0lj8p64cr229qtrq5hjglzxs0sgf0zje2ta6e6rq4nfj74hjxn2afxcl52ur66xhr83z9tvj3d95hkzejumym4nv5cdtmsuk45ccz7ad77te6wp")
+     Height: 4547472
+     Synced: NaN%
+     Recovered: NaN%
+    Balance:   0.00000000 TAZ
+     Sapling Spendable:   0.00000000 TAZ
+     Orchard Spendable:   0.00000000 TAZ
+    Ironwood Spendable:   0.00000000 TAZ
+  Unshielded Spendable:   0.00000000 TAZ
