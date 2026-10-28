@@ -4,7 +4,9 @@
 //              read it and a node with internet (a gateway) broadcasts it.
 //   "sealed" - payload encrypted to one recipient (receipt, memo, message). Relays cannot
 //              read it; recipients find theirs by trial decryption, so there is no
-//              recipient tag to link.
+//              recipient tag to link. Sealed boxes are AUTHENTICATED: the sender's static
+//              public key is mixed into the key derivation and travels in the blob, so a
+//              ciphertext not produced by the claimed sender fails the MAC.
 import { createHash, randomBytes, generateKeyPairSync, diffieHellman, createPublicKey,
   createPrivateKey, createCipheriv, createDecipheriv } from 'node:crypto';
 
@@ -18,27 +20,49 @@ export function newIdentity() {
   return { publicKey, privateKey, pub: rawPub(publicKey) };
 }
 
-function kdf(shared, epk) { return sha(Buffer.concat([Buffer.from('zmesh-v1'), shared, epk])); }
+const FORMAT_V2 = 0x02;
+const SPK_LEN = 32, EPK_LEN = 32, NONCE_LEN = 12, TAG_LEN = 16;
+const HEADER_LEN = 1 + SPK_LEN + EPK_LEN;
 
-export function seal(recipientPub, plaintext) {
+function kdf(ephemeral, senderStatic, spk, epk) {
+  return sha(Buffer.concat([Buffer.from('zmesh-v2'), ephemeral, senderStatic, spk, epk]));
+}
+
+// seal(recipientPub, plaintext, sender) -> blob
+//   blob = [0x02] [sender pub 32B] [ephemeral pub 32B] [nonce 12B] [ct] [tag 16B]
+// Key mixes DH(ephemeral, recipient) and DH(sender static, recipient): only the
+// holder of the claimed sender's private key can produce an openable blob.
+export function seal(recipientPub, plaintext, sender) {
+  if (!sender || !sender.privateKey) throw new TypeError('seal requires the sender identity (authenticated)');
   const eph = generateKeyPairSync('x25519');
   const epk = rawPub(eph.publicKey);
-  const key = kdf(diffieHellman({ privateKey: eph.privateKey, publicKey: pubFromRaw(recipientPub) }), epk);
+  const spk = sender.pub;
+  const key = kdf(
+    diffieHellman({ privateKey: eph.privateKey, publicKey: pubFromRaw(recipientPub) }),
+    diffieHellman({ privateKey: sender.privateKey, publicKey: pubFromRaw(recipientPub) }),
+    spk, epk);
   const nonce = randomBytes(12);
-  const c = createCipheriv('chacha20-poly1305', key, nonce, { authTagLength: 16 });
+  const c = createCipheriv('chacha20-poly1305', key, nonce, { authTagLength: TAG_LEN });
   const ct = Buffer.concat([c.update(plaintext), c.final()]);
-  return Buffer.concat([epk, nonce, ct, c.getAuthTag()]);
+  return Buffer.concat([Buffer.from([FORMAT_V2]), spk, epk, nonce, ct, c.getAuthTag()]);
 }
 
 export function open(identity, blob) {
-  if (blob.length < 32 + 12 + 16) return null;
-  const epk = blob.subarray(0, 32), nonce = blob.subarray(32, 44);
-  const ct = blob.subarray(44, blob.length - 16), tag = blob.subarray(blob.length - 16);
+  if (blob.length < HEADER_LEN + TAG_LEN || blob[0] !== FORMAT_V2) return null;
+  const spk = blob.subarray(1, 1 + SPK_LEN);
+  const epk = blob.subarray(1 + SPK_LEN, HEADER_LEN);
+  const nonce = blob.subarray(HEADER_LEN, HEADER_LEN + NONCE_LEN);
+  const rest = blob.subarray(HEADER_LEN + NONCE_LEN);
+  const ct = rest.subarray(0, rest.length - TAG_LEN);
+  const tag = rest.subarray(rest.length - TAG_LEN);
   try {
-    const key = kdf(diffieHellman({ privateKey: identity.privateKey, publicKey: pubFromRaw(epk) }), epk);
-    const d = createDecipheriv('chacha20-poly1305', key, nonce, { authTagLength: 16 });
+    const key = kdf(
+      diffieHellman({ privateKey: identity.privateKey, publicKey: pubFromRaw(epk) }),
+      diffieHellman({ privateKey: identity.privateKey, publicKey: pubFromRaw(spk) }),
+      spk, epk);
+    const d = createDecipheriv('chacha20-poly1305', key, nonce, { authTagLength: TAG_LEN });
     d.setAuthTag(tag);
-    return Buffer.concat([d.update(ct), d.final()]);
+    return { plaintext: Buffer.concat([d.update(ct), d.final()]), sender: spk };
   } catch { return null; }
 }
 
@@ -57,8 +81,13 @@ export class Node {
     if (this.seen.has(pkt.id)) return;
     this.seen.add(pkt.id);
     if (pkt.kind === 'sealed') {
-      const pt = open(this.identity, pkt.body);
-      if (pt) this.inbox.push(JSON.parse(pt.toString()));
+      const opened = open(this.identity, pkt.body);
+      if (opened) {
+        let msg;
+        try { msg = JSON.parse(opened.plaintext.toString()); } catch { msg = { raw: opened.plaintext.toString('base64') }; }
+        if (opened.sender) msg.sender = opened.sender.toString('hex');
+        this.inbox.push(msg);
+      }
     } else if (pkt.kind === 'tx' && this.gateway) {
       this.broadcast.push(pkt.body);
       this.gateway(pkt.body);

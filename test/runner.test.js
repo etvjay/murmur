@@ -93,6 +93,7 @@ test('delivers a 9000-byte tx packet between two devices', async () => {
 
 test('delivers a sealed message that only the recipient opens', async () => {
   const [portA, portBob, portEve] = await grabPorts(3);
+  const alice = newIdentity();
   const bob = newIdentity();
   const msg = { kind: 'message', text: 'meet at the market' };
   const bobGot = [];
@@ -116,9 +117,9 @@ test('delivers a sealed message that only the recipient opens', async () => {
       identity: newIdentity(),
       onSealed: (m) => eveGot.push(m),
     });
-    devA.send({ id: hexId(), kind: 'sealed', ttl: 8, body: seal(bob.pub, Buffer.from(JSON.stringify(msg))) });
+    devA.send({ id: hexId(), kind: 'sealed', ttl: 8, body: seal(bob.pub, Buffer.from(JSON.stringify(msg)), alice) });
     await settle();
-    assert.deepEqual(bobGot, [msg]);
+    assert.deepEqual(bobGot, [{ ...msg, sender: alice.pub.toString('hex') }]);
     assert.deepEqual(eveGot, []);
   } finally {
     devA?.close();

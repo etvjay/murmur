@@ -26,9 +26,9 @@ log(`1. Payer policy check: ${decision.allowed ? 'ALLOWED' : 'DENIED ' + decisio
 const tx = Buffer.from('a'.repeat(4000), 'hex'); // stand-in for a PCZT-extracted shielded transaction
 net.inject(payer, payer.makePacket('tx', tx));
 net.inject(payer, payer.makePacket('sealed', seal(merchant.identity.pub,
-  Buffer.from(JSON.stringify({ kind: 'receipt', amountZat: req.amountZat, policyHash: decision.policyHash })))));
+  Buffer.from(JSON.stringify({ kind: 'receipt', amountZat: req.amountZat, policyHash: decision.policyHash })), payer.identity)));
 net.inject(payer, payer.makePacket('sealed', seal(merchant.identity.pub,
-  Buffer.from(JSON.stringify({ kind: 'message', text: 'Paid. Two bags, pickup at 5.' })))));
+  Buffer.from(JSON.stringify({ kind: 'message', text: 'Paid. Two bags, pickup at 5.' })), payer.identity)));
 log('2. Payer sends: raw tx (public), sealed receipt, sealed message');
 
 net.rounds(nodes, 4);

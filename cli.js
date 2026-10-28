@@ -46,8 +46,8 @@ function parsePeers(list = []) {
   });
 }
 
-function sealJson(recipientPubHex, obj) {
-  return seal(Buffer.from(recipientPubHex, 'hex'), Buffer.from(JSON.stringify(obj)));
+function sealJson(recipientPubHex, obj, identity) {
+  return seal(Buffer.from(recipientPubHex, 'hex'), Buffer.from(JSON.stringify(obj)), identity);
 }
 
 export async function main(argv, { stdout = process.stdout, stderr = process.stderr, signal } = {}) {
@@ -90,7 +90,7 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
       emit(msg);
       // Ack messages and receipts back to the sender, never acks (no ack loops).
       if (v.ack && (msg.kind === 'message' || msg.kind === 'receipt') && HEX64.test(msg.from ?? '')) {
-        device.send({ kind: 'sealed', body: sealJson(msg.from, { kind: 'ack', of: msg.kind, from: myPub }) });
+        device.send({ kind: 'sealed', body: sealJson(msg.from, { kind: 'ack', of: msg.kind, from: myPub }, identity) });
       }
     };
     const onTx = (body) => {
@@ -155,10 +155,10 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
       emit({ kind: 'sent', txid: txArtifact.txid, bytes: txArtifact.tx.length, sha256: sha256(txArtifact.tx) });
       device.send({ kind: 'sealed', body: sealJson(to, {
         kind: 'receipt', amountZat: txArtifact.valueZat, policyHash: txArtifact.policyHash, txid: txArtifact.txid, from: myPub,
-      }) });
-      if (v.message) device.send({ kind: 'sealed', body: sealJson(to, { kind: 'message', text: v.message, from: myPub }) });
+      }, identity) });
+      if (v.message) device.send({ kind: 'sealed', body: sealJson(to, { kind: 'message', text: v.message, from: myPub }, identity) });
     } else {
-      device.send({ kind: 'sealed', body: sealJson(to, { kind: 'message', text: v.text, from: myPub }) });
+      device.send({ kind: 'sealed', body: sealJson(to, { kind: 'message', text: v.text, from: myPub }, identity) });
     }
     const timeout = new Promise((resolve) => setTimeout(() => resolve(false), waitMs));
     return (await Promise.race([gotAck, timeout])) ? 0 : 3;
