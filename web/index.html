@@ -428,7 +428,7 @@ main { overflow-x: clip; }
 
   <section class="in sect center" id="cmds" aria-labelledby="cmds-h">
     <h2 id="cmds-h" class="reveal">Run it from the command line</h2>
-    <p class="sub">Real commands from the project's CLI. Testnet only.</p>
+    <p class="sub">Real commands from the project's CLI. The carrier needs only Node; payments also need the patched zcash-devtool. Testnet only.</p>
     <div class="tabs-card" style="width:100%;text-align:left">
       <div class="tabs-left">
         <p>Pick a role. The window shows the command that role runs.</p>
@@ -666,12 +666,16 @@ if (typeof module !== "undefined") module.exports = { relay: relay };
     pay: { fn: "payer", lines: [
       '<span class="cm"># Payer: build offline, seal, hand to a nearby device</span>',
       'node cli.js <span class="k">pay</span> \\',
-      '  <span class="k">--to</span> <span class="s">"zcash:ztestsapling1&hellip;?amount=0.00003"</span> \\',
-      '  <span class="k">--recipient-pub</span> <span class="s">&lt;64 hex&gt;</span> \\',
-      '  <span class="k">--peer</span> <span class="s">HOST:PORT</span> \\',
+      '  <span class="k">--to</span> <span class="s">ztestsapling1&hellip;</span> <span class="k">--amount</span> <span class="s">1000</span> \\',
+      '  <span class="k">--recipient-pub</span> <span class="s">&lt;64 hex&gt;</span> <span class="k">--peer</span> <span class="s">HOST:PORT</span> \\',
       '  <span class="k">--identity</span> <span class="s">~/payer.json</span> \\',
       '  <span class="k">--wallet</span> <span class="s">./wallet</span> <span class="k">--wallet-key</span> <span class="s">./wallet-key.txt</span> \\',
-      '  <span class="k">--devtool</span> <span class="s">./zcash-devtool</span> <span class="k">--save-tx</span> <span class="s">offline.tx</span>'],
+      '  <span class="k">--devtool</span> <span class="s">./zcash-devtool</span> <span class="k">--save-tx</span> <span class="s">offline.tx</span>',
+      '',
+      '{"kind":"sent","txid":"5110a458&hellip;c8fd43","bytes":5222,"sha256":"cbc99ff1&hellip;"}',
+      '{"kind":"ack","of":"receipt","from":"802226f1&hellip;"}',
+      '<span class="cm"># real output: evidence/04-e2e-loopback/payer.jsonl</span>',
+      '<span class="cm"># --to also accepts a ZIP 321 request URI</span>'],
       rows: [["Spend policy", "within cap"], ["Wallet", "built offline"]], steps: ["Build", "Seal", "Hand over"] },
     listen: { fn: "gateway", lines: [
       '<span class="cm"># Gateway: receive, broadcast once, acknowledge</span>',
@@ -679,13 +683,21 @@ if (typeof module !== "undefined") module.exports = { relay: relay };
       '  <span class="k">--identity</span> <span class="s">~/gateway.json</span> \\',
       '  <span class="k">--peer</span> <span class="s">HOST:47002</span> <span class="k">--ack</span> \\',
       '  <span class="k">--gateway</span> <span class="k">--devtool</span> <span class="s">./zcash-devtool</span> \\',
-      '  <span class="k">--wallet</span> <span class="s">./wallet</span>'],
+      '  <span class="k">--wallet</span> <span class="s">./wallet</span>',
+      '',
+      '{"kind":"tx","bytes":5222,"sha256":"cbc99ff1&hellip;"}',
+      '{"kind":"receipt","amountZat":1000,"policyHash":"b94caa29&hellip;"}',
+      '{"kind":"broadcast","ok":true}',
+      '<span class="cm"># real output: evidence/04-e2e-loopback/gateway-listener.jsonl</span>'],
       rows: [["Gateway", "listening"], ["Duplicates", "dropped"]], steps: ["Receive", "Broadcast once", "Ack"] },
     broadcast: { fn: "broadcast", lines: [
       '<span class="cm"># Any device back online: submit a saved transaction</span>',
       'node cli.js <span class="k">broadcast</span> <span class="k">--tx</span> <span class="s">offline.tx</span> \\',
       '  <span class="k">--devtool</span> <span class="s">./zcash-devtool</span> \\',
-      '  <span class="k">--wallet</span> <span class="s">./wallet</span>'],
+      '  <span class="k">--wallet</span> <span class="s">./wallet</span>',
+      '',
+      '{"kind":"broadcast","ok":true,"bytes":&lt;n&gt;,"sha256":"&lt;hash&gt;"}',
+      '<span class="cm"># output format. Run B used the gateway above instead.</span>'],
       rows: [["Transaction", "offline.tx"], ["Network", "reconnected"]], steps: ["Read", "Submit", "Confirm"] }
   };
   var tabOrder = ["request", "pay", "listen", "broadcast"], curTab = "request";
