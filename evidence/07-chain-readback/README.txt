@@ -18,9 +18,10 @@ Negative controls (the lookup says no when it should): the transaction built off
 What this does not show:
   - It used one server (testnet.zec.rocks). A second independent server was not queried.
   - A public TESTNET block explorer was not confirmed. From this machine the testnet explorers returned 403
-    (bot blocking) or did not resolve. The owner's check used a MAINNET explorer (zcashexplorer.app, footer says
-    "Mainnet"), where a testnet id is correctly "not found"; that says nothing against these transactions.
-    testnet.zcashexplorer.app has not yet been checked from a browser. Do not cite an explorer link until one is verified.
+    (bot blocking) or did not resolve. The owner pasted a "Transaction Not Found" page from a Zcash block explorer
+    whose footer shows "Mainnet". It is UNKNOWN whether that was the mainnet or the testnet explorer (the footer word
+    may be a network label or a switch link; both hosts block this machine, so it could not be checked). If it was
+    mainnet, "not found" is expected for a testnet id. If it was testnet, the id may simply not be indexed yet. Unresolved. Do not cite an explorer link until one is verified.
   - It shows that the transaction exists and where it was mined. It does not reveal shielded contents (by design).
 Noise: after the lines kept here the devtool panics ("parameter file size is not correct") because it then tries to
 verify proofs and the Zcash proving parameters are not installed on this machine. That does not affect the lookup.
