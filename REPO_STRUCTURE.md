@@ -69,7 +69,7 @@ docs/adr/              accepted architectural decisions
 docs/product/          product thesis and user journeys
 docs/development/      design spec, plan, findings from the build
 docs/operations/       two-device test, web deploy, forum post draft
-docs/submission/       architecture, claims and limits, evidence index, demo script, checklist
+docs/submission/       architecture, claims and limits, evidence index, related work, demo script, checklist
 docs/brand/            brand identity (BRAND.md)
 ```
 

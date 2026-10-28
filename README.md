@@ -66,6 +66,8 @@ Runs B and C used loopback UDP on one machine. **No real radio, phone-to-phone o
 
 Check any transaction yourself, independent of our wallet: `zcash-devtool inspect -l <txid>` (or `sh scripts/verify-on-chain.sh <txid>`). Results are in [`evidence/07-chain-readback`](evidence/07-chain-readback).
 
+Related work, including Offline Protocol's Bluetooth mesh SDK and why Murmur does not use it yet: [`docs/submission/RELATED_WORK.md`](docs/submission/RELATED_WORK.md).
+
 Every claim and its evidence ceiling: [`docs/submission/CLAIMS_AND_LIMITS.md`](docs/submission/CLAIMS_AND_LIMITS.md), [`foundry/claims.jsonl`](foundry/claims.jsonl), [`STATUS.md`](STATUS.md). Open gaps: [`foundry/gaps.jsonl`](foundry/gaps.jsonl).
 
 ## Quick start
