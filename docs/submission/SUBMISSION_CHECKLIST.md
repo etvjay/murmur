@@ -32,7 +32,7 @@ Legend: [x] done and verified, [ ] not done, [~] partly done. Items that need th
 
 - [x] `MIT OR Apache-2.0`, matching the upstream devtool and librustzcash (`LICENSE-MIT`, `LICENSE-APACHE`).
 - [x] Third-party notices, including fonts and the devtool patch (`THIRD_PARTY_NOTICES.md`).
-- [ ] **(owner)** Confirm the copyright holder name in `LICENSE-MIT` (it says "Murmur contributors").
+- [x] Copyright holder in `LICENSE-MIT` is `etvjay` (confirmed by the owner).
 - [ ] Crate-by-crate license audit of a devtool build, if a binary is ever distributed.
 
 ## Judge page
