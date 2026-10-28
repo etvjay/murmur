@@ -35,7 +35,7 @@ Details and caveats: `docs/submission/EVIDENCE_INDEX.md`.
 
 ## Open gaps by severity
 
-High 1 (no real radio test; needs the owner's devices). Medium 3. Low 4. Three more are accepted limits. One gap (mainnet addresses) was closed. See `foundry/gaps.jsonl`.
+High 1 (no real radio test; needs the owner's devices). Medium 4. Low 3. Three more are accepted limits. One gap (mainnet addresses) was closed. See `foundry/gaps.jsonl`.
 
 ## Not claimed
 
