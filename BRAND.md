@@ -100,22 +100,23 @@ Plain, specific, and evidence-first. Short sentences. Say what happened, with th
 
 Proposed, pending approval.
 
-- Night `#00080B`: the dark ground; mandatory.
-- Mist `#E9EDF5`: primary light text and light-theme ground; mandatory.
-- Signal lime `#CDFF00`: the single accent, used for proof numbers, the active step and packets in motion; mandatory. (Replaces Lamplight after the XBOW-based rebuild.)
-- Relay blue `#7FA8FF`: links between nodes and secondary data; optional.
+- Night `#04050E`: the dark ground; mandatory.
+- Mist `#F3F5FF`: primary light text; mandatory.
+- Electric blue `#2B2BFF`: the single accent, used for stripes, file-title windows, the sender's bubble, buttons and the footer; mandatory.
+- Signal tint `#9BA6FF`: blue used as text on the dark ground (links, numbers, chips), because `#2B2BFF` itself is too dark for text; mandatory for text.
 
 ### Typefaces
 
-Proposed, pending approval. Licensing not verified.
+Proposed, pending approval. Licensing not verified. All four are open-licensed Google Fonts.
 
-- Display and headings: Geist Mono, fallback system monospace.
+- Display and headings: Newsreader Light, fallback Georgia.
 - Body: Geist, fallback system sans-serif.
-- Data (hashes, txids, code, navigation labels): Geist Mono, fallback system monospace.
+- Code, hashes, txids and file names: Geist Mono, fallback system monospace.
+- Pixel accent for ciphertext only: Silkscreen, fallback Geist Mono.
 
 ### Art Direction
 
-A neighborhood at night with the power out: a dark ground, a few small points of warm light, thin lines passing between them. Panels read as lit windows, translucent and few. Evidence is shown as plain documents (hashes, block numbers, logs), never as decoration.
+A night screen with one electric-blue light source. A near-black ground, thin blue stripe bands as horizons, and small windows with file-name title bars for every piece of evidence, as if each log were an open file. Messages appear as chat bubbles: plain for the sender, dashed pixel type for what a relay sees, blue for the reader. Evidence is shown as documents (hashes, block numbers, logs), never as decoration.
 
 ## Governance
 
