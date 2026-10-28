@@ -2,7 +2,7 @@
 
 **Repository state:** `SUBMISSION_CANDIDATE`
 
-**Network:** Zcash testnet only.
+**Network:** Zcash test networks only. The runs used the network served by `testnet.zec.rocks`; the public explorer `testnet.zcashexplorer.app` follows a different chain (GAP-012).
 
 **Evidence ceiling:** `LIVE_TESTNET` for three runs over loopback; `TESTED` for the carrier, the policy and the bridge; `SIMULATED` for the relay on the judge page. No radio claim is made.
 

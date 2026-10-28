@@ -10,15 +10,15 @@ Murmur
 
 SHIELDED PAYMENTS
 
-## Description (1962 / 2000 characters)
+## Description (1995 / 2000 characters)
 
 Murmur lets people pay and message privately over Zcash when the network is down. A merchant makes a ZIP 321 payment request. The payer's wallet builds, proves and signs a real shielded transaction with the network cut. The finished transaction and a sealed receipt hop between nearby devices over UDP, and the first device that reconnects broadcasts it once. The chain confirms it.
 
 Why it does not leak: relays can read the transaction packet, but it is a shielded Zcash transaction, so it shows nothing about payer, recipient or amount. Receipts and notes are sealed to one recipient (X25519 + ChaCha20-Poly1305) with the sender's key in the derivation, so relays cannot read them, cannot link them to a recipient, and a forged sender fails. Only the finished raw transaction travels, never a PCZT, which can hold viewing keys. A spend policy caps each payment and the total spent offline.
 
-What is real (Zcash testnet): Run A built a shielded transaction with every wallet step offline. Run B carried one across the carrier and it was mined in block 4,550,000. Run C paid a ZIP 321 request: every wallet step ran in a no-network namespace, the hand-over used loopback UDP, one gateway broadcast it, and it was mined in block 4,550,881. 57 tests pass (1 skipped). Every claim sits in a ledger linked to its evidence. Verify any transaction id: zcash-devtool inspect -l <txid>.
+What is real (testnet.zec.rocks network): Run A built a shielded transaction with every wallet step offline. Run B carried one across the carrier and it was mined in block 4,550,000. Run C paid a ZIP 321 request: every wallet step ran in a no-network namespace, the hand-over used loopback UDP, one gateway broadcast it, and it was mined in block 4,550,881. 57 tests pass (1 skipped). Claims link to evidence. Verify any transaction id: zcash-devtool inspect -l <txid>.
 
-What is a mock or not proven: the relay on the demo page is a labeled simulation, not the carrier. Hand-overs ran over loopback on one machine; no real radio, phone-to-phone or multi-hop test has been run. The request's memo was not observed on chain. A payer can still double-spend before broadcast; the spend policy only limits the loss. An offline transaction expires about 50 minutes after the last sync. The devtool's offline signing cannot yet spend change notes, so Run C paid from an account holding an externally received note. The cryptography is unaudited. Testnet only.
+What is a mock or not proven: the relay on the demo page is a labeled simulation, not the carrier. Hand-overs ran over loopback on one machine; no real radio, phone-to-phone or multi-hop test has been run. The request's memo was not observed on chain. A payer can still double-spend before broadcast; the spend policy only limits the loss. An offline transaction expires about 50 minutes after the last sync. The devtool's offline signing cannot yet spend change notes, so Run C paid from an account holding an externally received note. The cryptography is unaudited. The public testnet explorer shows another chain. Testnet only.
 
 ## Code repository
 

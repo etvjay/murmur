@@ -364,7 +364,7 @@ main { overflow-x: clip; }
     <div class="hero-row">
       <p class="lede">Murmur carries a real shielded Zcash transaction and a sealed note from device to device with no internet. Whoever reconnects first broadcasts it.</p>
       <div class="hero-meta">
-        <span class="meta"><svg aria-hidden="true"><use href="#g-star"/></svg>Verified on the Zcash testnet</span>
+        <span class="meta"><svg aria-hidden="true"><use href="#g-star"/></svg>Verified on a Zcash test network</span>
         <div class="pill"><code>txid 5110a458bd641e54&hellip;48a4c8fd43</code><a class="btn" href="#evidence">See the proof<svg aria-hidden="true"><use href="#g-chev"/></svg></a></div>
       </div>
     </div>
@@ -537,7 +537,7 @@ main { overflow-x: clip; }
       <p>The carrier has no dependencies and needs Node 18.3 or newer. From the project folder:</p>
       <pre class="cmd" id="c1">node --test test/*.test.js</pre>
       <div><button class="cp" type="button" data-copy="c1">Copy</button></div>
-      <p>To check that a transaction is on the testnet, independent of our wallet, ask the chain server for it by id. The four broadcast transactions above come back at the blocks shown; transactions that were built but never broadcast come back as not found. One server was used, and a public block explorer was not confirmed.</p>
+      <p>These transactions are on the test network served by testnet.zec.rocks (chain name test). The public explorer testnet.zcashexplorer.app follows a different chain and does not show them; block hashes at shared heights differ. To check a transaction independent of our wallet, ask the chain server for it by id. The four broadcast transactions above come back at the blocks shown; transactions that were built but never broadcast come back as not found. One server was used, and a public block explorer was not confirmed.</p>
       <pre class="cmd" id="c2">zcash-devtool inspect -l 0efad38fd3d577779817d949caa695e4391adc4329b0700b6a4b37c5b66f96d7</pre>
       <div><button class="cp" type="button" data-copy="c2">Copy</button></div>
     </article>

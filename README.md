@@ -33,7 +33,7 @@ CHAIN      Zcash testnet mines it; the merchant opens the sealed receipt
 
 ## What has been shown
 
-All runs are on the Zcash testnet. Full detail in [`docs/submission/EVIDENCE_INDEX.md`](docs/submission/EVIDENCE_INDEX.md).
+All runs are on a Zcash test network: the one served by `testnet.zec.rocks` (chain name `test`, NU7). A public explorer we tried, `testnet.zcashexplorer.app`, follows a different chain, so it does not show these transactions ([GAP-012](foundry/gaps.jsonl), [`evidence/08-chain-comparison`](evidence/08-chain-comparison)). Which network the hackathon treats as canonical is unconfirmed. Full detail in [`docs/submission/EVIDENCE_INDEX.md`](docs/submission/EVIDENCE_INDEX.md).
 
 | Run | What it shows | Result | Evidence |
 |---|---|---|---|

@@ -31,7 +31,7 @@ zcash-devtool inspect -l 0efad38fd3d577779817d949caa695e4391adc4329b0700b6a4b37c
 sh scripts/verify-on-chain.sh <txid> [<txid> ...]     # prints "Mined in testnet block N" or "not found"
 ```
 
-Limits: one server (`testnet.zec.rocks`); a public block explorer was not confirmed (see GAP-012), so no explorer links are given.
+Limits: one server (`testnet.zec.rocks`). The public explorer `testnet.zcashexplorer.app` follows a different chain (block hashes differ at shared heights: `evidence/08-chain-comparison/`), so it does not show these transactions and no explorer links are given (GAP-012).
 
 ## What the evidence does not show
 
