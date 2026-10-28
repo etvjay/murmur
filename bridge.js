@@ -68,7 +68,7 @@ const TXID_RE = /^[0-9a-f]{64}$/;
 // the PCZT finalizes into a transaction; it prints the txid). Policy is
 // evaluated — and any denial thrown — before the first devtool invocation,
 // which unit tests pin down by asserting the stub ran zero times.
-export async function buildOfflineTx({ devtool, walletDir, identityFile, address, valueZat, memo, policy, spentZat }) {
+export async function buildOfflineTx({ devtool, walletDir, identityFile, address, valueZat, memo, policy, spentZat, accountId }) {
   if (typeof devtool !== 'string' || devtool.length === 0) throw new TypeError('devtool path is required');
   if (typeof walletDir !== 'string' || walletDir.length === 0) throw new TypeError('walletDir is required');
   if (typeof identityFile !== 'string' || identityFile.length === 0) throw new TypeError('identityFile is required');
@@ -90,6 +90,8 @@ export async function buildOfflineTx({ devtool, walletDir, identityFile, address
   try {
     const createArgs = ['pczt', '-w', walletDir, 'create', '--address', address, '--value', String(valueZat), '--output', file('created.pczt')];
     if (memo !== undefined) createArgs.push('--memo', memo);
+    // With more than one account in the wallet the devtool needs the account UUID (a positional argument).
+    if (accountId !== undefined) createArgs.push(accountId);
     await run(devtool, createArgs).catch(
       (e) => { throw new BridgeError('create', e.stderr, e); });
     // Not enough funds surfaces here as a `create` BridgeError carrying the

@@ -24,12 +24,13 @@ const USAGE = `usage:
                --identity FILE --wallet DIR --wallet-key FILE --devtool PATH
                [--port N] [--message TEXT] [--wait-ms N] [--save-tx FILE]
                [--max-per-payment ZAT] [--max-offline-total ZAT] [--spent ZAT]
+               [--account UUID]   (needed when the wallet has more than one account)
   Testnet only. --identity is the mesh key; --wallet-key is the wallet's age identity.`;
 
 const OPTIONS = {
   port: { type: 'string' }, identity: { type: 'string' }, peer: { type: 'string', multiple: true },
   ack: { type: 'boolean' }, gateway: { type: 'boolean' }, devtool: { type: 'string' },
-  wallet: { type: 'string' }, 'wallet-key': { type: 'string' }, server: { type: 'string' },
+  wallet: { type: 'string' }, 'wallet-key': { type: 'string' }, server: { type: 'string' }, account: { type: 'string' },
   'recipient-pub': { type: 'string' }, text: { type: 'string' }, to: { type: 'string' },
   amount: { type: 'string' }, message: { type: 'string' }, 'wait-ms': { type: 'string' },
   'max-per-payment': { type: 'string' }, 'max-offline-total': { type: 'string' }, spent: { type: 'string' },
@@ -148,11 +149,12 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
         return fail(1, `bad --to payment request: ${e.message}\n${USAGE}`);
       }
     }
+    if (v.account !== undefined && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v.account)) return fail(1, '--account must be an account UUID (see `wallet list-accounts`)');
     if (!Number.isInteger(valueZat) || valueZat <= 0) return fail(1, '--amount must be a positive integer of zatoshis (or a zcash: URI with amount)');
     try {
       txArtifact = await buildOfflineTx({
         devtool: v.devtool, walletDir: v.wallet, identityFile: v['wallet-key'], address: to, valueZat,
-        memo: uriMemo ?? undefined,
+        memo: uriMemo ?? undefined, accountId: v.account,
         policy: {
           maxPerPaymentZat: int(v['max-per-payment'], 1000000), maxOfflineTotalZat: int(v['max-offline-total'], 5000000),
           spentZat: 0, minExpiryHeight: int(v['min-expiry'], 0),

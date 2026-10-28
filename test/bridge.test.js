@@ -48,6 +48,30 @@ const stubArgs = {
   valueZat: 1000,
 };
 
+test('stub: passes --account id to pczt create when given, and nothing extra when not', async () => {
+  const ACCOUNT = 'dbeb032a-8f1b-471b-824f-5f22979b7c97';
+  const stub = makeStub();
+  try {
+    await buildOfflineTx({
+      devtool: stub.devtool, walletDir: stub.walletDir, identityFile: stub.idFile,
+      ...stubArgs, policy: stubPolicy, spentZat: 5000, accountId: ACCOUNT,
+    });
+    const createLine = fs.readFileSync(stub.log, 'utf8').split('\n').find((l) => / create /.test(l));
+    assert.ok(createLine, 'create was invoked');
+    assert.ok(createLine.split(/\s+/).includes(ACCOUNT), 'account id must be an argument to pczt create: ' + createLine);
+    assert.equal(createLine.split(/\s+/).filter((t) => t === ACCOUNT).length, 1, 'passed exactly once');
+  } finally { fs.rmSync(stub.dir, { recursive: true, force: true }); }
+  const stub2 = makeStub();
+  try {
+    await buildOfflineTx({
+      devtool: stub2.devtool, walletDir: stub2.walletDir, identityFile: stub2.idFile,
+      ...stubArgs, policy: stubPolicy, spentZat: 5000,
+    });
+    const createLine = fs.readFileSync(stub2.log, 'utf8').split('\n').find((l) => / create /.test(l));
+    assert.ok(!createLine.includes(ACCOUNT), 'no account id when none is given');
+  } finally { fs.rmSync(stub2.dir, { recursive: true, force: true }); }
+});
+
 test('stub: runs create, prove, sign, combine, extract in order', async () => {
   const stub = makeStub();
   try {
