@@ -14,12 +14,12 @@ A device that regains internet broadcasts the transaction.
 | Claim | Status | Evidence |
 |---|---|---|
 | Sealed messages cross a mesh; relays cannot read them | Verified in tests (simulation and loopback UDP) | `test/mesh.test.js`, `test/runner.test.js` |
-| A shielded tx (2-9 KB) survives chunking, loss and reordering | Verified over loopback UDP | `test/wire.test.js`, `test/runner.test.js` |
+| A shielded tx survives chunking, loss and reordering | Verified over loopback UDP (real txs measured: 5,222 bytes to a Sapling recipient, 20,986 bytes to a unified address with an Orchard receiver) | `test/wire.test.js`, `test/runner.test.js` |
 | CLI works between two separate OS processes | Verified on one machine, loopback only | `test/cli.test.js`, manual smoke run |
 | Spend policy blocks a payment before any Zcash command runs | Verified (stub devtool) | `test/cli.test.js`, `test/bridge.test.js` |
 | Wallet syncs and reads balance with the network cut off | Verified on testnet | `evidence/02-sync/` |
-| A real shielded transaction built with the network blocked | **Not yet run.** Needs testnet funds (faucets were down during the build; see below) | `scripts/acceptance-a.sh` |
-| Broadcast and on-chain confirmation | **Not yet run** | `scripts/acceptance-a.sh` |
+| A real shielded transaction built with the network blocked | **Verified.** `create`, `prove`, `sign`, `combine`, `extract` all succeeded inside a no-network namespace (DNS probe failed as required). Raw tx 20,986 bytes | `evidence/03-acceptance-a/` |
+| Payer to gateway to chain, real devtool, through the CLI | **Verified over loopback UDP (no radio).** Payer and gateway printed the same SHA-256; sealed receipt read; ack returned; tx `5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43` mined in testnet block 4,550,000 | `evidence/04-e2e-loopback/` |
 | Laptop and phone exchange a message over a real Wi-Fi link | **Not yet run** (needs the devices) | `scripts/acceptance-b.md` |
 | Multi-hop relaying over real radio | **Not tested.** Only simulated | `test/mesh.test.js`, `demo.js` |
 
@@ -35,13 +35,18 @@ Update this table from `evidence/` when the acceptance runs finish. Anything wit
 
 ## Run it
 ```
-node --test test/*.test.js        # 38 pass, 1 skipped (needs a funded wallet)
+node --test test/*.test.js        # 38 pass, 1 skipped (the real-devtool test, needs ZMESH_E2E=1 and a funded wallet)
 node demo.js 30                   # 6-node simulation at 30% loss (simulation, not radio)
 node cli.js pubkey --identity ~/id.json
 node cli.js listen --port 47001 --identity ~/id.json --peer HOST:47002 --ack
 node cli.js msg --port 47002 --recipient-pub <hex> --peer HOST:47001 --identity ~/id2.json --text "hi"
 ```
 Real two-device procedure: `scripts/acceptance-b.md`. Real transaction procedure: `scripts/acceptance-a.sh` (needs a funded testnet wallet and `zcash-devtool`).
+
+## Lessons from the real run
+- `zcash-devtool pczt sign` fails with `MissingProofGenerationKey` on a Sapling spend unless it is given the **proven** PCZT: `prove` is what writes the proof-generation key into it. The bridge and script sign `proven.pczt`.
+- `prove` works offline (the key is derived from the encrypted seed on the device).
+- Transaction size depends on the recipient: about 5 KB to a Sapling address, about 21 KB to a unified address with an Orchard receiver. Larger transactions need more datagrams, so they are more sensitive to packet loss.
 
 ## Threat model and limits
 - **Double-spend is bounded, not prevented.** Until the transaction is mined, the payer could spend the same notes elsewhere. The policy caps the exposure. Nothing here is trustless offline settlement; that needs a ledger.
@@ -56,5 +61,5 @@ Real two-device procedure: `scripts/acceptance-b.md`. Real transaction procedure
 ## Layout
 `mesh.js` carrier and sealed boxes, `wire.js` packet format and chunking, `runner.js` UDP device, `policy.js` spend policy, `bridge.js` `zcash-devtool` wrapper, `cli.js` commands, `scripts/` acceptance procedures, `evidence/` logs (no keys).
 
-## Why testnet funding is not done yet
-During the build the public Zcash testnet was upgrading to NU7 (active since block 4,465,026). The faucet we tried reported "the wallet cannot pay this address" for unified, Sapling and transparent addresses alike, and its status page showed zero payouts in 24 hours. The acceptance runs resume as soon as the wallet has testnet coins.
+## Funding note
+During the build the public Zcash testnet was past its NU7 upgrade (active since block 4,465,026). Two faucets failed (one answered "the wallet cannot pay this address" for every address type), and a third (Causeway) turned out to be a separate regtest chain. The wallet was funded by fauzec.com (1 TAZ, Sapling address, block 4,549,978).

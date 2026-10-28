@@ -1,0 +1,8 @@
+probe        offline ok
+sync         online  ok
+create       offline ok
+prove        offline ok
+sign         offline ok
+combine      offline ok
+extract      offline ok
+summary      -       done; broadcast txid=no

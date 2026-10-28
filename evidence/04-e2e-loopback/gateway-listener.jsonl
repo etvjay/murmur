@@ -1,0 +1,3 @@
+{"kind":"tx","bytes":5222,"sha256":"cbc99ff1fc8dbabf0ec230ed1d1c021117b37265f7f15c75168e32241bb0b70f"}
+{"kind":"receipt","amountZat":1000,"policyHash":"b94caa290767f5cd64efbc15a7334fc8c6aaed470af2b58c1ff8915e6df1907b","txid":"5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43","from":"c911e8b1e0a7336438b6dcf90ea9f4c7dbf562d6c1e955cc2dd446af8b85d26e"}
+{"kind":"broadcast","ok":true}

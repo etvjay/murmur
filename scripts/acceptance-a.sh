@@ -76,7 +76,7 @@ run_logged() { # run_logged <name> <mode:offline|online> <args...>
 # except where explicitly fatal.
 run_or_note() { # run_or_note <status-label> <args...>
   label=$1; shift
-  if run_logged "$label" "$@"; then
+  if run_logged "$label" offline "$@"; then
     note_status "$label" offline ok
     return 0
   fi
@@ -147,7 +147,7 @@ else
   echo "NOTE: 'prove' failed offline — re-running it ONLINE (recorded as prove-needs-network)" >&2
   note_status prove-note - "per-brief: prove needs network; re-ran online"
   log_cmd "online-fallback: prove"
-  if run_logged prove "$devtool" pczt -w "$wallet_dir" prove -i "$identity_file" "$work/created.pczt" --output "$work/proven.pczt"; then
+  if run_logged prove online "$devtool" pczt -w "$wallet_dir" prove -i "$identity_file" "$work/created.pczt" --output "$work/proven.pczt"; then
     note_status prove online- "ok(ran-online)" # deliberate marker: prove needed the network
     prove_mode=online
   else
@@ -157,7 +157,8 @@ else
   fi
 fi
 
-run_or_note sign "$devtool" pczt -w "$wallet_dir" sign --identity "$identity_file" "$work/created.pczt" --output "$work/signed.pczt"
+# sign the PROVEN pczt: prove adds the Sapling proof-generation key that sign requires
+run_or_note sign "$devtool" pczt -w "$wallet_dir" sign --identity "$identity_file" "$work/proven.pczt" --output "$work/signed.pczt"
 run_or_note combine "$devtool" pczt combine -i "$work/signed.pczt" -i "$work/proven.pczt" --output "$work/combined.pczt"
 # Extract the final raw transaction offline (local devtool patch: --raw writes the
 # raw tx bytes to stdout and the txid to stderr). This is the public on-chain

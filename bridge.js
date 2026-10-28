@@ -96,7 +96,9 @@ export async function buildOfflineTx({ devtool, walletDir, identityFile, address
     // wallet's stderr; nothing below runs once any step exits nonzero.
     await run(devtool, ['pczt', '-w', walletDir, 'prove', '-i', identityFile, file('created.pczt'), '--output', file('proven.pczt')])
       .catch((e) => { throw new BridgeError('prove', e.stderr, e); });
-    await run(devtool, ['pczt', '-w', walletDir, 'sign', '--identity', identityFile, file('created.pczt'), '--output', file('signed.pczt')])
+    // Sign the PROVEN PCZT: `prove` writes the Sapling proof-generation key into the
+    // PCZT, and `sign` fails with MissingProofGenerationKey on a Sapling spend without it.
+    await run(devtool, ['pczt', '-w', walletDir, 'sign', '--identity', identityFile, file('proven.pczt'), '--output', file('signed.pczt')])
       .catch((e) => { throw new BridgeError('sign', e.stderr, e); });
     await run(devtool, ['pczt', 'combine', '-i', file('signed.pczt'), '-i', file('proven.pczt'), '--output', file('combined.pczt')])
       .catch((e) => { throw new BridgeError('combine', e.stderr, e); });
