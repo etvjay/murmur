@@ -1,0 +1,114 @@
+diff --git a/src/commands/pczt/extract.rs b/src/commands/pczt/extract.rs
+index c4d322c..6aca742 100644
+--- a/src/commands/pczt/extract.rs
++++ b/src/commands/pczt/extract.rs
+@@ -10,7 +10,14 @@ use zcash_proofs::prover::LocalTxProver;
+ 
+ // Options accepted for the `pczt extract` command
+ #[derive(Debug, Args)]
+-pub(crate) struct Command {}
++pub(crate) struct Command {
++    /// Write the raw serialized transaction bytes to stdout instead of the txid
++    /// (the txid goes to stderr). Local patch for the offline mesh: the final
++    /// transaction is the public on-chain object, unlike a PCZT, which can carry
++    /// viewing keys, note plaintexts and derivation paths.
++    #[arg(long)]
++    raw: bool,
++}
+ 
+ impl Command {
+     pub(crate) async fn run(self) -> Result<(), anyhow::Error> {
+@@ -31,7 +38,15 @@ impl Command {
+             .extract(UnwrapErr(SysRng))
+             .map_err(|e| anyhow!("Failed to extract transaction from PCZT: {e:?}"))?;
+         let txid = tx.txid();
+-        println!("{txid}");
++        if self.raw {
++            use std::io::Write;
++            let mut raw = vec![];
++            tx.write(&mut raw)?;
++            eprintln!("{txid}");
++            std::io::stdout().write_all(&raw)?;
++        } else {
++            println!("{txid}");
++        }
+         Ok(())
+     }
+ }
+diff --git a/src/commands/pczt/send_without_storing.rs b/src/commands/pczt/send_without_storing.rs
+index f513b68..e007afa 100644
+--- a/src/commands/pczt/send_without_storing.rs
++++ b/src/commands/pczt/send_without_storing.rs
+@@ -24,6 +24,11 @@ pub(crate) struct Command {
+ 
+     /// Path to a file from which to read the PCZT. If not provided, reads from stdin.
+     input: Option<PathBuf>,
++
++    /// The input is an already-extracted raw transaction (from `pczt extract --raw`)
++    /// rather than a PCZT. Local patch for the offline mesh.
++    #[arg(long)]
++    raw: bool,
+ }
+ 
+ impl Command {
+@@ -40,28 +45,33 @@ impl Command {
+             stdin().read_to_end(&mut buf).await?;
+         }
+ 
+-        let pczt = Pczt::parse(&buf).map_err(|e| anyhow!("Failed to read PCZT: {:?}", e))?;
+-
+-        let prover = LocalTxProver::bundled();
+-        let (spend_vk, output_vk) = prover.verifying_keys();
++        let (raw_tx, txid) = if self.raw {
++            // Already-serialized transaction; the node validates it on submission.
++            let mut raw_tx = service::RawTransaction::default();
++            raw_tx.data = buf;
++            (raw_tx, None)
++        } else {
++            let pczt = Pczt::parse(&buf).map_err(|e| anyhow!("Failed to read PCZT: {:?}", e))?;
+ 
+-        let finalized = SpendFinalizer::new(pczt)
+-            .finalize_spends()
+-            .map_err(|e| anyhow!("Failed to finalize PCZT spends: {e:?}"))?;
++            let prover = LocalTxProver::bundled();
++            let (spend_vk, output_vk) = prover.verifying_keys();
+ 
+-        let tx = TransactionExtractor::new(finalized)
+-            .with_sapling(&spend_vk, &output_vk)
+-            .extract(UnwrapErr(SysRng))
+-            .map_err(|e| anyhow!("Failed to extract transaction from PCZT: {e:?}"))?;
+-        let txid = tx.txid();
++            let finalized = SpendFinalizer::new(pczt)
++                .finalize_spends()
++                .map_err(|e| anyhow!("Failed to finalize PCZT spends: {e:?}"))?;
+ 
+-        // Send the transaction.
+-        println!("Sending transaction...");
+-        let raw_tx = {
++            let tx = TransactionExtractor::new(finalized)
++                .with_sapling(&spend_vk, &output_vk)
++                .extract(UnwrapErr(SysRng))
++                .map_err(|e| anyhow!("Failed to extract transaction from PCZT: {e:?}"))?;
++            let txid = tx.txid();
+             let mut raw_tx = service::RawTransaction::default();
+             tx.write(&mut raw_tx.data).unwrap();
+-            raw_tx
++            (raw_tx, Some(txid))
+         };
++
++        // Send the transaction.
++        println!("Sending transaction...");
+         let response = client.send_transaction(raw_tx).await?.into_inner();
+ 
+         if response.error_code != 0 {
+@@ -71,7 +81,9 @@ impl Command {
+             }
+             .into())
+         } else {
+-            println!("{txid}");
++            if let Some(txid) = txid {
++                println!("{txid}");
++            }
+             Ok(())
+         }
+     }
