@@ -102,16 +102,16 @@ Proposed, pending approval.
 
 - Night `#00080B`: the dark ground; mandatory.
 - Mist `#E9EDF5`: primary light text and light-theme ground; mandatory.
-- Lamplight `#F2B766`: the single warm accent, used for packets in motion and the one key action; mandatory.
+- Signal lime `#CDFF00`: the single accent, used for proof numbers, the active step and packets in motion; mandatory. (Replaces Lamplight after the XBOW-based rebuild.)
 - Relay blue `#7FA8FF`: links between nodes and secondary data; optional.
 
 ### Typefaces
 
 Proposed, pending approval. Licensing not verified.
 
-- Display and headings: IBM Plex Mono, fallback system monospace.
-- Body: IBM Plex Sans, fallback system sans-serif.
-- Data (hashes, txids, code, navigation labels): IBM Plex Mono, fallback system monospace.
+- Display and headings: Geist Mono, fallback system monospace.
+- Body: Geist, fallback system sans-serif.
+- Data (hashes, txids, code, navigation labels): Geist Mono, fallback system monospace.
 
 ### Art Direction
 

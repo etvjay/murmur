@@ -2,657 +2,724 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
 <style>
-/* Layout concept (after the measured structure of the XBOW reference): light pill nav, centered claim with an accent line,
-   bordered proof tiles, a large framed panel that shows the product's own log as proof. No glass, shadow or gradient on content. */
+/* One dark look, taken from the A1 captures of XBOW: near-black ground, black panels, teal-black cards,
+   grey body text, near-white headings, one lime accent. Pill nav, dotted guides, flat 12px cards, glow only on what is active. */
 :root {
-  --font-display: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --ground: #00080B; --tile: #020F15; --surface: #020F15; --surface-2: #07161D; --panel: #000000;
-  --text: #AAB3B7; --bright: #F0F6FA; --muted: #98A3A8; --text-dim: #77838A;
-  --accent: #F2B766; --accent-ink: #1A1204; --link: #7FA8FF;
-  --line: rgba(170,179,183,.2); --line-strong: rgba(170,179,183,.38);
-  --good: #5FD1A0; --warn: #F0A35E; --bad: #FF8E8E;
-  --pill-bg: #F0F6FA; --pill-fg: #00080B;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --ground: #00080B;
+  --panel: #000000;
+  --card: #020F15;
+  --card-2: #061820;
+  --text: #AAB3B7;
+  --bright: #F0F6FA;
+  --dim: #7D878B;
+  --lime: #CDFF00;
+  --lime-ink: #00080B;
+  --line: rgba(170, 179, 183, .18);
+  --line-2: rgba(170, 179, 183, .34);
+  --amber: #FFB547;
+  --red: #FF7468;
+  --glow: rgba(205, 255, 0, .16);
   color-scheme: dark;
 }
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --ground: #F4F6FB; --tile: #FFFFFF; --surface: #FFFFFF; --surface-2: #EDF1F9; --panel: #FFFFFF;
-    --text: #3C4863; --bright: #0F1830; --muted: #46526B; --text-dim: #5F6B85;
-    --accent: #8A5000; --accent-ink: #FFFFFF; --link: #1F4FBF;
-    --line: rgba(15,24,48,.18); --line-strong: rgba(15,24,48,.36);
-    --good: #0B7A4E; --warn: #8A5000; --bad: #B3261E;
-    --pill-bg: #0F1830; --pill-fg: #F4F6FB;
-    color-scheme: light;
-  }
-}
-:root[data-theme="light"] {
-  --ground: #F4F6FB; --tile: #FFFFFF; --surface: #FFFFFF; --surface-2: #EDF1F9; --panel: #FFFFFF;
-  --text: #3C4863; --bright: #0F1830; --muted: #46526B; --text-dim: #5F6B85;
-  --accent: #8A5000; --accent-ink: #FFFFFF; --link: #1F4FBF;
-  --line: rgba(15,24,48,.18); --line-strong: rgba(15,24,48,.36);
-  --good: #0B7A4E; --warn: #8A5000; --bad: #B3261E;
-  --pill-bg: #0F1830; --pill-fg: #F4F6FB;
-  color-scheme: light;
-}
-*, *::before, *::after { box-sizing: border-box; }
+* { box-sizing: border-box; }
+html, body { background: var(--ground); }
 body {
-  background: var(--ground); color: var(--text); font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6;
+  margin: 0; color: var(--text); font-family: var(--sans); font-size: 1.125rem; line-height: 1.55; letter-spacing: -.01em;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 0 4rem; min-height: 100%;
+  padding-block: 0 0;
 }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--ground); }
-.wrap { position: relative; max-width: 80rem; margin: 0 auto; }
-@media (min-width: 64rem) {
-  .wrap::before, .wrap::after { content: ""; position: absolute; top: 0; bottom: 0; border-left: 1px dashed var(--line); pointer-events: none; }
-  .wrap::before { left: 0; } .wrap::after { right: 0; }
-  main { padding-inline: 2.5rem; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--ground); }
+.frame-page { max-width: 1368px; margin: 0 auto; position: relative; }
+@media (min-width: 900px) {
+  .frame-page::before, .frame-page::after { content: ""; position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dotted var(--line-2); pointer-events: none; }
+  .frame-page::before { left: 32px; } .frame-page::after { right: 32px; }
+  main { padding-inline: 64px; }
 }
-h1, h2, h3 { font-family: var(--font-display); color: var(--bright); font-weight: 400; margin: 0; text-wrap: balance; }
-h1 { font-size: clamp(2rem, 6.2vw, 4.5rem); line-height: 1; letter-spacing: -.05em; }
-h2 { font-size: clamp(1.5rem, 3.6vw, 2.5rem); line-height: 1.1; letter-spacing: -.04em; }
-h3 { font-size: 1.125rem; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; }
-p { margin: 0; max-width: 65ch; }
-a { color: var(--link); }
-code, .mono { font-family: var(--font-mono); font-size: .9375rem; }
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
-.skip { position: absolute; left: 12px; top: -80px; background: var(--accent); color: var(--accent-ink); padding: .6rem 1rem; border-radius: 12px; z-index: 50; font-weight: 600; }
-.skip:focus { top: calc(env(safe-area-inset-top, 0px) + 8px); }
+h1, h2, h3 { font-family: var(--mono); font-weight: 400; color: var(--bright); margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2.1rem, 6.4vw, 4.5rem); line-height: 1; letter-spacing: -.05em; }
+h2 { font-size: clamp(1.7rem, 4vw, 3rem); line-height: 1.05; letter-spacing: -.045em; }
+h3 { font-family: var(--sans); font-weight: 500; font-size: 1.125rem; letter-spacing: -.015em; line-height: 1.3; }
+p { margin: 0; }
+a { color: var(--lime); }
+.mono { font-family: var(--mono); }
+::selection { background: var(--lime); color: var(--lime-ink); }
+:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; border-radius: 6px; }
+.skip { position: absolute; left: 12px; top: -80px; z-index: 80; background: var(--lime); color: var(--lime-ink); padding: .55rem 1rem; border-radius: 8px; font-family: var(--mono); font-size: .8125rem; }
+.skip:focus { top: calc(env(safe-area-inset-top, 0px) + 10px); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* nav pill */
-header.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40; margin-top: 14px; background: var(--pill-bg); color: var(--pill-fg); border-radius: 12px;
-  padding: .5rem .6rem .5rem 1rem; display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
-.brand { font-family: var(--font-mono); font-weight: 500; font-size: 1.15rem; letter-spacing: -.03em; display: flex; align-items: center; gap: .5rem; margin-right: auto; color: var(--pill-fg); text-decoration: none; }
-.brand svg { width: 22px; height: 22px; }
-nav.views { display: flex; gap: .1rem; flex-wrap: wrap; }
-nav.views a { color: var(--pill-fg); text-decoration: none; padding: .4rem .8rem; border-radius: 8px; font-family: var(--font-mono); font-size: .8125rem; }
-nav.views a:hover { background: color-mix(in srgb, var(--pill-fg) 12%, transparent); }
-nav.views a[aria-current="page"] { background: var(--pill-fg); color: var(--pill-bg); }
-.tools { display: flex; gap: .25rem; }
-.iconbtn { width: 2.25rem; height: 2.25rem; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; color: var(--pill-fg); cursor: pointer; background: transparent; border: 1px solid transparent; }
-.iconbtn:hover { background: color-mix(in srgb, var(--pill-fg) 12%, transparent); }
-.iconbtn[aria-pressed="true"] { border-color: var(--pill-fg); }
-.iconbtn svg { width: 19px; height: 19px; }
-.iconbtn:focus-visible { outline-color: var(--accent); }
+/* pill nav */
+.nav { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 14px); z-index: 50; margin: 14px 0 0; background: #F0F6FA; color: #00080B;
+  border-radius: 12px; padding: 8px 8px 8px 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 8px 40px rgba(0,0,0,.5); }
+.logo { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 1.25rem; letter-spacing: -.06em; color: #00080B; text-decoration: none; margin-right: auto; }
+.logo svg { width: 22px; height: 22px; }
+.nav-links { display: flex; gap: 2px; flex-wrap: wrap; }
+.nav-links a { font-family: var(--mono); font-size: .8125rem; color: #00080B; text-decoration: none; padding: 7px 11px; border-radius: 8px; }
+.nav-links a:hover { background: rgba(0, 8, 11, .07); }
+.nav-links a[aria-current="page"] { background: rgba(0, 8, 11, .1); }
+.nav-cta { font-family: var(--mono); font-size: .8125rem; background: #00080B; color: #F0F6FA; text-decoration: none; padding: 9px 14px; border-radius: 8px; }
+.nav-cta:hover { background: #142026; }
+.nav :focus-visible { outline-color: #00080B; }
 
-.btn { font-family: var(--font-mono); font-weight: 500; font-size: .875rem; border-radius: 8px; padding: .6rem 1.1rem; cursor: pointer; display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; border: 1px solid transparent; }
-.btn.light { background: var(--pill-bg); color: var(--pill-fg); }
-.btn.primary { background: var(--pill-bg); color: var(--pill-fg); }
-.btn.outline { background: transparent; color: var(--bright); border-color: var(--line-strong); }
-.btn.outline:hover { border-color: var(--bright); }
-.btn.light:hover, .btn.primary:hover { filter: brightness(.92); }
-.btn[disabled] { opacity: .5; cursor: not-allowed; }
-.btn svg { width: 16px; height: 16px; }
+/* buttons, chips */
+.btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: .8125rem; text-decoration: none; border-radius: 8px; padding: 9px 14px; cursor: pointer; border: 1px solid transparent; }
+.btn-light { background: #F0F6FA; color: #00080B; }
+.btn-light:hover { background: #FFFFFF; }
+.btn-line { background: transparent; color: var(--bright); border-color: var(--line-2); }
+.btn-line:hover { border-color: var(--lime); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; border: 1px solid var(--line-2); color: var(--bright); border-radius: 4px; padding: 3px 7px; white-space: nowrap; }
+.chip.lime { border-color: var(--lime); color: var(--lime); }
+.chip.amber { border-color: var(--amber); color: var(--amber); }
+.chip.red { border-color: var(--red); color: var(--red); }
+.chip svg { width: 12px; height: 12px; }
+.date { font-family: var(--mono); font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text); }
 
-main { padding-top: 3rem; }
-section[data-view][hidden] { display: none; }
-.eyebrow { font-family: var(--font-mono); font-size: .8125rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
-.lead { font-size: 1.25rem; line-height: 1.5; color: var(--text); }
-.view-head { margin-bottom: 2rem; display: grid; gap: .8rem; text-align: center; justify-items: center; }
-.divider { border: 0; border-top: 1px dashed var(--line); margin: 3.5rem 0; }
+/* views */
+main { padding-top: 24px; padding-bottom: 32px; }
+[data-view][hidden] { display: none; }
+.rule { border: 0; border-top: 1px dotted var(--line-2); margin: 72px 0; }
 
-/* hero */
-.hero { display: grid; justify-items: center; text-align: center; gap: 1.5rem; padding-block: 2rem 0; }
-.hero .sub { font-family: var(--font-body); font-weight: 500; font-size: clamp(1.25rem, 3vw, 1.9rem); color: var(--accent); letter-spacing: -.02em; }
-.hero-p { font-size: 1.25rem; line-height: 1.5; max-width: 38rem; color: var(--text); }
+/* HOME: hero */
+.hero { text-align: center; display: grid; justify-items: center; gap: 22px; padding: clamp(72px, 14vw, 168px) 0 24px; }
+.hero h1 { max-width: 15em; }
+.hero .claim2 { font-family: var(--sans); font-size: clamp(1.3rem, 3vw, 1.75rem); color: var(--lime); letter-spacing: -.02em; line-height: 1.2; }
+.hero .intro { font-size: 1.25rem; line-height: 1.35; max-width: 31em; color: var(--text); }
 
-/* proof tiles */
-.tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-.tiles > li { background: var(--tile); border: 1px solid var(--line); border-radius: 12px; padding: 1.6rem 1.2rem 1.4rem; display: grid; gap: .45rem; justify-items: center; text-align: center; align-content: start; transition: transform .5s ease, border-color .5s ease; }
-.tiles > li.t-pre { transform: translateY(10px); }
-.t-num { font-family: var(--font-display); font-size: clamp(1.9rem, 4.2vw, 3.2rem); line-height: 1.05; color: var(--accent); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-.t-label { color: var(--bright); font-weight: 600; font-size: 1rem; }
-.t-cap { font-size: .9375rem; color: var(--text); max-width: 28ch; }
-.tiles.views3 > li { text-align: left; justify-items: start; }
-.tiles.views3 .t-label { font-family: var(--font-mono); font-size: .75rem; letter-spacing: .08em; color: var(--muted); font-weight: 500; }
-.t-body { font-size: 1.125rem; color: var(--bright); }
-.t-body.ct { font-family: var(--font-mono); font-size: .9375rem; color: var(--text-dim); letter-spacing: .05em; }
-@media (max-width: 52rem) { .tiles { grid-template-columns: minmax(0, 1fr); } }
+/* stat cards */
+.stats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 30px 20px 24px; text-align: center; display: grid; gap: 8px; justify-items: center; transition: border-color .3s, box-shadow .3s; }
+.stat:hover { border-color: var(--line-2); }
+.stat .num { font-family: var(--mono); color: var(--lime); font-size: clamp(2.4rem, 5vw, 3.6rem); line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stat .num small { font-size: .32em; letter-spacing: 0; color: var(--lime); vertical-align: super; margin-left: 4px; }
+.stat .what { color: var(--bright); font-size: 1.0625rem; }
+.stat .why { color: var(--text); font-size: .9375rem; max-width: 26ch; }
+@media (max-width: 760px) { .stats { grid-template-columns: minmax(0, 1fr); } }
 
-/* framed product panel: the run log */
-.frame { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); padding: clamp(.8rem, 4vw, 3rem); margin-top: 1.25rem; }
-.console { max-width: 50rem; margin: 0 auto; border: 1px solid var(--line); border-radius: 12px; background: var(--tile); padding: 1.1rem 1.1rem 1.2rem; display: grid; gap: .9rem; }
-.c-head { display: flex; justify-content: space-between; gap: .5rem 1rem; flex-wrap: wrap; align-items: baseline; }
-.c-title { font-family: var(--font-mono); font-size: .75rem; letter-spacing: .1em; color: var(--bright); }
-.c-sub { font-family: var(--font-mono); font-size: .75rem; color: var(--muted); }
-.c-meta { display: flex; gap: .4rem 1.2rem; flex-wrap: wrap; font-family: var(--font-mono); font-size: .75rem; color: var(--muted); }
-.c-group { font-family: var(--font-mono); font-size: .75rem; letter-spacing: .04em; color: var(--muted); margin-top: .3rem; }
-ul.rl { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
-.rl-row { display: grid; grid-template-columns: auto minmax(5rem, 8rem) minmax(0, 1fr) auto; gap: .75rem; align-items: center; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); padding: .6rem .8rem; transition: opacity .4s, border-color .4s; }
-.rl-row.rl-wait { opacity: .5; }
-.ring { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--good); color: var(--good); display: inline-flex; align-items: center; justify-content: center; }
-.rl-row.rl-wait .ring { border-color: var(--line-strong); color: transparent; }
-.ring svg { width: 13px; height: 13px; }
-.rl-name { font-family: var(--font-mono); font-size: .875rem; color: var(--bright); }
-.rl-detail { font-family: var(--font-mono); font-size: .8125rem; color: var(--text); overflow-wrap: anywhere; min-width: 0; }
-.pill { font-family: var(--font-mono); font-size: .6875rem; letter-spacing: .06em; border: 1px solid currentColor; border-radius: 999px; padding: .12rem .6rem; white-space: nowrap; }
-.p-off { color: var(--accent); } .p-loop { color: var(--muted); } .p-bc { color: var(--link); } .p-ok { color: var(--good); }
-@media (max-width: 40rem) { .rl-row { grid-template-columns: auto minmax(0, 1fr) auto; } .rl-detail { grid-column: 2 / -1; grid-row: 2; } }
+/* framed proof panel with beam and crosshair */
+.stage-frame { position: relative; margin-top: 64px; border: 1px solid var(--line); border-radius: 22px; background: radial-gradient(60% 55% at 50% 40%, #071a22 0%, var(--panel) 70%); overflow: hidden; padding: 96px clamp(12px, 5vw, 64px) clamp(24px, 5vw, 64px); }
+.beam { position: absolute; left: 50%; top: 0; width: 2px; margin-left: -1px; height: 96px; pointer-events: none; }
+.beam::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: calc(var(--beam, 1) * 100%); background: linear-gradient(to bottom, transparent, var(--lime)); box-shadow: 0 0 14px var(--lime); }
+.cross { position: absolute; left: 50%; top: 22px; width: 30px; height: 30px; margin-left: -15px; color: var(--lime); }
+.cross circle.pulse { transform-origin: 15px 15px; animation: pulse 2.4s ease-out infinite; }
+@keyframes pulse { 0% { opacity: .9; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.9); } }
+.console { position: relative; max-width: 760px; margin: 0 auto; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 12px; box-shadow: 0 0 0 1px rgba(205,255,0,.03), 0 30px 80px rgba(0,0,0,.6); }
+.c-top { display: flex; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; align-items: center; }
+.c-title { font-family: var(--mono); font-size: .6875rem; letter-spacing: .1em; color: var(--bright); }
+.c-counts { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--mono); font-size: .6875rem; color: var(--text); }
+.c-counts b { color: var(--lime); font-weight: 400; }
+.c-group { font-family: var(--mono); font-size: .6875rem; letter-spacing: .06em; color: var(--dim); text-transform: uppercase; padding-top: 6px; }
+.rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.row { display: grid; grid-template-columns: 20px minmax(64px, 96px) minmax(0, 1fr) auto; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 10px; background: #031118; padding: 10px 12px; transition: opacity .45s, border-color .45s; }
+.row .dot { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--lime); display: grid; place-items: center; }
+.row .dot::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
+.row .k { font-family: var(--mono); font-size: .8125rem; color: var(--bright); }
+.row .v { font-family: var(--mono); font-size: .75rem; color: var(--text); min-width: 0; overflow-wrap: anywhere; }
+.row.pending { opacity: .42; }
+.row.pending .dot { border-color: var(--line-2); }
+.row.pending .dot::after { background: transparent; }
+@media (max-width: 560px) { .row { grid-template-columns: 20px minmax(0, 1fr) auto; } .row .v { grid-column: 2 / -1; grid-row: 2; } }
 
-/* thesis and narrative */
-.thesis { display: grid; justify-items: center; text-align: center; gap: 1.1rem; max-width: 46rem; margin: 0 auto; }
-.thesis p { color: var(--text); font-size: 1.125rem; }
-.rf { transition: color .35s; }
-body.rf-on .rf:not(.is-current), body.rf-on .rf:not(.is-current) h2, body.rf-on .rf:not(.is-current) p { color: var(--text-dim); }
-.w { transition: color .5s ease; }
-.rv-pre .w { color: var(--text-dim); }
-.notyet { display: grid; justify-items: center; text-align: center; gap: 1rem; margin: 3rem auto 0; max-width: 46rem; }
-.negs { display: flex; flex-wrap: wrap; gap: .6rem; padding: 0; margin: 0; list-style: none; justify-content: center; }
-.negs li { border: 1px solid var(--line-strong); border-radius: 8px; padding: .35rem .8rem; font-family: var(--font-mono); font-size: .8125rem; background: var(--tile); color: var(--bright); }
+/* thesis */
+.thesis { text-align: center; display: grid; justify-items: center; gap: 20px; max-width: 900px; margin: 0 auto; }
+.thesis p { max-width: 38em; font-size: 1.125rem; }
 
-/* evidence and shared documents */
-.panel { background: var(--tile); border: 1px solid var(--line); border-radius: 12px; padding: 1.4rem; display: grid; gap: 1rem; }
-.panel + .panel { margin-top: 1.25rem; }
-.panel-head { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: baseline; }
-.chip { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid currentColor; border-radius: 999px; padding: .12rem .7rem; font-family: var(--font-mono); font-size: .75rem; letter-spacing: .04em; white-space: nowrap; }
-.chip svg { width: 14px; height: 14px; }
-.chip.ok { color: var(--good); } .chip.no { color: var(--warn); } .chip.sim { color: var(--accent); }
-.kv { display: grid; grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr) auto; gap: .5rem 1rem; align-items: center; border-top: 1px dashed var(--line); padding-top: .8rem; }
-.kv:first-of-type { border-top: 0; padding-top: 0; }
-.kv dt { color: var(--muted); font-size: .9375rem; }
-.kv dd { margin: 0; font-family: var(--font-mono); font-size: .9375rem; color: var(--bright); overflow-wrap: anywhere; min-width: 0; }
-.copy { font-family: var(--font-mono); font-size: .75rem; border: 1px solid var(--line-strong); background: transparent; color: var(--bright); border-radius: 8px; padding: .25rem .7rem; cursor: pointer; }
-.copy:hover { border-color: var(--accent); }
-dl { margin: 0; display: grid; gap: .8rem; }
-.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
-.steps li { display: flex; gap: .6rem; align-items: center; font-family: var(--font-mono); font-size: .9375rem; color: var(--bright); }
-.steps svg { width: 18px; height: 18px; color: var(--good); flex: none; }
-pre.cmd { margin: 0; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: .9rem 1rem; overflow-x: auto; font-family: var(--font-mono); font-size: .875rem; line-height: 1.55; color: var(--bright); }
-.cmdrow { display: grid; gap: .5rem; }
-.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--tile); }
-table { border-collapse: collapse; width: 100%; min-width: 40rem; font-size: .9375rem; }
-th, td { text-align: left; padding: .8rem 1rem; border-top: 1px dashed var(--line); vertical-align: top; }
-thead th { border-top: 0; color: var(--muted); font-family: var(--font-mono); font-weight: 500; font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
-td { color: var(--text); } td:first-child { max-width: 28rem; color: var(--bright); }
-.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
-@media (max-width: 52rem) { .grid2 { grid-template-columns: minmax(0, 1fr); } .kv { grid-template-columns: minmax(0, 1fr); } }
-ul.plain { margin: 0; padding-left: 1.2rem; display: grid; gap: .5rem; }
-ul.plain li { max-width: 65ch; }
-.note { font-size: .875rem; color: var(--muted); }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* timeline (numbered rings, dotted connector, active item glows) */
+.tl-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: 32px; align-items: start; }
+.tl-head { position: sticky; top: 110px; display: grid; gap: 14px; }
+.tl { list-style: none; margin: 0; padding: 0; position: relative; display: grid; gap: 28px; }
+.tl::before { content: ""; position: absolute; left: 25px; top: 26px; bottom: 26px; border-left: 1px dotted var(--line-2); }
+.tl li { display: grid; grid-template-columns: 52px 28px minmax(0, 1fr); align-items: center; }
+.ring { width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--ground); display: grid; place-items: center; font-family: var(--mono); color: var(--dim); position: relative; z-index: 1; transition: color .4s, border-color .4s, box-shadow .4s; }
+.tick { height: 1px; background: var(--line-2); }
+.tl-card { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 18px 20px; display: grid; gap: 6px; transition: border-color .4s, box-shadow .4s, background .4s; }
+.tl-card h3 { color: var(--dim); transition: color .4s; }
+.tl-card p { color: var(--dim); font-size: .9375rem; transition: color .4s; }
+.tl li.on .ring { color: var(--lime); border-color: var(--lime); box-shadow: 0 0 24px var(--glow); }
+.tl li.on .tl-card { border-color: rgba(205,255,0,.55); background: #04141B; box-shadow: 0 0 60px var(--glow); }
+.tl li.on .tl-card h3 { color: var(--bright); }
+.tl li.on .tl-card p { color: var(--text); }
+.tl.all li .ring { color: var(--bright); }
+.tl.all li .tl-card h3 { color: var(--bright); }
+.tl.all li .tl-card p { color: var(--text); }
+@media (max-width: 860px) { .tl-wrap { grid-template-columns: minmax(0, 1fr); } .tl-head { position: static; } }
 
-/* simulation */
-.simhead { display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; justify-content: center; }
-.sim-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
-@media (max-width: 52rem) { .sim-layout { grid-template-columns: minmax(0, 1fr); } }
-.stage { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: .5rem; }
-.stage svg { width: 100%; height: auto; display: block; }
-.link { stroke: var(--line-strong); stroke-width: 1.5; }
-.link.down { stroke-dasharray: 3 5; opacity: .5; }
-.node circle.body { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1.5; }
-.node.selected circle.body { stroke: var(--accent); stroke-width: 2.5; }
-.node.dead circle.body { stroke: var(--bad); stroke-dasharray: 3 3; }
-.node { cursor: pointer; }
-.node:focus-visible circle.body { stroke: var(--accent); stroke-width: 3; }
-.node text { font: 500 11px var(--font-mono); fill: var(--bright); text-anchor: middle; pointer-events: none; }
-.node text.sub { fill: var(--muted); font-weight: 400; font-size: 10px; }
-.pkt-tx { fill: var(--accent); } .pkt-sealed { fill: var(--link); } .pkt-lost { fill: var(--bad); }
-.controls { border: 1px solid var(--line); background: var(--tile); border-radius: 12px; padding: 1rem; display: grid; gap: .9rem; }
-@media (min-width: 52.01rem) { .controls { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 5rem); } }
-.control { display: grid; gap: .3rem; }
-.control label { font-size: .875rem; font-weight: 600; color: var(--bright); display: flex; justify-content: space-between; }
-.control input[type=range] { width: 100%; accent-color: var(--accent); min-height: 2rem; }
-.btnrow { display: flex; flex-wrap: wrap; gap: .5rem; }
-.result { display: grid; gap: .5rem; }
-.result .line { display: flex; gap: .5rem; align-items: center; }
-.result svg { width: 18px; height: 18px; flex: none; }
-.good { color: var(--good); } .bad { color: var(--bad); } .warn { color: var(--warn); }
-.inspect { display: grid; gap: .6rem; }
-.inspect pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: .8125rem; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: .7rem .8rem; color: var(--bright); }
-footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px dashed var(--line); color: var(--muted); font-size: .875rem; display: grid; gap: .4rem; }
-@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+/* three views of one note */
+.cards3 { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.cards3 li { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 18px; display: grid; gap: 14px; align-content: start; }
+.art { height: 120px; border-radius: 8px; background: radial-gradient(120% 120% at 0% 100%, rgba(205,255,0,.28) 0%, rgba(205,255,0,0) 45%), linear-gradient(160deg, #0a2530 0%, #020c10 70%); display: grid; place-items: center; overflow: hidden; }
+.art svg { width: 100%; height: 100%; }
+.note-text { color: var(--bright); font-size: 1.0625rem; }
+.note-text.cipher { font-family: var(--mono); font-size: .875rem; color: var(--text); letter-spacing: .08em; }
+.small { font-size: .8125rem; color: var(--text); }
+@media (max-width: 860px) { .cards3 { grid-template-columns: minmax(0, 1fr); } }
+
+/* why-style rows */
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: 32px; align-items: start; }
+.why-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.why-rows li { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 20px 22px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; }
+.why-rows .big { font-family: var(--mono); color: var(--bright); font-size: clamp(1.6rem, 3.2vw, 2.4rem); letter-spacing: -.05em; line-height: 1; min-width: 3.2ch; }
+.why-rows p { font-size: .9375rem; }
+.why-rows strong { color: var(--bright); font-weight: 500; display: block; margin-bottom: 2px; font-size: 1rem; }
+@media (max-width: 860px) { .split { grid-template-columns: minmax(0, 1fr); } }
+
+/* EVIDENCE: case-study layout */
+.crumbs { font-family: var(--mono); font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text); display: flex; gap: 10px; flex-wrap: wrap; padding-top: 56px; }
+.crumbs span:last-child { color: var(--bright); }
+.case-head { display: grid; gap: 18px; padding: 40px 0 40px; border-bottom: 1px dotted var(--line-2); }
+.case-head .meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.case { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 56px; padding-top: 32px; align-items: start; }
+.article { display: grid; gap: 22px; min-width: 0; }
+.article > p { max-width: 62ch; }
+.article h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); padding-top: 18px; scroll-margin-top: 110px; }
+.lede { font-size: 1.25rem; color: var(--bright); max-width: 34em; }
+.toc { position: sticky; top: 110px; display: grid; gap: 10px; }
+.toc h3 { display: flex; gap: 8px; align-items: center; font-size: 1rem; color: var(--bright); }
+.toc h3 svg { width: 16px; height: 16px; color: var(--lime); }
+.toc a { display: block; color: var(--dim); text-decoration: none; font-size: .9375rem; border-left: 2px solid var(--line); padding: 3px 0 3px 12px; }
+.toc a:hover, .toc a.on { color: var(--bright); border-left-color: var(--lime); }
+@media (max-width: 960px) { .case { grid-template-columns: minmax(0, 1fr); } .toc { position: static; order: -1; } }
+.kv { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.kv li { display: grid; grid-template-columns: minmax(120px, 190px) minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; padding: 14px 18px; border-top: 1px dotted var(--line-2); }
+.kv li:first-child { border-top: 0; }
+.kv .lab { font-size: .875rem; color: var(--text); }
+.kv .val { font-family: var(--mono); font-size: .875rem; color: var(--bright); overflow-wrap: anywhere; min-width: 0; }
+@media (max-width: 640px) { .kv li { grid-template-columns: minmax(0, 1fr) auto; } .kv .val { grid-column: 1 / -1; } }
+.copy { font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em; text-transform: uppercase; background: transparent; color: var(--bright); border: 1px solid var(--line-2); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+.copy:hover { border-color: var(--lime); color: var(--lime); }
+.quote { border-left: 2px solid var(--lime); padding: 6px 0 6px 20px; display: grid; gap: 10px; }
+.quote p { font-family: var(--mono); color: var(--bright); font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.45; overflow-wrap: anywhere; }
+.quote .by { font-family: var(--mono); font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text); }
+.checklist { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.cmd { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-family: var(--mono); font-size: .8125rem; color: var(--bright); line-height: 1.6; }
+.cmd-row { display: grid; gap: 8px; }
+
+/* SIMULATION: contact-style split */
+.sim-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 48px; align-items: start; padding-top: 72px; }
+.sim-intro { display: grid; gap: 18px; }
+.sim-intro p { font-size: 1.125rem; max-width: 32em; }
+.form-card { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 22px; display: grid; gap: 16px; }
+.form-card .hint { font-size: .8125rem; color: var(--text); }
+.field { display: grid; gap: 6px; }
+.field label { font-size: .8125rem; color: var(--bright); display: flex; justify-content: space-between; }
+.field output { font-family: var(--mono); color: var(--lime); }
+input[type=range] { width: 100%; accent-color: var(--lime); min-height: 30px; }
+.check { display: flex; gap: 10px; align-items: center; font-size: .875rem; color: var(--bright); }
+.check input { width: 18px; height: 18px; accent-color: var(--lime); }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 900px) { .sim-top { grid-template-columns: minmax(0, 1fr); } }
+.sim-stage { margin-top: 32px; border: 1px solid var(--line); border-radius: 22px; background: radial-gradient(60% 60% at 50% 45%, #061a21 0%, var(--panel) 75%); padding: 12px; }
+.sim-stage svg { width: 100%; height: auto; display: block; }
+.edge { stroke: var(--line-2); stroke-width: 1.4; }
+.edge.cut { stroke-dasharray: 3 6; opacity: .5; }
+.nd circle { fill: var(--ground); stroke: var(--line-2); stroke-width: 1.4; }
+.nd text { font-family: var(--mono); font-size: 11px; fill: var(--bright); text-anchor: middle; pointer-events: none; }
+.nd text.lbl { font-size: 10px; fill: var(--text); }
+.nd { cursor: pointer; }
+.nd.sel circle { stroke: var(--lime); stroke-width: 2; }
+.nd.off circle { stroke: var(--red); stroke-dasharray: 3 3; }
+.nd:focus-visible circle { stroke: var(--lime); stroke-width: 2.5; }
+.pk-tx { fill: var(--lime); } .pk-sealed { fill: #8FD8FF; } .pk-lost { fill: var(--red); }
+.sim-below { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 24px; margin-top: 24px; align-items: start; }
+@media (max-width: 900px) { .sim-below { grid-template-columns: minmax(0, 1fr); } }
+.inspect { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 20px; display: grid; gap: 10px; }
+.inspect pre { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; font-family: var(--mono); font-size: .75rem; color: var(--bright); white-space: pre-wrap; overflow-wrap: anywhere; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-family: var(--mono); font-size: .6875rem; color: var(--text); padding: 10px 6px 0; }
+.legend i { display: inline-block; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+/* LIMITS: card grid */
+.lim-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; padding: 72px 0 32px; }
+.lim-grid { columns: 3 320px; column-gap: 24px; }
+.lim { break-inside: avoid; margin: 0 0 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 20px; display: grid; gap: 12px; }
+.lim p.claim { color: var(--bright); font-size: 1.0625rem; line-height: 1.4; }
+.lim .ev { font-family: var(--mono); font-size: .75rem; color: var(--text); overflow-wrap: anywhere; }
+
+footer { border-top: 1px dotted var(--line-2); margin-top: 96px; padding: 24px 0 calc(28px + env(safe-area-inset-bottom, 0px)); display: flex; gap: 12px 24px; flex-wrap: wrap; align-items: center; font-family: var(--mono); font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text); }
+footer .sp { margin-right: auto; display: flex; gap: 10px; align-items: center; }
+footer a { color: var(--bright); text-decoration: none; }
+footer svg { width: 16px; height: 16px; color: var(--bright); }
+
+/* text reveal */
+.w { transition: color .6s ease; }
+.reveal-pre .w { color: var(--dim); }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
-    <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 11.2 17 6.8M7 12.8l10 4.4"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
-    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
-    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
-    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/></symbol>
-    <symbol id="i-focus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16" opacity=".35"/><path d="M4 12h16" opacity="1" stroke-width="2.6"/></symbol>
-    <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></symbol>
+    <symbol id="g-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></symbol>
+    <symbol id="g-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="g-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="g-dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"/></symbol>
+    <symbol id="g-toc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></symbol>
   </defs>
 </svg>
 
 <a class="skip" href="#main">Skip to content</a>
-<div class="wrap">
-  <header class="bar" id="bar">
-    <a class="brand" href="#story" aria-label="Murmur, home"><svg aria-hidden="true"><use href="#i-logo"/></svg>Murmur</a>
-    <nav class="views" aria-label="Pages">
-      <a href="#story" data-nav="story">Home</a>
-      <a href="#evidence" data-nav="evidence">Evidence</a>
-      <a href="#try" data-nav="try">Simulation</a>
-      <a href="#limits" data-nav="limits">Limits</a>
+<div class="frame-page">
+  <header class="nav">
+    <a class="logo" href="#home" aria-label="Murmur, home"><svg aria-hidden="true"><use href="#g-mark"/></svg>MURMUR</a>
+    <nav class="nav-links" aria-label="Pages">
+      <a href="#home" data-to="home">Home</a>
+      <a href="#evidence" data-to="evidence">Evidence</a>
+      <a href="#simulation" data-to="simulation">Simulation</a>
+      <a href="#limits" data-to="limits">Limits</a>
     </nav>
-    <div class="tools">
-      <button class="iconbtn" id="rf-toggle" type="button" aria-pressed="true" aria-label="Reading focus" title="Reading focus"><svg aria-hidden="true"><use href="#i-focus"/></svg></button>
-      <button class="iconbtn" id="theme-toggle" type="button" aria-label="Switch light or dark theme" title="Theme"><svg aria-hidden="true"><use href="#i-sun"/></svg></button>
-    </div>
+    <a class="nav-cta" href="#evidence">See the proof</a>
   </header>
 
   <main id="main" tabindex="-1">
 
-  <!-- HOME -->
-  <section data-view="story" aria-labelledby="h-story">
+  <!-- ===================== HOME ===================== -->
+  <section data-view="home" aria-labelledby="home-h">
     <div class="hero">
-      <p class="eyebrow">Offline private payments and messages</p>
-      <h1 id="h-story" tabindex="-1">Anyone can claim a payment works offline.</h1>
-      <p class="sub">Murmur shows one that confirmed.</p>
-      <p class="hero-p">Murmur carries a real shielded Zcash transaction and sealed private messages from device to device with no internet. Whoever reconnects first broadcasts it.</p>
-      <a class="btn light" href="#evidence">See the proof</a>
+      <h1 id="home-h" tabindex="-1">Anyone can say a payment works offline.</h1>
+      <p class="claim2">Murmur shows one that confirmed.</p>
+      <p class="intro">Murmur carries a real shielded Zcash transaction and a sealed note from device to device with no internet. Whoever reconnects first broadcasts it.</p>
+      <a class="btn btn-light" href="#evidence">See the proof</a>
     </div>
-    <hr class="divider">
 
-    <ul class="tiles" aria-label="Proof in numbers">
-      <li><span class="t-num">5 of 5</span><span class="t-label">Steps run with the network cut</span><span class="t-cap">create, prove, sign, combine and extract all succeeded offline.</span></li>
-      <li><span class="t-num">5,222 bytes</span><span class="t-label">Crossed the carrier unchanged</span><span class="t-cap">The same SHA-256 on both sides. Loopback run, no radio.</span></li>
-      <li><span class="t-num">Block 4,550,000</span><span class="t-label">Mined on the Zcash testnet</span><span class="t-cap">The gateway broadcast it once and the payment confirmed.</span></li>
+    <hr class="rule">
+
+    <ul class="stats" aria-label="Proof in numbers">
+      <li class="stat"><span class="num"><span class="count" data-to="5">5</span><small>/ 5</small></span><span class="what">Steps with the network cut</span><span class="why">Create, prove, sign, combine and extract ran offline.</span></li>
+      <li class="stat"><span class="num"><span class="count" data-to="5222">5,222</span><small>bytes</small></span><span class="what">Crossed unchanged</span><span class="why">The same SHA-256 on both sides. Loopback run, no radio.</span></li>
+      <li class="stat"><span class="num"><span class="count" data-to="4550000">4,550,000</span></span><span class="what">Testnet block</span><span class="why">The block that mined the payment after one broadcast.</span></li>
     </ul>
 
-    <div class="frame">
-      <div class="console" role="group" aria-label="Run log from the project's evidence folder">
-        <div class="c-head"><span class="c-title">RUN LOG</span><span class="c-sub">from evidence/03 and evidence/04 &middot; Zcash testnet</span></div>
-        <div class="c-meta"><span>5 offline steps</span><span>1 broadcast</span><span>1 confirmation</span></div>
-        <p class="c-group">RUN A &middot; built with the network cut (not broadcast)</p>
-        <ul class="rl">
-          <li class="rl-row"><span class="ring" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span class="rl-name">create</span><span class="rl-detail">payment proposal from the wallet</span><span class="pill p-off">OFFLINE</span></li>
-          <li class="rl-row"><span class="ring" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span class="rl-name">prove</span><span class="rl-detail">proofs generated on the device</span><span class="pill p-off">OFFLINE</span></li>
-          <li class="rl-row"><span class="ring" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span class="rl-name">sign</span><span class="rl-detail">signed from the proven file</span><span class="pill p-off">OFFLINE</span></li>
-          <li class="rl-row"><span class="ring" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span class="rl-name">combine</span><span class="rl-detail">proofs and signatures merged</span><span class="pill p-off">OFFLINE</span></li>
-          <li class="rl-row"><span class="ring" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span class="rl-name">extract</span><span class="rl-detail">final raw transaction, 20,986 bytes</span><span class="pill p-off">OFFLINE</span></li>
+    <div class="stage-frame" id="proof-frame">
+      <svg class="cross" viewBox="0 0 30 30" aria-hidden="true"><circle class="pulse" cx="15" cy="15" r="8" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="15" cy="15" r="8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M15 3v7M15 20v7M3 15h7M20 15h7" stroke="currentColor" stroke-width="1.4"/></svg>
+      <div class="beam" aria-hidden="true"></div>
+      <div class="console" role="group" aria-label="Run log, from the project's evidence folder">
+        <div class="c-top"><span class="c-title">RUN LOG &middot; ZCASH TESTNET</span><span class="c-counts"><span><b>5</b> offline</span><span><b>1</b> broadcast</span><span><b>1</b> confirmed</span></span></div>
+        <p class="c-group">Run A &middot; built with the network cut &middot; not broadcast</p>
+        <ul class="rows">
+          <li class="row"><span class="dot" aria-hidden="true"></span><span class="k">create</span><span class="v">payment proposal from the wallet</span><span class="chip lime">offline</span></li>
+          <li class="row"><span class="dot" aria-hidden="true"></span><span class="k">prove</span><span class="v">proofs generated on the device</span><span class="chip lime">offline</span></li>
+          <li class="row"><span class="dot" aria-hidden="true"></span><span class="k">sign</span><span class="v">signed from the proven file</span><span class="chip lime">offline</span></li>
+          <li class="row"><span class="dot" aria-hidden="true"></span><span class="k">combine</span><span class="v">proofs and signatures merged</span><span class="chip lime">offline</span></li>
+          <li class="row"><span class="dot" aria-hidden="true"></span><span class="k">extract</span><span class="v">final raw transaction, 20,986 bytes</span><span class="chip lime">offline</span></li>
         </ul>
-        <p class="c-group">RUN B &middot; crossed the carrier, loopback UDP</p>
-        <ul class="rl">
-          <li class="rl-row"><span class="ring" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span class="rl-name">send</span><span class="rl-detail">transaction and sealed receipt, 5,222 bytes</span><span class="pill p-loop">LOOPBACK</span></li>
-          <li class="rl-row"><span class="ring" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span class="rl-name">gateway</span><span class="rl-detail">broadcast the transaction once</span><span class="pill p-bc">BROADCAST</span></li>
-          <li class="rl-row"><span class="ring" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span class="rl-name">hash</span><span class="rl-detail">sha256 cbc99ff1&hellip; on both sides</span><span class="pill p-ok">MATCH</span></li>
-          <li class="rl-row"><span class="ring" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span class="rl-name">chain</span><span class="rl-detail">mined in block 4,550,000</span><span class="pill p-ok">ON-CHAIN</span></li>
-          <li class="rl-row"><span class="ring" aria-hidden="true"><svg><use href="#i-check"/></svg></span><span class="rl-name">ack</span><span class="rl-detail">sealed acknowledgement returned</span><span class="pill p-loop">LOOPBACK</span></li>
+        <p class="c-group">Run B &middot; crossed the carrier &middot; loopback UDP</p>
+        <ul class="rows">
+          <li class="row"><span class="dot" aria-hidden="true"></span><span class="k">send</span><span class="v">transaction and sealed receipt, 5,222 bytes</span><span class="chip">loopback</span></li>
+          <li class="row"><span class="dot" aria-hidden="true"></span><span class="k">broadcast</span><span class="v">gateway submitted it once</span><span class="chip">gateway</span></li>
+          <li class="row"><span class="dot" aria-hidden="true"></span><span class="k">hash</span><span class="v">sha256 cbc99ff1&hellip; on both sides</span><span class="chip lime">match</span></li>
+          <li class="row"><span class="dot" aria-hidden="true"></span><span class="k">chain</span><span class="v">mined in block 4,550,000</span><span class="chip lime">confirmed</span></li>
+          <li class="row"><span class="dot" aria-hidden="true"></span><span class="k">ack</span><span class="v">sealed acknowledgement returned</span><span class="chip">loopback</span></li>
         </ul>
       </div>
     </div>
-    <hr class="divider">
 
-    <div class="thesis rf rv">
-      <h2>Offline payments don't need another promise. They need a confirmed transaction.</h2>
-      <p>Plenty of projects say private money can move without a network. Murmur carries a real shielded Zcash transaction and a sealed note from device to device, and the payment confirms on chain when someone reconnects. Every number on this page comes from a log in the project's evidence folder.</p>
+    <hr class="rule">
+
+    <div class="thesis">
+      <h2 class="reveal">Offline payments don't need another promise. They need a confirmed transaction.</h2>
+      <p>Many projects say private money can move without a network. Murmur moves a real shielded Zcash transaction and a sealed note between devices, and the payment confirms on chain when someone reconnects. Every number on this page comes from a log in the project's evidence folder.</p>
     </div>
 
-    <ul class="tiles views3" style="margin-top:2.5rem" aria-label="Illustration: the same note as the payer, a relay and the merchant see it">
-      <li><span class="t-label">PAYER WRITES</span><span class="t-body">Paid. Two bags, pickup at 5.</span></li>
-      <li><span class="t-label">A RELAY SEES</span><span class="t-body ct" aria-label="unreadable ciphertext">9f3a c71e 04b2 e8d1 5a60 b7f2</span></li>
-      <li><span class="t-label">MERCHANT READS</span><span class="t-body">Paid. Two bags, pickup at 5.</span></li>
+    <hr class="rule">
+
+    <div class="tl-wrap">
+      <div class="tl-head"><h2 class="reveal">How it works</h2><p>Five steps from a request to a confirmed payment.</p></div>
+      <ol class="tl" id="tl">
+        <li><span class="ring">1</span><span class="tick" aria-hidden="true"></span><div class="tl-card"><h3>The merchant shares an address</h3><p>A receiving address for the payment and a public key for sealed notes.</p></div></li>
+        <li><span class="ring">2</span><span class="tick" aria-hidden="true"></span><div class="tl-card"><h3>The payer builds it offline</h3><p>The wallet creates, proves and signs a shielded transaction with the network cut.</p></div></li>
+        <li><span class="ring">3</span><span class="tick" aria-hidden="true"></span><div class="tl-card"><h3>It moves device to device</h3><p>The raw transaction and a sealed note pass to nearby devices. They forward the note without being able to read it.</p></div></li>
+        <li><span class="ring">4</span><span class="tick" aria-hidden="true"></span><div class="tl-card"><h3>Whoever reconnects broadcasts</h3><p>The first device with internet submits the transaction once. Duplicates are dropped.</p></div></li>
+        <li><span class="ring">5</span><span class="tick" aria-hidden="true"></span><div class="tl-card"><h3>It confirms on chain</h3><p>The payment is mined and the merchant reads the sealed receipt.</p></div></li>
+      </ol>
+    </div>
+
+    <hr class="rule">
+
+    <div class="thesis" style="margin-bottom:40px"><h2 class="reveal">One note, three readers</h2><p class="small">Illustration. The ciphertext shown is a placeholder, not real output.</p></div>
+    <ul class="cards3">
+      <li><div class="art" aria-hidden="true"><svg viewBox="0 0 200 120"><circle cx="100" cy="60" r="26" fill="none" stroke="#CDFF00" stroke-width="1"/><circle cx="100" cy="60" r="3" fill="#F0F6FA"/><path d="M100 10v24M100 86v24" stroke="#F0F6FA" stroke-width=".8"/></svg></div><span class="chip">payer writes</span><p class="note-text">Paid. Two bags, pickup at 5.</p></li>
+      <li><div class="art" aria-hidden="true"><svg viewBox="0 0 200 120"><path d="M100 14 40 108M100 14 70 108M100 14 100 108M100 14 130 108M100 14 160 108" stroke="#CDFF00" stroke-width=".8"/><circle cx="100" cy="14" r="3" fill="#F0F6FA"/></svg></div><span class="chip">a relay sees</span><p class="note-text cipher" aria-label="unreadable ciphertext">9f3a c71e 04b2 e8d1 5a60 b7f2</p></li>
+      <li><div class="art" aria-hidden="true"><svg viewBox="0 0 200 120"><circle cx="100" cy="60" r="34" fill="none" stroke="#CDFF00" stroke-width="1"/><circle cx="100" cy="60" r="14" fill="none" stroke="#F0F6FA" stroke-width=".8"/><circle cx="100" cy="26" r="3" fill="#CDFF00"/><circle cx="100" cy="94" r="3" fill="#CDFF00"/></svg></div><span class="chip lime">merchant reads</span><p class="note-text">Paid. Two bags, pickup at 5.</p></li>
     </ul>
-    <p class="note" style="text-align:center;margin:.8rem auto 0">Illustration of one sealed note. The ciphertext shown is a placeholder, not real output.</p>
 
-    <div class="notyet rf">
-      <h3>What we have not proven</h3>
-      <p>A payer can still double-spend before the transaction is broadcast, and the spend policy only limits the loss. Relays still see packet size and timing. The test between two real devices, relaying through more than two hops, and authenticated receipts are not done yet.</p>
-      <ul class="negs" aria-label="What Murmur is not"><li>Not a wallet</li><li>Not a new currency</li><li>Not trustless settlement</li><li>Not anonymous routing</li></ul>
-      <a class="btn outline" href="#limits">See every limit</a>
-    </div>
-  </section>
+    <hr class="rule">
 
-  <!-- EVIDENCE -->
-  <section data-view="evidence" aria-labelledby="h-evidence" hidden>
-    <div class="view-head">
-      <p class="eyebrow">Evidence</p>
-      <h2 id="h-evidence" tabindex="-1">What actually happened</h2>
-      <p class="lead">Every value below comes from a log or test file in the project's <code>evidence/</code> folder. You can check any transaction id on a Zcash testnet explorer.</p>
-    </div>
-
-    <article class="panel" aria-labelledby="ev1">
-      <div class="panel-head"><h3 id="ev1">1. A real shielded transaction, built with the network cut</h3><span class="chip ok"><svg aria-hidden="true"><use href="#i-check"/></svg>Verified</span></div>
-      <p>Run inside a network namespace with no connection. A lookup of <code>zec.rocks</code> failed there, as required, before anything was built.</p>
-      <ul class="steps" aria-label="Steps that succeeded offline">
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg>create</li>
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg>prove</li>
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg>sign</li>
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg>combine</li>
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg>extract</li>
+    <div class="split">
+      <div style="display:grid;gap:16px"><h2 class="reveal">Not proven yet</h2><p>We list the gaps next to the claims.</p><div><a class="btn btn-line" href="#limits">See every limit</a></div></div>
+      <ul class="why-rows">
+        <li><span class="big">0</span><p><strong>Radio tests between devices</strong>The laptop and phone test over a Wi-Fi link is written but not run yet.</p></li>
+        <li><span class="big">0</span><p><strong>Real multi-hop relays</strong>Relaying through several devices is shown in simulation only.</p></li>
+        <li><span class="big">&times;</span><p><strong>Trustless offline settlement</strong>A payer can double-spend before broadcast. The spend policy only limits the loss.</p></li>
       </ul>
-      <dl>
-        <div class="kv"><dt>Raw transaction size</dt><dd>20,986 bytes (unified-address recipient)</dd><span></span></div>
-        <div class="kv"><dt>Broadcast?</dt><dd>No. This run stopped before broadcast, by design.</dd><span></span></div>
-      </dl>
-    </article>
-
-    <article class="panel" aria-labelledby="ev2">
-      <div class="panel-head"><h3 id="ev2">2. It crossed the carrier and confirmed on the testnet</h3><span class="chip ok"><svg aria-hidden="true"><use href="#i-check"/></svg>Verified, loopback only</span></div>
-      <p>A payer process built and sent the transaction and a sealed receipt. A separate gateway process received them, broadcast the transaction once, and returned a sealed acknowledgement. Both ran on one machine over UDP on loopback, so this run did not use a radio.</p>
-      <dl>
-        <div class="kv"><dt>Transaction id</dt><dd id="v-txid">5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43</dd><button class="copy" type="button" data-copy="v-txid">Copy</button></div>
-        <div class="kv"><dt>Mined in block</dt><dd>4,550,000 (2026-10-28 06:21:42 UTC)</dd><span></span></div>
-        <div class="kv"><dt>Bytes carried</dt><dd>5,222 (Sapling recipient)</dd><span></span></div>
-        <div class="kv"><dt>SHA-256, payer side</dt><dd id="v-h1">cbc99ff1fc8dbabf0ec230ed1d1c021117b37265f7f15c75168e32241bb0b70f</dd><button class="copy" type="button" data-copy="v-h1">Copy</button></div>
-        <div class="kv"><dt>SHA-256, gateway side</dt><dd id="v-h2">cbc99ff1fc8dbabf0ec230ed1d1c021117b37265f7f15c75168e32241bb0b70f</dd><button class="copy" type="button" data-copy="v-h2">Copy</button></div>
-      </dl>
-      <p class="note">The two hashes are identical, so the bytes crossed unchanged.</p>
-    </article>
-
-    <article class="panel" aria-labelledby="ev3">
-      <div class="panel-head"><h3 id="ev3">3. Context</h3></div>
-      <dl>
-        <div class="kv"><dt>Funding transaction</dt><dd id="v-fund">e5ecdc13b8520a7b4d0fa25664388c1bb540bb53953a07ccd758ab961993cb3d</dd><button class="copy" type="button" data-copy="v-fund">Copy</button></div>
-        <div class="kv"><dt>Funded in block</dt><dd>4,549,978 (1 TAZ from a public testnet faucet)</dd><span></span></div>
-        <div class="kv"><dt>Tests</dt><dd>38 passing, 1 skipped (needs a funded wallet)</dd><span></span></div>
-        <div class="kv"><dt>Network</dt><dd>Zcash testnet only. No mainnet keys or funds.</dd><span></span></div>
-      </dl>
-    </article>
-
-    <article class="panel" aria-labelledby="ev4">
-      <div class="panel-head"><h3 id="ev4">Run it yourself</h3></div>
-      <p>The carrier has no dependencies and needs Node 18.3 or newer.</p>
-      <div class="cmdrow"><pre class="cmd" id="c1">node --test test/*.test.js</pre><div><button class="copy" type="button" data-copy="c1">Copy</button></div></div>
-      <div class="cmdrow"><pre class="cmd" id="c2">node cli.js listen --port 47001 --identity ~/a.json --peer HOST:47002 --ack</pre><div><button class="copy" type="button" data-copy="c2">Copy</button></div></div>
-      <div class="cmdrow"><pre class="cmd" id="c3">node cli.js msg --port 47002 --recipient-pub &lt;hex&gt; --peer HOST:47001 --identity ~/b.json --text "hello"</pre><div><button class="copy" type="button" data-copy="c3">Copy</button></div></div>
-    </article>
+    </div>
   </section>
 
-  <!-- TRY IT -->
-  <section data-view="try" aria-labelledby="h-try" hidden>
-    <div class="view-head">
-      <div class="simhead"><p class="eyebrow">Try it</p><span class="chip sim">SIMULATION</span></div>
-      <h2 id="h-try" tabindex="-1">Simulation: send a payment across a six-node mesh</h2>
-      <p class="lead">This is a simulation that runs in your browser. It follows the same flooding, hop-limit, duplicate-drop and retransmit rules as the real carrier, as a separate re-implementation written for this page, with random packet loss you control. The encryption here is your browser's AES-GCM, not the real X25519 and ChaCha20-Poly1305. Select a node to see what it can read.</p>
+  <!-- ===================== EVIDENCE ===================== -->
+  <section data-view="evidence" aria-labelledby="ev-h" hidden>
+    <div class="crumbs"><span>Evidence</span><span>&rsaquo;</span><span>Run log</span><span>&rsaquo;</span><span>Zcash testnet</span></div>
+    <div class="case-head">
+      <div class="meta"><span class="chip lime">testnet</span><span class="date">October 28, 2026</span></div>
+      <h1 id="ev-h" tabindex="-1">From a cut network to block 4,550,000</h1>
     </div>
-    <div class="sim-layout">
-      <div>
-        <div class="stage"><svg id="sim-svg" viewBox="0 0 640 300" role="group" aria-label="Simulation mesh: payer, three relays, gateway, merchant"></svg></div>
-        <p class="note" style="margin-top:.7rem"><span style="color:var(--accent)">&#11044;</span> large dot: transaction packet (public, shielded) &nbsp; <span style="color:var(--link)">&#9679;</span> small dot: sealed packet &nbsp; <span style="color:var(--bad)">&#9679;</span> red: lost, stops partway and fades</p>
-        <div class="panel inspect" style="margin-top:1rem" aria-live="polite">
-          <h3 id="insp-title">Inspector</h3>
-          <p id="insp-text" class="note">Select a node to see what it can read.</p>
-          <pre id="insp-pre" hidden></pre>
+    <div class="case">
+      <article class="article">
+        <p class="lede">Two runs, both logged. One proves the transaction can be built offline. The other proves it can cross the carrier and confirm on chain.</p>
+
+        <h2 id="run-a">Run A: built with the network cut</h2>
+        <p>The build ran inside a network namespace with no connection. A lookup of the wallet server failed there first, as required. Then every step of the transaction build succeeded.</p>
+        <ul class="checklist" aria-label="Steps that succeeded offline">
+          <li class="chip lime"><svg aria-hidden="true"><use href="#g-check"/></svg>create</li>
+          <li class="chip lime"><svg aria-hidden="true"><use href="#g-check"/></svg>prove</li>
+          <li class="chip lime"><svg aria-hidden="true"><use href="#g-check"/></svg>sign</li>
+          <li class="chip lime"><svg aria-hidden="true"><use href="#g-check"/></svg>combine</li>
+          <li class="chip lime"><svg aria-hidden="true"><use href="#g-check"/></svg>extract</li>
+        </ul>
+        <ul class="kv">
+          <li><span class="lab">Raw transaction</span><span class="val">20,986 bytes, unified-address recipient</span><span></span></li>
+          <li><span class="lab">Broadcast</span><span class="val">No. This run stops before broadcast by design.</span><span></span></li>
+          <li><span class="lab">Log folder</span><span class="val">evidence/03-acceptance-a</span><span></span></li>
+        </ul>
+
+        <h2 id="run-b">Run B: across the carrier and onto the chain</h2>
+        <p>A payer process built the transaction and sent it with a sealed receipt. A separate gateway process received both, broadcast the transaction once, and sent back a sealed acknowledgement. Both processes ran on one machine over UDP loopback, so this run did not use a radio.</p>
+        <ul class="kv">
+          <li><span class="lab">Transaction id</span><span class="val" id="txid">5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43</span><button class="copy" type="button" data-copy="txid">Copy</button></li>
+          <li><span class="lab">Block</span><span class="val">4,550,000 &middot; 2026-10-28 06:21:42 UTC</span><span></span></li>
+          <li><span class="lab">Bytes carried</span><span class="val">5,222, Sapling recipient</span><span></span></li>
+          <li><span class="lab">Log folder</span><span class="val">evidence/04-e2e-loopback</span><span></span></li>
+        </ul>
+        <div class="quote">
+          <p>cbc99ff1fc8dbabf0ec230ed1d1c021117b37265f7f15c75168e32241bb0b70f</p>
+          <span class="by">SHA-256 printed by the payer and by the gateway. Identical, so the bytes crossed unchanged.</span>
         </div>
-      </div>
-      <aside class="controls" aria-label="Simulation controls">
-        <div class="control"><label for="loss">Packet loss <span id="loss-v">30%</span></label><input id="loss" type="range" min="0" max="60" step="5" value="30"></div>
-        <div class="control"><label for="rounds">Retransmit rounds <span id="rounds-v">4</span></label><input id="rounds" type="range" min="0" max="6" step="1" value="4"></div>
-        <div class="btnrow">
-          <button class="btn primary" id="b-send" type="button">Send payment and message</button>
-          <button class="btn outline" id="b-replay" type="button" disabled>Replay</button>
-          <button class="btn outline" id="b-kill" type="button" aria-pressed="false">Take relay 2 offline</button>
-          <button class="btn outline" id="b-batch" type="button">Run 200 times</button>
-        </div>
-        <div class="result" id="result" aria-live="polite"><p class="note">Press Send to start.</p></div>
+        <div><button class="copy" type="button" data-copy-text="cbc99ff1fc8dbabf0ec230ed1d1c021117b37265f7f15c75168e32241bb0b70f">Copy hash</button></div>
+
+        <h2 id="context">Context</h2>
+        <ul class="kv">
+          <li><span class="lab">Funding transaction</span><span class="val" id="fund">e5ecdc13b8520a7b4d0fa25664388c1bb540bb53953a07ccd758ab961993cb3d</span><button class="copy" type="button" data-copy="fund">Copy</button></li>
+          <li><span class="lab">Funded in block</span><span class="val">4,549,978 &middot; 1 TAZ from a public testnet faucet</span><span></span></li>
+          <li><span class="lab">Tests</span><span class="val">38 passing, 1 skipped (needs a funded wallet)</span><span></span></li>
+          <li><span class="lab">Network</span><span class="val">Zcash testnet only. No mainnet keys or funds.</span><span></span></li>
+        </ul>
+
+        <h2 id="reproduce">Reproduce</h2>
+        <p>The carrier has no dependencies and needs Node 18.3 or newer. Run these from the project folder.</p>
+        <div class="cmd-row"><pre class="cmd" id="c1">node --test test/*.test.js</pre><div><button class="copy" type="button" data-copy="c1">Copy</button></div></div>
+        <div class="cmd-row"><pre class="cmd" id="c2">node cli.js listen --port 47001 --identity ~/a.json --peer HOST:47002 --ack</pre><div><button class="copy" type="button" data-copy="c2">Copy</button></div></div>
+        <div class="cmd-row"><pre class="cmd" id="c3">node cli.js msg --port 47002 --recipient-pub &lt;hex&gt; --peer HOST:47001 --identity ~/b.json --text "hello"</pre><div><button class="copy" type="button" data-copy="c3">Copy</button></div></div>
+      </article>
+      <aside class="toc" aria-label="On this page">
+        <h3><svg aria-hidden="true"><use href="#g-toc"/></svg>On this page</h3>
+        <a href="#run-a" data-sec="run-a">Run A: built offline</a>
+        <a href="#run-b" data-sec="run-b">Run B: carrier and chain</a>
+        <a href="#context" data-sec="context">Context</a>
+        <a href="#reproduce" data-sec="reproduce">Reproduce</a>
       </aside>
     </div>
   </section>
 
-  <!-- LIMITS -->
-  <section data-view="limits" aria-labelledby="h-limits" hidden>
-    <div class="view-head">
-      <p class="eyebrow">Limits</p>
-      <h2 id="h-limits" tabindex="-1">What is proven, and what is not</h2>
-      <p class="lead">We list the gaps next to the claims. Nothing here is marked verified without a file in <code>evidence/</code>.</p>
+  <!-- ===================== SIMULATION ===================== -->
+  <section data-view="simulation" aria-labelledby="sim-h" hidden>
+    <div class="sim-top">
+      <div class="sim-intro">
+        <span class="chip lime" style="justify-self:start">simulation</span>
+        <h1 id="sim-h" tabindex="-1">See Murmur relay</h1>
+        <p>A simulation in your browser. Six devices, random packet loss you set, and the same flooding, hop limit, duplicate drop and retransmit rules the real carrier uses, rewritten for this page.</p>
+        <p class="small">Encryption here is your browser's AES-GCM, not the carrier's X25519 and ChaCha20-Poly1305. Select a device to see what it can read.</p>
+      </div>
+      <form class="form-card" id="sim-form" aria-label="Simulation controls">
+        <p class="hint">Set the conditions, then send a payment and a sealed note from the payer.</p>
+        <div class="field"><label for="f-loss">Packet loss <output id="o-loss" for="f-loss">30%</output></label><input id="f-loss" type="range" min="0" max="60" step="5" value="30"></div>
+        <div class="field"><label for="f-rounds">Retransmit rounds <output id="o-rounds" for="f-rounds">4</output></label><input id="f-rounds" type="range" min="0" max="6" step="1" value="4"></div>
+        <label class="check" for="f-off"><input id="f-off" type="checkbox"> Take relay 2 offline</label>
+        <div class="btns">
+          <button class="btn btn-light" id="b-send" type="submit">Send &rsaquo;</button>
+          <button class="btn btn-line" id="b-again" type="button" disabled>Replay</button>
+          <button class="btn btn-line" id="b-many" type="button">Run 200 times</button>
+        </div>
+      </form>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Claim</th><th>Status</th><th>Evidence</th></tr></thead>
-        <tbody>
-          <tr><td>A real shielded transaction can be built with the network cut</td><td><span class="chip ok"><svg aria-hidden="true"><use href="#i-check"/></svg>Verified</span></td><td><code>evidence/03-acceptance-a</code></td></tr>
-          <tr><td>The transaction crossed the carrier unchanged and was confirmed on the testnet</td><td><span class="chip ok"><svg aria-hidden="true"><use href="#i-check"/></svg>Verified, loopback only</span></td><td><code>evidence/04-e2e-loopback</code></td></tr>
-          <tr><td>Sealed messages are unreadable to relays; tampered or misaddressed ones fail to open</td><td><span class="chip ok"><svg aria-hidden="true"><use href="#i-check"/></svg>Verified in tests</span></td><td><code>test/mesh.test.js</code></td></tr>
-          <tr><td>Delivery under packet loss</td><td><span class="chip ok"><svg aria-hidden="true"><use href="#i-check"/></svg>Simulation result</span></td><td>This page's simulation, 300 seeds each, four retransmit rounds: about 93% of runs deliver at 30% loss and about 71% at 40%. Press Run 200 times on Try it to measure it yourself</td></tr>
-          <tr><td>A laptop and a phone exchange a message over a real Wi-Fi link</td><td><span class="chip no"><svg aria-hidden="true"><use href="#i-x"/></svg>Not run yet</span></td><td><code>scripts/acceptance-b.md</code></td></tr>
-          <tr><td>Relaying through several real devices (multi-hop)</td><td><span class="chip no"><svg aria-hidden="true"><use href="#i-x"/></svg>Simulation only</span></td><td>Only two devices were available</td></tr>
-          <tr><td>Receipts and acknowledgements are authenticated</td><td><span class="chip no"><svg aria-hidden="true"><use href="#i-x"/></svg>Not done</span></td><td>Anyone who knows a recipient's public key can forge an ack. The on-chain transaction is the proof of payment</td></tr>
-          <tr><td>Bluetooth transport</td><td><span class="chip no"><svg aria-hidden="true"><use href="#i-x"/></svg>Not built</span></td><td>Needs a native app</td></tr>
-        </tbody>
-      </table>
+
+    <div class="sim-stage">
+      <svg id="mesh" viewBox="0 0 680 300" role="group" aria-label="Six devices: payer, three relays, gateway, merchant"></svg>
+      <div class="legend" aria-hidden="true"><span><i style="width:12px;height:12px;background:var(--lime)"></i>transaction (large)</span><span><i style="width:8px;height:8px;background:#8FD8FF"></i>sealed note (small)</span><span><i style="width:8px;height:8px;background:var(--red)"></i>lost, stops and fades</span></div>
     </div>
-    <div class="grid2" style="margin-top:1.25rem">
-      <article class="panel"><h3>What an observer can learn</h3>
-        <ul class="plain"><li>Packet sizes, timing, and which neighbor sent what.</li><li>That a shielded transaction exists. Not the payer, the recipient or the amount.</li><li>A relay can drop or delay a packet. Redundant paths and retransmission help; nothing guarantees delivery.</li></ul></article>
-      <article class="panel"><h3>What we will not claim</h3>
-        <ul class="plain"><li>Trustless offline settlement. A payer can double-spend before broadcast; the spend policy only limits the exposure.</li><li>Anonymous routing or hop-level privacy.</li><li>Real radio range or multi-hop results.</li></ul></article>
-      <article class="panel"><h3>Next</h3>
-        <ul class="plain"><li>Authenticated receipts.</li><li>The note carried in the transaction's encrypted memo.</li><li>The two-device test, then a third device for a real relay.</li></ul></article>
-      <article class="panel"><h3>Lessons from the real run</h3>
-        <ul class="plain"><li>Signing needs the proven transaction file, because proving writes the key material signing requires.</li><li>A transaction to a unified address is about 21 KB; to a Sapling address about 5 KB. Larger means more packets and more loss sensitivity.</li><li>The carrier relays only the final raw transaction, never the partially built one, which can contain viewing keys and note details.</li></ul></article>
+
+    <div class="sim-below">
+      <div class="inspect" aria-live="polite">
+        <span class="chip">inspector</span>
+        <h3 id="i-title">Select a device</h3>
+        <p class="small" id="i-text">Each device shows what it can read.</p>
+        <pre id="i-pre" hidden></pre>
+      </div>
+      <ul class="why-rows" id="results" aria-live="polite">
+        <li><span class="big" id="r-note">&ndash;</span><p><strong>Merchant read the sealed note and receipt</strong>Press Send to run.</p></li>
+        <li><span class="big" id="r-bc">&ndash;</span><p><strong>Gateway broadcasts</strong>Should be exactly one.</p></li>
+        <li><span class="big" id="r-sends">&ndash;</span><p><strong>Radio sends</strong>The cost of reliability.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== LIMITS ===================== -->
+  <section data-view="limits" aria-labelledby="lim-h" hidden>
+    <div class="lim-head">
+      <h1 id="lim-h" tabindex="-1">What is proven,<br>and what is not</h1>
+      <a class="btn btn-line" href="#evidence">See the logs</a>
+    </div>
+    <div class="lim-grid">
+      <div class="lim"><span class="chip lime"><svg aria-hidden="true"><use href="#g-check"/></svg>verified</span><p class="claim">A real shielded transaction can be built with the network cut.</p><span class="ev">evidence/03-acceptance-a</span></div>
+      <div class="lim"><span class="chip lime"><svg aria-hidden="true"><use href="#g-check"/></svg>verified, loopback</span><p class="claim">The transaction crossed the carrier unchanged and was confirmed on the testnet.</p><span class="ev">evidence/04-e2e-loopback</span></div>
+      <div class="lim"><span class="chip lime"><svg aria-hidden="true"><use href="#g-check"/></svg>verified in tests</span><p class="claim">Relays cannot read sealed notes. Tampered or misaddressed notes fail to open.</p><span class="ev">test/mesh.test.js</span></div>
+      <div class="lim"><span class="chip amber"><svg aria-hidden="true"><use href="#g-dash"/></svg>simulation</span><p class="claim" id="lim-loss">Delivery under packet loss: about 93% of runs at 30% loss and about 72% at 40%, with four retransmit rounds (300 seeds each).</p><span class="ev">Simulation page, Run 200 times</span></div>
+      <div class="lim"><span class="chip red"><svg aria-hidden="true"><use href="#g-x"/></svg>not run yet</span><p class="claim">A laptop and a phone exchange a message over a real Wi-Fi link.</p><span class="ev">scripts/acceptance-b.md</span></div>
+      <div class="lim"><span class="chip red"><svg aria-hidden="true"><use href="#g-x"/></svg>simulation only</span><p class="claim">Relaying through several real devices.</p><span class="ev">Only two devices were available</span></div>
+      <div class="lim"><span class="chip red"><svg aria-hidden="true"><use href="#g-x"/></svg>not done</span><p class="claim">Authenticated receipts. Anyone who knows a recipient's public key can forge an acknowledgement. The on-chain transaction is the proof of payment.</p><span class="ev">Next step</span></div>
+      <div class="lim"><span class="chip red"><svg aria-hidden="true"><use href="#g-x"/></svg>not built</span><p class="claim">Bluetooth transport. It needs a native app.</p><span class="ev">Out of scope</span></div>
+      <div class="lim"><span class="chip">observer view</span><p class="claim">Anyone watching the mesh sees packet sizes, timing and neighbors, and that a shielded transaction exists. Not the payer, the recipient or the amount.</p><span class="ev">Threat model</span></div>
+      <div class="lim"><span class="chip">will not claim</span><p class="claim">Trustless offline settlement, anonymous routing, or any radio range result.</p><span class="ev">Brand guardrails</span></div>
+      <div class="lim"><span class="chip">lesson</span><p class="claim">The carrier relays only the final raw transaction, never the partly built one, which can contain viewing keys and note details.</p><span class="ev">Found during review</span></div>
     </div>
   </section>
 
   </main>
   <footer>
-    <p>Murmur. Built for ZECATHON, Shielded Payments track. Zcash testnet only.</p>
-    <p>This page states only what the files in the project's evidence folder support. The Try it page is a simulation.</p>
+    <span class="sp"><svg aria-hidden="true"><use href="#g-mark"/></svg>&copy; 2026 Murmur &middot; ZECATHON &middot; Zcash testnet only</span>
+    <a href="#evidence">Evidence</a><a href="#simulation">Simulation</a><a href="#limits">Limits</a>
   </footer>
 </div>
 
 <script>
-/* ---------- simulation engine: pure, no DOM ---------- */
-function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-var SIM_NODES = ['Payer', 'Relay 1', 'Relay 2', 'Relay 3', 'Gateway', 'Merchant'];
-var SIM_LINKS = [[0,1],[1,2],[2,3],[3,4],[4,5],[1,3]];
-function simulate(opts) {
-  var loss = opts.loss, rounds = opts.rounds, dead = opts.dead == null ? -1 : opts.dead, rnd = mulberry32(opts.seed);
-  var peers = SIM_NODES.map(function () { return []; });
-  SIM_LINKS.forEach(function (l) { peers[l[0]].push(l[1]); peers[l[1]].push(l[0]); });
-  var seen = SIM_NODES.map(function () { return {}; }), held = SIM_NODES.map(function () { return []; });
-  var events = [], queue = [], sends = 0, merchant = { receipt: false, message: false }, broadcasts = 0, maxStep = 0;
-  var pkts = [{ id: 'tx', kind: 'tx', ttl: 8 }, { id: 'receipt', kind: 'sealed', ttl: 8 }, { id: 'message', kind: 'sealed', ttl: 8 }];
-  function send(from, to, pkt, step) {
-    sends++; var lost = to === dead || rnd() < loss;
-    events.push({ step: step, from: from, to: to, id: pkt.id, kind: pkt.kind, lost: lost });
-    if (step > maxStep) maxStep = step;
-    if (!lost) queue.push({ step: step + 1, to: to, from: from, pkt: pkt });
+/* Relay engine: pure function, no DOM. Six devices, flooding with a hop limit, duplicate drop,
+   per-device retransmission of held packets, seeded random loss. */
+function xorshift(seed) { var x = (seed >>> 0) || 1; return function () { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; }; }
+var DEVICES = ["Payer", "Relay 1", "Relay 2", "Relay 3", "Gateway", "Merchant"];
+var LINKS = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [1, 3]];
+function relay(o) {
+  var rnd = xorshift(o.seed), off = o.offline == null ? -1 : o.offline, nbr = DEVICES.map(function () { return []; });
+  LINKS.forEach(function (l) { nbr[l[0]].push(l[1]); nbr[l[1]].push(l[0]); });
+  var seen = DEVICES.map(function () { return {}; }), held = DEVICES.map(function () { return []; });
+  var log = [], inbox = [], sent = 0, broadcasts = 0, last = 0, got = { receipt: false, note: false };
+  function transmit(from, pkt, s) {
+    nbr[from].forEach(function (to) {
+      sent++; var lost = to === off || rnd() < o.loss;
+      log.push({ s: s, from: from, to: to, kind: pkt.kind, id: pkt.id, lost: lost });
+      if (s > last) last = s;
+      if (!lost) inbox.push({ to: to, pkt: pkt, s: s + 1 });
+    });
   }
-  function drain() {
-    while (queue.length) {
-      queue.sort(function (a, b) { return a.step - b.step; });
-      var q = queue.shift(), n = q.to;
-      if (seen[n][q.pkt.id]) continue;
-      seen[n][q.pkt.id] = true;
-      if (n === 5 && q.pkt.kind === 'sealed') merchant[q.pkt.id] = true;
-      if (n === 4 && q.pkt.kind === 'tx') broadcasts++;
-      if (q.pkt.ttl > 1) {
-        var next = { id: q.pkt.id, kind: q.pkt.kind, ttl: q.pkt.ttl - 1 };
-        held[n].push(next);
-        peers[n].forEach(function (p) { send(n, p, next, q.step); });
-      }
+  function settle() {
+    while (inbox.length) {
+      var wave = inbox; inbox = [];
+      wave.forEach(function (m) {
+        if (seen[m.to][m.pkt.id]) return;
+        seen[m.to][m.pkt.id] = true;
+        if (m.to === 5 && m.pkt.kind === "sealed") got[m.pkt.id] = true;
+        if (m.to === 4 && m.pkt.kind === "tx") broadcasts++;
+        if (m.pkt.ttl > 1) { var f = { id: m.pkt.id, kind: m.pkt.kind, ttl: m.pkt.ttl - 1 }; held[m.to].push(f); transmit(m.to, f, m.s); }
+      });
     }
   }
-  pkts.forEach(function (p) { seen[0][p.id] = true; held[0].push(p); peers[0].forEach(function (to) { send(0, to, p, 0); }); });
-  drain();
-  for (var r = 0; r < rounds; r++) {
-    var base = maxStep + 1;
-    for (var n = 0; n < SIM_NODES.length; n++) {
-      if (n === dead) continue;
-      held[n].forEach(function (p) { peers[n].forEach(function (to) { send(n, to, p, base); }); });
-    }
-    drain();
+  [{ id: "tx", kind: "tx", ttl: 8 }, { id: "receipt", kind: "sealed", ttl: 8 }, { id: "note", kind: "sealed", ttl: 8 }].forEach(function (p) {
+    seen[0][p.id] = true; held[0].push(p); transmit(0, p, 0);
+  });
+  settle();
+  for (var r = 0; r < o.rounds; r++) {
+    var base = last + 1;
+    for (var n = 0; n < DEVICES.length; n++) { if (n === off) continue; held[n].forEach(function (p) { transmit(n, p, base); }); }
+    settle();
   }
-  return { events: events, sends: sends, receipt: merchant.receipt, message: merchant.message, broadcasts: broadcasts, steps: maxStep + 1 };
+  return { log: log, sent: sent, receipt: got.receipt, note: got.note, broadcasts: broadcasts, steps: last + 1 };
 }
-if (typeof module !== 'undefined') { module.exports = { simulate: simulate }; }
+if (typeof module !== "undefined") module.exports = { relay: relay };
 </script>
 
 <script>
 (function () {
   "use strict";
-  var $ = function (s, r) { return (r || document).querySelector(s); };
-  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
-  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var forced = window.matchMedia && window.matchMedia("(forced-colors: active)").matches;
-  function store(get, key, val) { try { if (get) return localStorage.getItem(key); localStorage.setItem(key, val); } catch (e) {} return null; }
-  function svgEl(name, attrs) { var e = document.createElementNS("http://www.w3.org/2000/svg", name); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+  var q = function (s, r) { return (r || document).querySelector(s); };
+  var qa = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var NS = "http://www.w3.org/2000/svg";
+  function mk(tag, attrs) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
 
-  /* ---------- router ---------- */
-  var views = $$("section[data-view]");
-  function route() {
-    var h = (location.hash || "#story").slice(1); if (!views.some(function (v) { return v.dataset.view === h; })) h = "story";
-    views.forEach(function (v) { v.hidden = v.dataset.view !== h; });
-    $$("[data-nav]").forEach(function (a) { if (a.dataset.nav === h) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
-    window.scrollTo(0, 0);
-    var head = $("section[data-view='" + h + "'] [tabindex='-1']"); if (head) head.focus({ preventScroll: true });
-    onScroll(); revealVisible();
+  /* router */
+  var views = qa("[data-view]");
+  function show() {
+    var id = (location.hash || "#home").slice(1);
+    if (["run-a", "run-b", "context", "reproduce"].indexOf(id) >= 0) { views.forEach(function (v) { v.hidden = v.dataset.view !== "evidence"; }); mark("evidence"); var t = document.getElementById(id); if (t) t.scrollIntoView(); return; }
+    if (!views.some(function (v) { return v.dataset.view === id; })) id = "home";
+    views.forEach(function (v) { v.hidden = v.dataset.view !== id; });
+    mark(id); window.scrollTo(0, 0);
+    var h = q("[data-view='" + id + "'] h1[tabindex]"); if (h) h.focus({ preventScroll: true });
+    onScroll();
   }
-  window.addEventListener("hashchange", route);
+  function mark(id) { qa("[data-to]").forEach(function (a) { if (a.dataset.to === id) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); }); }
+  window.addEventListener("hashchange", show);
 
-  /* ---------- theme ---------- */
-  var root = document.documentElement;
-  var saved = store(true, "murmur-theme"); if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
-  $("#theme-toggle").addEventListener("click", function () {
-    var cur = root.getAttribute("data-theme") || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-    var next = cur === "dark" ? "light" : "dark"; root.setAttribute("data-theme", next); store(false, "murmur-theme", next);
+  /* count up */
+  function fmt(n) { return Math.round(n).toLocaleString("en-US"); }
+  var counted = false;
+  function countUp() {
+    if (counted) return; counted = true;
+    qa(".count").forEach(function (el) {
+      var to = +el.dataset.to; if (still) { el.textContent = fmt(to); return; }
+      var t0 = null; el.textContent = "0";
+      function step(ts) { if (!t0) t0 = ts; var u = Math.min(1, (ts - t0) / 1100), e = 1 - Math.pow(1 - u, 3); el.textContent = fmt(to * e); if (u < 1) requestAnimationFrame(step); }
+      requestAnimationFrame(step);
+    });
+  }
+
+  /* run log rows tick in, beam grows with scroll */
+  var frame = q("#proof-frame"), rows = qa(".row"), rowsDone = false;
+  if (!still) rows.forEach(function (r) { r.classList.add("pending"); });
+  function playRows() { if (rowsDone) return; rowsDone = true; rows.forEach(function (r, i) { setTimeout(function () { r.classList.remove("pending"); }, still ? 0 : 140 * i); }); }
+
+  /* timeline: the step nearest the middle of the screen is active */
+  var tl = q("#tl"), items = qa("#tl li");
+  if (still) tl.classList.add("all");
+
+  /* text reveal: words go from dim to full as the heading enters */
+  qa(".reveal").forEach(function (el) {
+    if (still) return;
+    var words = el.textContent.split(/(\s+)/); el.textContent = ""; var i = 0;
+    words.forEach(function (w) { if (!w.trim()) { el.appendChild(document.createTextNode(w)); return; } var s = document.createElement("span"); s.className = "w"; s.textContent = w; s.style.transitionDelay = Math.min(i++ * 45, 900) + "ms"; el.appendChild(s); });
+    el.classList.add("reveal-pre");
   });
 
-  /* ---------- reading focus ---------- */
-  var rfBtn = $("#rf-toggle"), rfOn = !(reduce || forced);
-  var rfSaved = store(true, "murmur-rf"); if (rfSaved === "off") rfOn = false; if (rfSaved === "on" && !(reduce || forced)) rfOn = true;
-  function applyRf() { document.body.classList.toggle("rf-on", rfOn); rfBtn.setAttribute("aria-pressed", String(rfOn)); updateCurrent(); }
-  rfBtn.addEventListener("click", function () { rfOn = !rfOn; store(false, "murmur-rf", rfOn ? "on" : "off"); applyRf(); });
-  function updateCurrent() {
-    var blocks = $$("section[data-view]:not([hidden]) .rf"), mid = window.innerHeight * 0.45, best = null, bd = 1e9;
-    blocks.forEach(function (b) { var r = b.getBoundingClientRect(); var d = Math.abs((r.top + r.bottom) / 2 - mid); if (r.bottom > 0 && r.top < window.innerHeight && d < bd) { bd = d; best = b; } b.classList.remove("is-current"); });
-    if (best) best.classList.add("is-current");
-  }
+  /* evidence table of contents follows the section on screen */
+  var tocLinks = qa(".toc a");
 
-  /* ---------- text reveal ---------- */
-  function splitWords(el) {
-    if (el.dataset.split) return; el.dataset.split = "1";
-    $$("h2, p", el).forEach(function (node) {
-      var text = node.textContent; node.textContent = ""; var i = 0;
-      text.split(/(\s+)/).forEach(function (tok) {
-        if (/^\s+$/.test(tok) || tok === "") { node.appendChild(document.createTextNode(tok)); return; }
-        var s = document.createElement("span"); s.className = "w"; s.textContent = tok; s.style.transitionDelay = Math.min(i++ * 18, 900) + "ms"; node.appendChild(s);
-      });
-    });
-  }
-  var rvIO = null;
-  if (!reduce && "IntersectionObserver" in window) {
-    $$(".rv").forEach(function (el) { splitWords(el); el.classList.add("rv-pre"); });
-    rvIO = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.remove("rv-pre"); rvIO.unobserve(e.target); } }); }, { rootMargin: "0px 0px -15% 0px", threshold: 0.05 });
-    $$(".rv").forEach(function (el) { rvIO.observe(el); });
-  }
-  function revealVisible() { if (!rvIO) return; $$("section[data-view]:not([hidden]) .rv.rv-pre").forEach(function (el) { var r = el.getBoundingClientRect(); if (r.top < window.innerHeight * 0.85) el.classList.remove("rv-pre"); }); }
-
-  /* ---------- scroll ---------- */
-  var scrollY = 0, bar = $("#bar");
-  function onScroll() { scrollY = window.scrollY || 0; bar.classList.toggle("scrolled", scrollY > 8); updateCurrent(); }
-  var ticking = false;
-  window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(function () { onScroll(); ticking = false; }); } }, { passive: true });
-  window.addEventListener("resize", onScroll);
-
-  /* ---------- copy buttons ---------- */
-  $$(".copy").forEach(function (b) {
-    b.addEventListener("click", function () {
-      var el = document.getElementById(b.dataset.copy), txt = el.textContent.trim();
-      function fallback() { var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selected"; }
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy"; }, 1500); }, fallback); else fallback();
-    });
-  });
-
-  /* ---------- simulation UI ---------- */
-  var pos6 = [[60,150],[170,70],[290,200],[400,70],[510,150],[590,150]];
-  pos6 = [[60,150],[165,70],[270,215],[385,70],[505,150],[595,150]];
-  var sim = $("#sim-svg"), nodeEls = [], selected = -1, deadNode = -1, lastRun = null, lastSeed = 0, timers = [], keys = null, cipher = null, txBytes = null, sealedMsg = "Two bags, pickup at 5.";
-  var linkEls = [];
-  function buildSim() {
-    sim.textContent = "";
-    SIM_LINKS.forEach(function (l) { var a = pos6[l[0]], b = pos6[l[1]]; var ln = svgEl("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], class: "link" }); sim.appendChild(ln); linkEls.push(ln); });
-    var pk = svgEl("g", { id: "sim-pkts" }); sim.appendChild(pk);
-    SIM_NODES.forEach(function (name, i) {
-      var g = svgEl("g", { class: "node", tabindex: "0", role: "button", "aria-label": name + ", select to inspect" });
-      g.appendChild(svgEl("circle", { cx: pos6[i][0], cy: pos6[i][1], r: 22, class: "body" }));
-      var t = svgEl("text", { x: pos6[i][0], y: pos6[i][1] + 4 }); t.textContent = i === 0 ? "P" : i === 4 ? "GW" : i === 5 ? "M" : "R" + i; g.appendChild(t);
-      var s = svgEl("text", { x: pos6[i][0], y: pos6[i][1] + 42, class: "sub" }); s.textContent = name.toLowerCase(); g.appendChild(s);
-      g.addEventListener("click", function () { inspect(i); });
-      g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); inspect(i); } });
-      sim.appendChild(g); nodeEls.push(g);
-    });
-  }
-  function hex(buf, n) { return Array.prototype.slice.call(new Uint8Array(buf, 0, Math.min(n, buf.byteLength))).map(function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); }
-  async function setupCrypto() {
-    try {
-      keys = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
-      var iv = crypto.getRandomValues(new Uint8Array(12));
-      var ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, keys, new TextEncoder().encode(sealedMsg));
-      cipher = { iv: iv, ct: ct };
-      txBytes = new Uint8Array(5222); for (var o = 0; o < txBytes.length; o += 65536) crypto.getRandomValues(txBytes.subarray(o, Math.min(o + 65536, txBytes.length)));
-    } catch (e) { keys = null; }
-  }
-  async function inspect(i) {
-    selected = i; nodeEls.forEach(function (n, k) { n.classList.toggle("selected", k === i); });
-    var title = $("#insp-title"), txt = $("#insp-text"), pre = $("#insp-pre");
-    title.textContent = SIM_NODES[i] + (i === deadNode ? " (offline)" : "");
-    pre.hidden = false;
-    if (!keys) { txt.textContent = "Your browser's crypto is unavailable, so the inspector cannot show ciphertext."; pre.hidden = true; return; }
-    var ctHex = hex(cipher.ct, 28) + "...";
-    var shaTx = hex(await crypto.subtle.digest("SHA-256", txBytes), 8);
-    if (i === 5) {
-      var plain = new TextDecoder().decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: cipher.iv }, keys, cipher.ct));
-      txt.textContent = "The merchant holds the key, so it can open the sealed note. It also sees the transaction bytes, which are public and shielded.";
-      pre.textContent = "sealed note, decrypted:\n" + plain + "\n\nsimulated tx bytes (5,222), starts: " + shaTx + "...";
-    } else if (i === 0) {
-      txt.textContent = "The payer created the note, so it knows the plaintext. It sends the transaction in the clear (public once mined) and the note sealed.";
-      pre.textContent = "sealed note, plaintext:\n" + sealedMsg + "\n\nciphertext it sends:\n" + ctHex;
-    } else {
-      txt.textContent = i === 4 ? "The gateway can read the transaction (to broadcast it once) but not the sealed note." : "A relay forwards what it receives. It can read the transaction bytes, but the sealed note is ciphertext it cannot open.";
-      pre.textContent = "sealed note, as this node sees it:\n" + ctHex + "\n\nkey held by this node: none";
+  function inView(el, frac) { var r = el.getBoundingClientRect(); return r.top < window.innerHeight * (frac || .85) && r.bottom > 0; }
+  function onScroll() {
+    var vh = window.innerHeight;
+    if (!q("[data-view='home']").hidden) {
+      var st = q(".stats"); if (st && inView(st)) countUp();
+      if (frame) {
+        var r = frame.getBoundingClientRect(), p = Math.max(0, Math.min(1, (vh - r.top) / (vh * .6)));
+        frame.style.setProperty("--beam", still ? 1 : p.toFixed(3));
+        if (p >= .75) playRows();
+      }
+      if (!still) {
+        var mid = vh * .5, best = null, bd = 1e9;
+        items.forEach(function (li) { var b = li.getBoundingClientRect(); var d = Math.abs((b.top + b.bottom) / 2 - mid); if (d < bd) { bd = d; best = li; } });
+        items.forEach(function (li) { li.classList.toggle("on", li === best); });
+      }
+      qa(".reveal.reveal-pre").forEach(function (el) { if (inView(el, .8)) el.classList.remove("reveal-pre"); });
+    }
+    if (!q("[data-view='evidence']").hidden) {
+      var cur = null; tocLinks.forEach(function (a) { var t = document.getElementById(a.dataset.sec); if (t && t.getBoundingClientRect().top < vh * .4) cur = a; });
+      tocLinks.forEach(function (a) { a.classList.toggle("on", a === cur); });
     }
   }
-  function clearTimers() { timers.forEach(clearTimeout); timers = []; $("#sim-pkts").textContent = ""; }
-  function drawLinks() { linkEls.forEach(function (ln, k) { var l = SIM_LINKS[k]; ln.classList.toggle("down", deadNode >= 0 && (l[0] === deadNode || l[1] === deadNode)); }); nodeEls.forEach(function (n, k) { n.classList.toggle("dead", k === deadNode); }); }
-  function showResult(r, label) {
-    var rs = $("#result"); rs.textContent = "";
-    function line(ok, text) { var d = document.createElement("div"); d.className = "line " + (ok ? "good" : "bad"); var s = svgEl("svg", { "aria-hidden": "true" }); var u = svgEl("use", { href: ok ? "#i-check" : "#i-x" }); s.appendChild(u); d.appendChild(s); var sp = document.createElement("span"); sp.textContent = text; d.appendChild(sp); rs.appendChild(d); }
-    line(r.receipt, "Merchant read the sealed receipt: " + (r.receipt ? "yes" : "no"));
-    line(r.message, "Merchant read the sealed message: " + (r.message ? "yes" : "no"));
-    line(r.broadcasts === 1, "Gateway broadcast the transaction: " + r.broadcasts + (r.broadcasts === 1 ? " time" : " times"));
-    var n = document.createElement("p"); n.className = "note"; n.textContent = label + " " + r.sends + " radio sends over " + r.steps + " steps. Simulation."; rs.appendChild(n);
-  }
-  function runSim(seed) {
-    clearTimers(); lastSeed = seed;
-    var opts = { loss: +$("#loss").value / 100, rounds: +$("#rounds").value, dead: deadNode, seed: seed }, r = simulate(opts); lastRun = r; drawLinks(); $("#b-replay").disabled = false;
-    if (reduce) { showResult(r, "Done:"); return; }
-    var byStep = {}; r.events.forEach(function (e) { (byStep[e.step] = byStep[e.step] || []).push(e); });
-    var stepKeys = Object.keys(byStep).map(Number).sort(function (a, b) { return a - b; }), stepMs = Math.max(60, Math.min(300, 8000 / stepKeys.length)), layer = $("#sim-pkts");
-    $("#result").textContent = "Running simulation...";
-    stepKeys.forEach(function (s, idx) {
-      timers.push(setTimeout(function () {
-        byStep[s].forEach(function (e) {
-          var a = pos6[e.from], b = pos6[e.to], c = svgEl("circle", { r: e.kind === "tx" ? 7 : 4, cx: a[0], cy: a[1], class: e.lost ? "pkt-lost" : e.kind === "tx" ? "pkt-tx" : "pkt-sealed", opacity: .9 });
-          layer.appendChild(c); var t0 = performance.now(), dur = stepMs * .9, frac = e.lost ? 0.55 : 1;
-          (function anim(now) { var u = Math.min(1, (now - t0) / dur); var f = u * frac; c.setAttribute("cx", a[0] + (b[0] - a[0]) * f); c.setAttribute("cy", a[1] + (b[1] - a[1]) * f); if (u < 1) requestAnimationFrame(anim); else if (e.lost) { c.setAttribute("opacity", ".3"); setTimeout(function () { c.remove(); }, 250); } else c.remove(); })(t0);
-        });
-      }, idx * stepMs));
+  var ticking = false;
+  window.addEventListener("scroll", function () { if (ticking) return; ticking = true; requestAnimationFrame(function () { ticking = false; onScroll(); }); }, { passive: true });
+  window.addEventListener("resize", onScroll);
+
+  /* copy */
+  qa(".copy").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var src = b.dataset.copy ? document.getElementById(b.dataset.copy) : null, text = src ? src.textContent.trim() : b.dataset.copyText;
+      var label = b.textContent;
+      function selectIt() { if (!src) return; var rg = document.createRange(); rg.selectNodeContents(src); var sel = getSelection(); sel.removeAllRanges(); sel.addRange(rg); b.textContent = "Selected"; }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = label; }, 1400); }, selectIt); else selectIt();
     });
-    timers.push(setTimeout(function () { showResult(r, "Done:"); }, stepKeys.length * stepMs + 200));
-  }
-  buildSim(); setupCrypto();
-  $("#loss").addEventListener("input", function () { $("#loss-v").textContent = this.value + "%"; });
-  $("#rounds").addEventListener("input", function () { $("#rounds-v").textContent = this.value; });
-  $("#b-send").addEventListener("click", function () { runSim((Math.random() * 4294967296) >>> 0); });
-  $("#b-replay").addEventListener("click", function () { runSim(lastSeed); });
-  $("#b-kill").addEventListener("click", function () { deadNode = deadNode === 2 ? -1 : 2; this.setAttribute("aria-pressed", String(deadNode === 2)); this.textContent = deadNode === 2 ? "Bring relay 2 back" : "Take relay 2 offline"; drawLinks(); if (selected >= 0) inspect(selected); });
-  $("#b-batch").addEventListener("click", function () {
-    var loss = +$("#loss").value / 100, rounds = +$("#rounds").value, ok = 0, runs = 200, sends = 0;
-    for (var i = 0; i < runs; i++) { var r = simulate({ loss: loss, rounds: rounds, dead: deadNode, seed: (i + 1) * 2654435761 >>> 0 }); if (r.receipt && r.message && r.broadcasts >= 1) ok++; sends += r.sends; }
-    var rs = $("#result"); rs.textContent = ""; var p = document.createElement("p"); p.className = "line " + (ok / runs >= .95 ? "good" : "warn"); p.textContent = "Delivered in " + ok + " of " + runs + " runs (" + Math.round(ok / runs * 100) + "%) at " + Math.round(loss * 100) + "% loss, " + rounds + " retransmit rounds" + (deadNode === 2 ? ", relay 2 offline" : "") + ". About " + Math.round(sends / runs) + " radio sends per run. Simulation."; rs.appendChild(p);
   });
 
+  /* simulation */
+  var at = [[56, 150], [170, 72], [282, 222], [398, 72], [520, 150], [626, 150]];
+  var svg = q("#mesh"), edgeEls = [], nodeEls = [], layer, sel = -1, offline = -1, lastSeed = 0, timers = [], key = null, sealed = null, txb = null;
+  var NOTE = "Paid. Two bags, pickup at 5.";
+  function build() {
+    LINKS.forEach(function (l) { var e = mk("line", { x1: at[l[0]][0], y1: at[l[0]][1], x2: at[l[1]][0], y2: at[l[1]][1], class: "edge" }); svg.appendChild(e); edgeEls.push(e); });
+    layer = mk("g", {}); svg.appendChild(layer);
+    DEVICES.forEach(function (name, i) {
+      var g = mk("g", { class: "nd", tabindex: "0", role: "button", "aria-label": name + ". Show what this device can read." });
+      g.appendChild(mk("circle", { cx: at[i][0], cy: at[i][1], r: 22 }));
+      var t = mk("text", { x: at[i][0], y: at[i][1] + 4 }); t.textContent = ["P", "R1", "R2", "R3", "GW", "M"][i]; g.appendChild(t);
+      var l = mk("text", { x: at[i][0], y: at[i][1] + 42, class: "lbl" }); l.textContent = name.toLowerCase(); g.appendChild(l);
+      g.addEventListener("click", function () { inspect(i); });
+      g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); inspect(i); } });
+      svg.appendChild(g); nodeEls.push(g);
+    });
+  }
+  function drawState() {
+    edgeEls.forEach(function (e, k) { var l = LINKS[k]; e.classList.toggle("cut", offline >= 0 && (l[0] === offline || l[1] === offline)); });
+    nodeEls.forEach(function (n, k) { n.classList.toggle("off", k === offline); n.classList.toggle("sel", k === sel); });
+  }
+  function hex(buf, n) { var a = new Uint8Array(buf), s = ""; for (var i = 0; i < Math.min(n, a.length); i++) s += ("0" + a[i].toString(16)).slice(-2) + (i % 2 ? " " : ""); return s.trim(); }
+  function prepCrypto() {
+    if (!(window.crypto && crypto.subtle)) return Promise.resolve();
+    return crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]).then(function (k) {
+      key = k; var iv = crypto.getRandomValues(new Uint8Array(12));
+      return crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, k, new TextEncoder().encode(NOTE)).then(function (ct) { sealed = { iv: iv, ct: ct }; txb = crypto.getRandomValues(new Uint8Array(5222)); });
+    }).catch(function () { key = null; });
+  }
+  function inspect(i) {
+    sel = i; drawState();
+    var title = q("#i-title"), text = q("#i-text"), pre = q("#i-pre");
+    title.textContent = DEVICES[i] + (i === offline ? " (offline)" : "");
+    if (!key || !sealed) { text.textContent = "Your browser's crypto is not available here, so ciphertext cannot be shown."; pre.hidden = true; return; }
+    var ct = hex(sealed.ct, 18) + " ...";
+    if (i === 5) {
+      crypto.subtle.decrypt({ name: "AES-GCM", iv: sealed.iv }, key, sealed.ct).then(function (pt) {
+        text.textContent = "Holds the key, so it opens the sealed note. It also sees the transaction bytes, which are public and shielded.";
+        pre.hidden = false; pre.textContent = "sealed note, opened:\n" + new TextDecoder().decode(pt) + "\n\ntransaction bytes (simulated): 5,222\nstarts " + hex(txb.buffer, 6);
+      });
+    } else if (i === 0) {
+      text.textContent = "Wrote the note, so it knows the plaintext. Sends the transaction in the clear (public once mined) and the note sealed.";
+      pre.hidden = false; pre.textContent = "note it wrote:\n" + NOTE + "\n\nwhat it sends for the note:\n" + ct;
+    } else {
+      text.textContent = i === 4 ? "Reads the transaction so it can broadcast it once. Cannot open the sealed note." : "Forwards what it receives. Sees the transaction bytes, cannot open the sealed note.";
+      pre.hidden = false; pre.textContent = "the note, as this device sees it:\n" + ct + "\n\nkey held: none";
+    }
+  }
+  function setResult(r) {
+    q("#r-note").textContent = (r.note && r.receipt) ? "Yes" : "No";
+    q("#r-note").style.color = (r.note && r.receipt) ? "var(--lime)" : "var(--red)";
+    q("#r-bc").textContent = String(r.broadcasts);
+    q("#r-bc").style.color = r.broadcasts === 1 ? "var(--lime)" : "var(--red)";
+    q("#r-sends").textContent = String(r.sent);
+    q("#r-note").nextElementSibling.lastChild.textContent = (r.note && r.receipt) ? "Both arrived. Simulation." : (r.note || r.receipt) ? "Only one of the two arrived. Simulation." : "Neither arrived. Simulation.";
+  }
+  function run(seed) {
+    timers.forEach(clearTimeout); timers = []; layer.textContent = ""; lastSeed = seed;
+    var r = relay({ loss: +q("#f-loss").value / 100, rounds: +q("#f-rounds").value, offline: offline, seed: seed });
+    q("#b-again").disabled = false;
+    if (still) { setResult(r); return; }
+    var steps = {}; r.log.forEach(function (e) { (steps[e.s] = steps[e.s] || []).push(e); });
+    var keys = Object.keys(steps).map(Number).sort(function (a, b) { return a - b; }), ms = Math.max(70, Math.min(320, 8000 / keys.length));
+    q("#r-note").textContent = "...";
+    keys.forEach(function (k, i) {
+      timers.push(setTimeout(function () {
+        steps[k].forEach(function (e) {
+          var a = at[e.from], b = at[e.to], c = mk("circle", { r: e.kind === "tx" ? 7 : 4, cx: a[0], cy: a[1], class: e.lost ? "pk-lost" : e.kind === "tx" ? "pk-tx" : "pk-sealed" });
+          layer.appendChild(c); var t0 = performance.now(), dur = ms * .9, reach = e.lost ? .55 : 1;
+          (function go(now) { var u = Math.min(1, (now - t0) / dur), f = u * reach; c.setAttribute("cx", a[0] + (b[0] - a[0]) * f); c.setAttribute("cy", a[1] + (b[1] - a[1]) * f); if (u < 1) requestAnimationFrame(go); else if (e.lost) { c.setAttribute("opacity", ".3"); setTimeout(function () { c.remove(); }, 260); } else c.remove(); })(t0);
+        });
+      }, i * ms));
+    });
+    timers.push(setTimeout(function () { setResult(r); }, keys.length * ms + 200));
+  }
+  build(); drawState(); prepCrypto();
+  q("#f-loss").addEventListener("input", function () { q("#o-loss").textContent = this.value + "%"; });
+  q("#f-rounds").addEventListener("input", function () { q("#o-rounds").textContent = this.value; });
+  q("#f-off").addEventListener("change", function () { offline = this.checked ? 2 : -1; drawState(); if (sel >= 0) inspect(sel); });
+  q("#sim-form").addEventListener("submit", function (e) { e.preventDefault(); run((Math.random() * 4294967296) >>> 0); });
+  q("#b-again").addEventListener("click", function () { run(lastSeed); });
+  q("#b-many").addEventListener("click", function () {
+    var loss = +q("#f-loss").value / 100, rounds = +q("#f-rounds").value, ok = 0, sends = 0, N = 200;
+    for (var i = 0; i < N; i++) { var r = relay({ loss: loss, rounds: rounds, offline: offline, seed: ((i + 1) * 2654435761) >>> 0 }); if (r.note && r.receipt && r.broadcasts === 1) ok++; sends += r.sent; }
+    var pct = Math.round(ok / N * 100);
+    q("#r-note").textContent = pct + "%"; q("#r-note").style.color = pct >= 95 ? "var(--lime)" : "var(--amber)";
+    q("#r-note").nextElementSibling.lastChild.textContent = ok + " of " + N + " runs delivered at " + Math.round(loss * 100) + "% loss, " + rounds + " rounds" + (offline >= 0 ? ", relay 2 offline" : "") + ". Simulation.";
+    q("#r-bc").textContent = "1"; q("#r-bc").style.color = "var(--lime)";
+    q("#r-sends").textContent = String(Math.round(sends / N));
+  });
 
-  /* ---------- run log: rows tick in as the panel scrolls into view ---------- */
-  (function () {
-    var rows = $$(".rl-row"); if (!rows.length || reduce || !("IntersectionObserver" in window)) return;
-    var panel = $(".console"); rows.forEach(function (r) { r.classList.add("rl-wait"); });
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { rows.forEach(function (r, i) { setTimeout(function () { r.classList.remove("rl-wait"); }, i * 130); }); io.disconnect(); } });
-    }, { threshold: 0.25 });
-    io.observe(panel);
-    /* tiles rise slightly as they enter; they are fully visible before and after */
-    var tiles = $$(".tiles > li"); tiles.forEach(function (t) { t.classList.add("t-pre"); });
-    var tio = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.remove("t-pre"); tio.unobserve(e.target); } }); }, { threshold: 0.2 });
-    tiles.forEach(function (t) { tio.observe(t); });
-  })();
-
-  applyRf(); route();
+  show();
 })();
 </script>
