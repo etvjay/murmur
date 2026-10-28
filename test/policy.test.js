@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluatePolicy } from '../policy.js';
+import { evaluatePolicy } from '../src/policy.js';
 
 test('policy envelope bounds offline risk', () => {
   const policy = { maxPerPaymentZat: 10000, maxOfflineTotalZat: 20000, spentZat: 15000, minExpiryHeight: 100 };

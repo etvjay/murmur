@@ -3,3 +3,4 @@ wallets/
 *.identity
 node_modules/
 dist/
+*.tgz

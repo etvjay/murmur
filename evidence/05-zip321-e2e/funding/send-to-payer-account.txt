@@ -1,0 +1,6 @@
+      Change outputs (2):
+        - Sapling   0.12482750 TAZ
+        - Sapling   0.12482750 TAZ
+      Fee:   0.00015000 TAZ
+Sending transaction...
+4d0ddfe59015b3317613deba431d67944bcd64de2bd74cd0f29302a21d62b35a

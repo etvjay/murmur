@@ -1,0 +1,16 @@
+{
+  "project": "murmur",
+  "version": 1,
+  "current_phase": "submission-candidate",
+  "status": "IN_PROGRESS",
+  "head": "WORKING_TREE",
+  "last_verified_at": "2026-10-28T12:48:00Z",
+  "critical_open_gaps": 0,
+  "high_open_gaps": 1,
+  "medium_open_gaps": 4,
+  "low_open_gaps": 3,
+  "external_blockers": 1,
+  "live_evidence_current": true,
+  "evidence_ceiling": "LIVE_TESTNET",
+  "notes": "external_blockers counts the owner-only real-device test (GAP-002)."
+}

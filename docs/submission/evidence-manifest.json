@@ -1,0 +1,38 @@
+{
+  "project": "murmur",
+  "network": "zcash-testnet",
+  "generated": "2026-10-28",
+  "note": "States use the vocabulary in foundry/README.md. Loopback means UDP on one machine, not a radio.",
+  "runs": [
+    {
+      "id": "A",
+      "title": "Shielded transaction built with the network cut",
+      "state": "LIVE_TESTNET",
+      "directory": "evidence/03-acceptance-a",
+      "files": ["evidence/03-acceptance-a/steps.status", "evidence/03-acceptance-a/offline-probe.stderr", "evidence/03-acceptance-a/commands.log", "evidence/03-acceptance-a/extract.txid"],
+      "facts": { "rawTransactionBytes": 20986, "recipientKind": "unified", "broadcast": false }
+    },
+    {
+      "id": "B",
+      "title": "Transaction carried across the carrier and confirmed",
+      "state": "LIVE_TESTNET",
+      "directory": "evidence/04-e2e-loopback",
+      "files": ["evidence/04-e2e-loopback/SUMMARY.txt", "evidence/04-e2e-loopback/payer.jsonl", "evidence/04-e2e-loopback/gateway-listener.jsonl", "evidence/04-e2e-loopback/wallet-list-tx-confirmed.txt"],
+      "facts": { "txid": "5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43", "block": 4550000, "bytes": 5222, "sha256": "cbc99ff1fc8dbabf0ec230ed1d1c021117b37265f7f15c75168e32241bb0b70f", "transport": "loopback-udp" }
+    },
+    {
+      "id": "C",
+      "title": "ZIP 321 payment request paid end to end",
+      "state": "LIVE_TESTNET",
+      "directory": "evidence/05-zip321-e2e",
+      "files": ["evidence/05-zip321-e2e/SUMMARY.txt", "evidence/05-zip321-e2e/request.jsonl", "evidence/05-zip321-e2e/uri.txt", "evidence/05-zip321-e2e/offline-probe.txt", "evidence/05-zip321-e2e/payer.jsonl", "evidence/05-zip321-e2e/gateway-listener.jsonl", "evidence/05-zip321-e2e/offline.tx"],
+      "facts": { "txid": "0efad38fd3d577779817d949caa695e4391adc4329b0700b6a4b37c5b66f96d7", "block": 4550881, "minedAt": "2026-10-28T12:20:12Z", "amountZat": 3000, "bytes": 5222, "sha256": "ad973801c3c260fb041485cc41d6bbb91e01cd70e9e0cd26f3effdf9613124ca", "transport": "loopback-udp", "offlineSteps": "every devtool call in a no-network namespace", "memoObserved": false }
+    }
+  ],
+  "findings": [
+    { "id": "F-1", "title": "PCZT path cannot sign internal-scope change notes", "directory": "evidence/05-zip321-e2e/attempt-1-change-note-sign-failure", "files": ["evidence/05-zip321-e2e/attempt-1-change-note-sign-failure/sign.stderr", "evidence/05-zip321-e2e/attempt-1-change-note-sign-failure/README.txt"] },
+    { "id": "F-2", "title": "Offline build not carried: isolated loopback", "directory": "evidence/05-zip321-e2e/attempt-2-offline-build-not-carried", "files": ["evidence/05-zip321-e2e/attempt-2-offline-build-not-carried/README.txt", "evidence/05-zip321-e2e/attempt-2-offline-build-not-carried/payer.jsonl"] },
+    { "id": "F-3", "title": "Stale-tip build refused after expiry", "directory": "evidence/05-zip321-e2e/finding-offline-expiry", "files": ["evidence/05-zip321-e2e/finding-offline-expiry/send-built-on-stale-tip.txt", "evidence/05-zip321-e2e/finding-offline-expiry/README.txt"] },
+    { "id": "F-4", "title": "Funding transfer for the payer account", "directory": "evidence/05-zip321-e2e/funding", "files": ["evidence/05-zip321-e2e/funding/send-to-payer-account.txt", "evidence/05-zip321-e2e/funding/README.txt"] }
+  ]
+}

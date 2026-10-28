@@ -7,10 +7,10 @@ import dgram from 'node:dgram';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { main } from '../cli.js';
+import { main } from '../bin/murmur.js';
 
 const settle = (ms) => new Promise((r) => setTimeout(r, ms));
-const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'zmesh-cli-'));
+const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'murmur-cli-'));
 
 function grabPorts(n) {
   const socks = Array.from({ length: n }, () => dgram.createSocket('udp4'));
@@ -164,7 +164,7 @@ test('request prints the ZIP-321 request URI for --address --amount', async () =
   assert.equal(code, 0);
   const req = json(c).find((m) => m.kind === 'request');
   assert.equal(req.uri.startsWith(`zcash:${SAP}?amount=0.00025`), true);
-  const { parse } = await import('../zip321.js');
+  const { parse } = await import('../src/zip321.js');
   assert.equal(parse(req.uri).memo, 'bags at 5');
 });
 

@@ -1,1 +1,17 @@
-{ "name": "zmesh", "version": "0.1.0", "type": "module", "scripts": { "test": "node --test test/*.test.js" } }
+{
+  "name": "murmur",
+  "version": "0.1.0",
+  "description": "Pay and message privately over Zcash when the network is down: a carrier for sealed notes and shielded transactions between nearby devices.",
+  "type": "module",
+  "license": "MIT OR Apache-2.0",
+  "engines": { "node": ">=18.3" },
+  "bin": { "murmur": "bin/murmur.js" },
+  "files": ["bin", "src", "patches", "LICENSE-MIT", "LICENSE-APACHE", "THIRD_PARTY_NOTICES.md", "README.md"],
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "demo": "node scripts/demo.js 30",
+    "check:foundry": "node scripts/check-foundry.mjs",
+    "build:web": "node apps/web/build.mjs",
+    "verify": "sh scripts/verify"
+  }
+}

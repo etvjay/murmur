@@ -2,15 +2,15 @@
 
 Goal: prove the carrier works between a laptop and an Android phone over a real Wi-Fi link with the phone's mobile data off. Part 1 (messaging) needs no funds. Part 2 (payment) needs the funded wallet from Acceptance A. Run Part 1 first.
 
-Evidence to keep (screenshots or pasted terminal text) goes in `mesh/evidence/03-devices/`. Do not paste key files or mnemonics.
+Evidence to keep (screenshots or pasted terminal text) goes in `evidence/06-two-devices/`. Do not paste key files or mnemonics.
 
 ## 0. Setup (both devices need internet once, only for this step)
 
 **Laptop** (Node 18.3+ required):
 ```
-cd /home/ubuntu/zcash/mesh   # or wherever the repo is
-tar czf dist/zmesh.tgz --transform 's,^,zmesh/,' mesh.js wire.js runner.js policy.js bridge.js cli.js package.json
-cd dist && python3 -m http.server 8000     # serves the tarball on your local network
+cd <path to the murmur repo>
+npm pack                                   # writes murmur-0.1.0.tgz (bin/, src/, patches/, licenses)
+python3 -m http.server 8000                # serves it on your local network
 ```
 
 **Phone** (Termux from F-Droid; the Play Store build is outdated):
@@ -19,12 +19,12 @@ pkg update && pkg install nodejs curl
 ```
 Then, with the phone and laptop on the same Wi-Fi or the phone's hotspot:
 ```
-curl -fsSO http://<LAPTOP_IP>:8000/zmesh.tgz && tar xzf zmesh.tgz && cd zmesh
-node cli.js pubkey --identity ~/phone-id.json     # prints 64 hex chars: the phone's public key
+curl -fsSO http://<LAPTOP_IP>:8000/murmur-0.1.0.tgz && tar xzf murmur-0.1.0.tgz && cd package
+node bin/murmur.js pubkey --identity ~/phone-id.json     # prints 64 hex chars: the phone's public key
 ```
 Write the phone's public key down (it is not a secret). The identity file stays on the phone.
 
-On the laptop: `node cli.js pubkey --identity ~/laptop-id.json`.
+On the laptop: `node bin/murmur.js pubkey --identity ~/laptop-id.json`.
 
 ## 1. Go offline
 1. Turn **mobile data off** on the phone. Turn **Wi-Fi hotspot on** (the phone shares nothing but a local network).
@@ -36,11 +36,11 @@ On the laptop: `node cli.js pubkey --identity ~/laptop-id.json`.
 ## 2. Part 1: private message, both directions
 Phone (listener, acknowledges):
 ```
-node cli.js listen --port 47001 --identity ~/phone-id.json --peer <LAPTOP_IP>:47002 --ack
+node bin/murmur.js listen --port 47001 --identity ~/phone-id.json --peer <LAPTOP_IP>:47002 --ack
 ```
 Laptop (sender):
 ```
-node cli.js msg --port 47002 --recipient-pub <PHONE_PUBKEY> --peer <PHONE_IP>:47001 \
+node bin/murmur.js msg --port 47002 --recipient-pub <PHONE_PUBKEY> --peer <PHONE_IP>:47001 \
   --identity ~/laptop-id.json --text "hello over a link with no internet" --wait-ms 5000
 ```
 Pass when: the phone prints a JSON line with the text, the laptop prints a JSON line with `"kind":"ack"`, and the laptop exits 0. Screenshot both.
@@ -50,7 +50,7 @@ Optional range check: walk apart until delivery stops, and note the distance. Re
 ## 3. Part 2: payment (needs a funded wallet)
 Prerequisite: Acceptance A passed, so `evidence/` has a txid. The phone only runs the carrier (no wallet), so the payee is any testnet address you control, for example a second address from the same wallet (`wallet generate-address -p sapling`, then `zcash-devtool inspect <ua>` for the plain Sapling address). Build and send the payment with the network down:
 ```
-node cli.js pay --to <RECIPIENT_TESTNET_ADDRESS> --amount 5000 --recipient-pub <PHONE_PUBKEY> \
+node bin/murmur.js pay --to <RECIPIENT_TESTNET_ADDRESS> --amount 5000 --recipient-pub <PHONE_PUBKEY> \
   --peer <PHONE_IP>:47001 --port 47002 --identity ~/laptop-id.json \
   --wallet <WALLET_DIR> --wallet-key <WALLET_KEY_FILE> \
   --devtool /home/ubuntu/zcash/repos/zcash-devtool/target/release/zcash-devtool \
@@ -61,7 +61,7 @@ Pass when: the phone prints `"kind":"tx"` and `"kind":"receipt"` lines, the `sha
 ## 4. Broadcast (back online)
 Turn the hotspot off, reconnect the laptop to the internet, then:
 ```
-node cli.js broadcast --tx ~/offline.tx --devtool <DEVTOOL> --wallet <WALLET_DIR>
+node bin/murmur.js broadcast --tx ~/offline.tx --devtool <DEVTOOL> --wallet <WALLET_DIR>
 ```
 Then sync the wallet and check the testnet explorer for the txid recorded by Acceptance A. Screenshot the confirmation.
 

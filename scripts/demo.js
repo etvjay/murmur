@@ -1,8 +1,8 @@
 // Demo: a payment and a private message cross a 6-node offline mesh.
 // Nobody on the path can read the message. The transaction is broadcast once, by the
 // one node that regains internet. Usage: node demo.js [lossPercent]
-import { Node, Network, seal } from './mesh.js';
-import { evaluatePolicy } from './policy.js';
+import { Node, Network, seal } from '../src/mesh.js';
+import { evaluatePolicy } from '../src/policy.js';
 
 const loss = (Number(process.argv[2] ?? 30)) / 100;
 let s = 7; const rng = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;

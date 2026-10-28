@@ -28,7 +28,7 @@ echo "== 1. sync, so the transaction expiry is measured from the real chain tip 
 "$DEVTOOL" wallet -w "$WALLET" balance "$ACCOUNT" > "$E/balance-before.txt" 2>&1 || true
 
 echo "== 2. the merchant makes a ZIP 321 request =="
-node cli.js request --address "$MERCHANT_ADDR" --amount "$AMOUNT" --memo "$MEMO" > "$E/request.jsonl"
+node bin/murmur.js request --address "$MERCHANT_ADDR" --amount "$AMOUNT" --memo "$MEMO" > "$E/request.jsonl"
 URI="$(node -e "console.log(JSON.parse(require('fs').readFileSync('$E/request.jsonl','utf8')).uri)")"
 echo "uri=$URI" > "$E/uri.txt"
 
@@ -40,14 +40,14 @@ chmod +x "$TMP/offline-devtool"
 if "$TMP/offline-devtool" wallet -w "$WALLET" get-info > "$E/offline-probe.txt" 2>&1; then
   echo "ERROR: the namespace can reach the network; aborting" >&2; exit 1
 fi
-node cli.js pubkey --identity "$TMP/m.id" > /dev/null
-node cli.js pubkey --identity "$TMP/p.id" > /dev/null
-MPUB="$(node cli.js pubkey --identity "$TMP/m.id")"
-node cli.js listen --port $PORT_G --identity "$TMP/m.id" --peer 127.0.0.1:$PORT_P --gateway \
+node bin/murmur.js pubkey --identity "$TMP/m.id" > /dev/null
+node bin/murmur.js pubkey --identity "$TMP/p.id" > /dev/null
+MPUB="$(node bin/murmur.js pubkey --identity "$TMP/m.id")"
+node bin/murmur.js listen --port $PORT_G --identity "$TMP/m.id" --peer 127.0.0.1:$PORT_P --gateway \
   --devtool "$DEVTOOL" --wallet "$WALLET" --ack > "$E/gateway-listener.jsonl" 2> "$E/gateway-listener.stderr" &
 GPID=$!
 sleep 1
-node cli.js pay --to "$URI" --recipient-pub "$MPUB" --peer 127.0.0.1:$PORT_G \
+node bin/murmur.js pay --to "$URI" --recipient-pub "$MPUB" --peer 127.0.0.1:$PORT_G \
   --identity "$TMP/p.id" --wallet "$WALLET" --wallet-key "$KEY" --devtool "$TMP/offline-devtool" --account "$ACCOUNT" \
   --wait-ms 30000 --port $PORT_P --save-tx "$E/offline.tx" > "$E/payer.jsonl" 2> "$E/payer.stderr" || true
 sleep 2

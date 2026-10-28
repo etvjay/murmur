@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Node, Network, newIdentity, seal, open } from '../mesh.js';
+import { Node, Network, newIdentity, seal, open } from '../src/mesh.js';
 
 const msgBody = (obj) => Buffer.from(JSON.stringify(obj));
 

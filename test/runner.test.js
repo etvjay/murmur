@@ -8,9 +8,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
-import { encodePacket } from '../wire.js';
-import { newIdentity, seal } from '../mesh.js';
-import { startDevice, loadOrCreateIdentity } from '../runner.js';
+import { encodePacket } from '../src/wire.js';
+import { newIdentity, seal } from '../src/mesh.js';
+import { startDevice, loadOrCreateIdentity } from '../src/runner.js';
 
 const hexId = () => randomBytes(16).toString('hex');
 
@@ -200,7 +200,7 @@ test('ignores a duplicate tx and calls onTx once', async () => {
 });
 
 test('persists the identity file with mode 0600 and reuses it across runs', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'zmesh-ident-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'murmur-ident-'));
   try {
     const file = path.join(dir, 'nested', 'device.id');
     const first = loadOrCreateIdentity(file);
@@ -215,7 +215,7 @@ test('persists the identity file with mode 0600 and reuses it across runs', () =
 });
 
 test('rejects a corrupt identity file instead of silently rotating keys', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'zmesh-ident-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'murmur-ident-'));
   try {
     const file = path.join(dir, 'device.id');
     fs.writeFileSync(file, '{"nope":true}\n', { mode: 0o600 });

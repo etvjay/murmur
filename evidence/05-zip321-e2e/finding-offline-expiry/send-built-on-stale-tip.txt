@@ -1,0 +1,8 @@
+        - Sapling 5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43:1    0.24993500 TAZ
+        - Sapling 5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43:2    0.24993500 TAZ
+      Change outputs (2):
+        - Sapling   0.12482750 TAZ
+        - Sapling   0.12482750 TAZ
+      Fee:   0.00015000 TAZ
+Sending transaction...
+Error: Send failed: (-25) failed to validate tx: WtxId("private"), error: transaction did not pass consensus validation: transaction must not be mined at a block Height(4550785) greater than its expiry Height(4550721), failing transaction transaction::Hash("99d90368414cda87ce8b939079acdd13ff7793aeb5ebf924e200330f1dea55d4")

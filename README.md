@@ -1,66 +1,92 @@
-# zmesh: offline private payments and messaging for Zcash
+# Murmur
 
-Built for ZECATHON (SHIELDED PAYMENTS). Testnet only.
+**Pay and talk when the network won't.**
 
-In an internet blackout, people still need to pay each other and talk without exposing who they are or what they say. zmesh carries two things between nearby devices with no internet:
+Murmur carries a real shielded Zcash transaction and sealed private notes from device to device with no internet. Whoever reconnects first broadcasts the transaction, and the payment confirms on chain.
 
-- a real shielded Zcash transaction, built offline, and
-- sealed private messages and receipts (X25519 + ChaCha20-Poly1305, no recipient tag, so a relay cannot read them or tell whom they are for).
+> Built for ZECATHON, Shielded Payments track. Zcash **testnet only**. The judge page is the static site in `apps/web`; deploy notes are in [`docs/operations/DEPLOY_WEB.md`](docs/operations/DEPLOY_WEB.md).
 
-A device that regains internet broadcasts the transaction.
+Murmur is for people who still need to pay and message each other privately when a network is down or shut off: a market stall in a blackout, a clinic after a storm, a team in a region with shutdowns. It is a transport and a spend boundary. It is not a wallet, not a new currency, not a bridge, and not anonymous routing.
 
-## Status: what is verified and what is not
+## The problem
 
-| Claim | Status | Evidence |
-|---|---|---|
-| Sealed messages cross a mesh; relays cannot read them | Verified in tests (simulation and loopback UDP) | `test/mesh.test.js`, `test/runner.test.js` |
-| A shielded tx survives chunking, loss and reordering | Verified over loopback UDP (real txs measured: 5,222 bytes to a Sapling recipient, 20,986 bytes to a unified address with an Orchard receiver) | `test/wire.test.js`, `test/runner.test.js` |
-| CLI works between two separate OS processes | Verified on one machine, loopback only | `test/cli.test.js`, manual smoke run |
-| Spend policy blocks a payment before any Zcash command runs | Verified (stub devtool) | `test/cli.test.js`, `test/bridge.test.js` |
-| Wallet syncs and reads balance with the network cut off | Verified on testnet | `evidence/02-sync/` |
-| A real shielded transaction built with the network blocked | **Verified.** `create`, `prove`, `sign`, `combine`, `extract` all succeeded inside a no-network namespace (DNS probe failed as required). Raw tx 20,986 bytes | `evidence/03-acceptance-a/` |
-| Payer to gateway to chain, real devtool, through the CLI | **Verified over loopback UDP (no radio).** Payer and gateway printed the same SHA-256; sealed receipt read; ack returned; tx `5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43` mined in testnet block 4,550,000 | `evidence/04-e2e-loopback/` |
-| Laptop and phone exchange a message over a real Wi-Fi link | **Not yet run** (needs the devices) | `scripts/acceptance-b.md` |
-| Multi-hop relaying over real radio | **Not tested.** Only simulated | `test/mesh.test.js`, `demo.js` |
-
-Update this table from `evidence/` when the acceptance runs finish. Anything without evidence stays "not run".
+Private money and private words both depend on a network someone can switch off. Offline payment pilots are run by issuers. Offline messengers carry no money. Nothing joins private money and private words.
 
 ## How it works
-1. The payer's wallet (`zcash-devtool`) builds, proves and signs a PCZT offline, then extracts the final raw transaction.
-2. The carrier sends the raw transaction (`tx` packet) and a sealed receipt/message to nearby devices over UDP, chunked to fit the link, with a hop limit, duplicate suppression and per-packet retransmission.
-3. Any device with internet broadcasts the `tx` packet once. The recipient decrypts the sealed receipt.
-4. A spend policy (per-payment cap, offline total, recipient allowlist) runs before anything is built.
 
-**The mesh carries the raw transaction, never the PCZT.** A PCZT can contain the payer's viewing key, note plaintexts and derivation paths. Stock `zcash-devtool pczt extract` prints only the txid, so this repo relies on a two-flag local patch (`extract --raw`, `send-without-storing --raw`) to the `zcash-devtool` clone. The patch is not upstream.
-
-## Run it
+```text
+MERCHANT   ZIP 321 payment request  (address, amount, memo)
+   ↓
+PAYER      wallet builds, proves and signs a shielded transaction with the network cut
+   ↓
+CARRIER    raw transaction + a sealed receipt hop from device to device (UDP)
+   ↓
+GATEWAY    the first device with internet broadcasts the transaction, once
+   ↓
+CHAIN      Zcash testnet mines it; the merchant opens the sealed receipt
 ```
-node --test test/*.test.js        # 38 pass, 1 skipped (the real-devtool test, needs ZMESH_E2E=1 and a funded wallet)
-node demo.js 30                   # 6-node simulation at 30% loss (simulation, not radio)
-node cli.js pubkey --identity ~/id.json
-node cli.js listen --port 47001 --identity ~/id.json --peer HOST:47002 --ack
-node cli.js msg --port 47002 --recipient-pub <hex> --peer HOST:47001 --identity ~/id2.json --text "hi"
+
+- The **wallet** (`zcash-devtool`, with a small patch in [`patches/`](patches)) holds keys and builds the transaction. Murmur never touches keys.
+- The **carrier** (`src/`) moves two packet kinds. A `tx` packet is the finished raw transaction; it is public once mined and any relay may read it. A `sealed` packet is encrypted to one recipient (X25519 and ChaCha20-Poly1305, with the sender's key mixed into the derivation). Relays cannot open it and there is no recipient tag to link.
+- The **spend policy** (`src/policy.js`) caps each payment and the total spent while offline. It is checked before the wallet runs.
+- Only the finished raw transaction travels. A PCZT can hold viewing keys and note details, so it never leaves the payer.
+
+## What has been shown
+
+All runs are on the Zcash testnet. Full detail in [`docs/submission/EVIDENCE_INDEX.md`](docs/submission/EVIDENCE_INDEX.md).
+
+| Run | What it shows | Result | Evidence |
+|---|---|---|---|
+| A | A shielded transaction built with the network cut | create, prove, sign, combine and extract all succeeded offline (20,986-byte transaction, unified-address recipient) | [`evidence/03-acceptance-a`](evidence/03-acceptance-a) |
+| B | A transaction carried across the carrier and confirmed | 5,222 bytes, same SHA-256 on both sides, one broadcast, mined in block 4,550,000 | [`evidence/04-e2e-loopback`](evidence/04-e2e-loopback) |
+| C | A ZIP 321 payment request paid end to end | every devtool step in a no-network namespace, hand-over over loopback UDP, one broadcast, mined in block 4,550,881 | [`evidence/05-zip321-e2e`](evidence/05-zip321-e2e) |
+
+Runs B and C used loopback UDP on one machine. **No real radio, phone-to-phone or multi-hop test has been run.** The judge page's relay is a labeled simulation.
+
+## Authority model
+
+| Authority | Responsibility | What it cannot claim |
+|---|---|---|
+| Zcash testnet | Consensus and finality of the payment | It does not know the carrier or the receipt |
+| Wallet (`zcash-devtool`) | Keys, note selection, proofs, signatures | It does not know the mesh; it never sees a relay |
+| Carrier (`src/`) | Moving packets, sealing notes, dropping duplicates, hop limits | It cannot create a payment, sign, or prove anything was paid |
+| Gateway | Broadcasting a received transaction once | It cannot make a transaction valid or confirmed |
+| Relay | Forwarding packets | It cannot read a sealed note; it can drop, delay or replay a packet |
+| Sealed receipt | Telling the merchant a payment was handed over | It is not proof of payment. The on-chain transaction is |
+| Judge page | Presenting evidence and a labeled simulation | It is not evidence about radio |
+
+## Limits, stated plainly
+
+- A payer can still spend the same notes elsewhere before broadcast. The spend policy bounds the loss; nothing here is trustless offline settlement.
+- Relays see packet sizes, timing and neighbors. Sealed notes hide content and recipient; the shielded transaction hides payer, recipient and amount on chain.
+- An offline-built transaction expires about 50 minutes after the wallet's last sync. The wallet's default expiry delta is 120 blocks since NU7 (25-second blocks, ZIP 218). One built against a stale tip carried expiry height 4,550,721 and was refused at height 4,550,785.
+- The devtool's PCZT path cannot yet sign for internal-scope change notes (`WrongFvkForNote`).
+- The memo in a ZIP 321 request was not observed in either wallet's view of Run C.
+- Sealed-note authentication binds keys, not people. The cryptography has not been independently audited.
+
+Every claim and its evidence ceiling: [`docs/submission/CLAIMS_AND_LIMITS.md`](docs/submission/CLAIMS_AND_LIMITS.md), [`foundry/claims.jsonl`](foundry/claims.jsonl), [`STATUS.md`](STATUS.md). Open gaps: [`foundry/gaps.jsonl`](foundry/gaps.jsonl).
+
+## Quick start
+
+Needs Node 18.3 or newer. No dependencies.
+
+```sh
+npm test                    # 53 tests: 52 pass, 1 skipped (the real-devtool test needs MURMUR_E2E=1 and a funded wallet)
+npm run demo                # 6-node relay simulation at 30% loss (a simulation, not radio)
+sh scripts/verify           # tests, ledger consistency, secret scan, web build check
+node bin/murmur.js pubkey --identity ~/id.json
+node bin/murmur.js listen --port 47001 --identity ~/id.json --peer HOST:47002 --ack
+node bin/murmur.js msg --port 47002 --recipient-pub <hex> --peer HOST:47001 --identity ~/id2.json --text "hi"
 ```
-Real two-device procedure: `scripts/acceptance-b.md`. Real transaction procedure: `scripts/acceptance-a.sh` (needs a funded testnet wallet and `zcash-devtool`).
 
-## Lessons from the real run
-- `zcash-devtool pczt sign` fails with `MissingProofGenerationKey` on a Sapling spend unless it is given the **proven** PCZT: `prove` is what writes the proof-generation key into it. The bridge and script sign `proven.pczt`.
-- `prove` works offline (the key is derived from the encrypted seed on the device).
-- Transaction size depends on the recipient: about 5 KB to a Sapling address, about 21 KB to a unified address with an Orchard receiver. Larger transactions need more datagrams, so they are more sensitive to packet loss.
+Payments need the patched devtool and a funded testnet wallet: see [`patches/README.md`](patches/README.md), [`scripts/wallet-setup.sh`](scripts/wallet-setup.sh) and [`scripts/run-zip321-e2e.sh`](scripts/run-zip321-e2e.sh). The two-device test is [`docs/operations/acceptance-b.md`](docs/operations/acceptance-b.md).
 
-## Threat model and limits
-- **Double-spend is bounded, not prevented.** Until the transaction is mined, the payer could spend the same notes elsewhere. The policy caps the exposure. Nothing here is trustless offline settlement; that needs a ledger.
-- **Relays learn metadata.** They see packet sizes, timing and which neighbors sent what. Fixed-size cells, jitter and onion layering are future work. Today a relay can also tell `tx` packets from sealed ones.
-- **Relays can drop or delay traffic.** Retransmission and redundant paths help; there is no guarantee. In the 6-node simulation with four retransmit rounds, about 93% of runs delivered at 30% loss and about 71% at 40% (300 seeds each, from the judge page's engine; the single-seed `demo.js` passes at 30% and fails at 40%).
-- **Sealed messages ARE authenticated, content-side.** The sender's static key is mixed into the key derivation (blob format v2: version byte, sender key, ephemeral key, nonce, ciphertext, tag). A sealed message cannot be forged in someone else's name: a ciphertext not produced by the claimed sender's key fails the MAC. Packets from before this change are rejected, not downgraded to unauthenticated reads. What this does NOT give you: proof that a key belongs to a human, and any protection relay-side — a relay can still drop, delay or replay a genuinely sealed packet; replay suppression is per-node dedupe only.
-- **An offline transaction expires about 40 blocks (roughly 50 minutes) after the wallet's last sync.** Observed on testnet: a transaction built when the wallet's tip was 4,550,681 carried expiry height 4,550,721, and the node refused it at height 4,550,785 ("must not be mined at a block Height greater than its expiry Height"). Sync right before going offline, and broadcast within the window. Whether an offline transaction can be given a later expiry is not verified; check ZIP 203 and your devtool version before relying on it.
-- **The PCZT path cannot spend internal-scope change notes yet.** In this devtool build, `pczt prove` derives the proof-generation key from the external-scope Sapling key and `pczt sign` signs with the external authorizing key, so a Sapling spend of a change note fails with `SaplingVerify(WrongFvkForNote)`. The native `wallet send` signed the same change notes without error. Practical effect: after a wallet's first spend, later offline payments from the same account fail unless it still holds an externally received note. Workaround used in the real run: spend from an account that holds an externally received note. A proper fix needs a devtool change (choose the scope whose address matches each spend's recipient). Evidence: `evidence/05-zip321-e2e/attempt-1-change-note-sign-failure/`.
-- **Multi-hop is simulated.** Only two physical devices were available. The relay code is exercised in tests and the demo, not over real radio.
-- **No Bluetooth.** A browser or Termux process cannot do phone-to-phone Bluetooth; that needs a native app.
-- **Testnet only.** Never put mainnet keys or funds into this.
+## Repository
 
-## Layout
-`mesh.js` carrier and sealed boxes, `wire.js` packet format and chunking, `runner.js` UDP device, `policy.js` spend policy, `bridge.js` `zcash-devtool` wrapper, `cli.js` commands, `scripts/` acceptance procedures, `evidence/` logs (no keys).
+[`REPO_STRUCTURE.md`](REPO_STRUCTURE.md) is the map. In short: `src/` and `bin/` are the carrier and CLI, `test/` the tests, `apps/web/` the judge page, `evidence/` the immutable run packages, `docs/` the canonical documents (invariants, ground truth, ADRs, submission), and `foundry/` the claim and gap ledgers.
 
-## Funding note
-During the build the public Zcash testnet was past its NU7 upgrade (active since block 4,465,026). Two faucets failed (one answered "the wallet cannot pay this address" for every address type), and a third (Causeway) turned out to be a separate regtest chain. The wallet was funded by fauzec.com (1 TAZ, Sapling address, block 4,549,978).
+Start with [`PRD.md`](PRD.md) for scope, [`docs/canonical/INVARIANTS.md`](docs/canonical/INVARIANTS.md) for what must always hold, and [`STATUS.md`](STATUS.md) for the current verified state.
+
+## License
+
+Licensed under either of [Apache License 2.0](LICENSE-APACHE) or [MIT license](LICENSE-MIT), at your option. Third-party terms: [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
-import { encodePacket, decodePacket, chunk, Reassembler } from '../wire.js';
+import { encodePacket, decodePacket, chunk, Reassembler } from '../src/wire.js';
 
 const hexId = () => randomBytes(16).toString('hex');
 

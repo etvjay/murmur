@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { encode, parse } from '../zip321.js';
+import { encode, parse } from '../src/zip321.js';
 
 const SAP = 'ztestsapling1cvge2ycqhv40jrdgr82qd7nv8q57urzeg83nkw07e20uwzf7j4h4nm344mmrht07nhfvx5uwlnc';
 const UA = 'utest19n84cdlcpyze9zjfunqrp5znf4eqw2jj4m3semls6w5e953yk7tjs4tdweh2heag85rtvq2qfax7schzcljwyhn9qz02uguw3lmy0lj8p64cr229qtrq5hjglzxs0sgf0zje2ta6e6rq4nfj74hjxn2afxcl52ur66xhr83z9tvj3d95hkzejumym4nv5cdtmsuk45ccz7ad77te6wp';

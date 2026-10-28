@@ -1,0 +1,19 @@
+#!/bin/sh
+# Canonical local verification gate. CI runs the same.
+# Tests, control-plane consistency, secret scan, judge-page build check.
+set -eu
+cd "$(dirname "$0")/.."
+
+echo "== tests"
+node --test test/*.test.js
+
+echo "== foundry (ledgers, manifest, links)"
+node scripts/check-foundry.mjs
+
+echo "== secrets"
+node scripts/scan-secrets.mjs
+
+echo "== judge page"
+node apps/web/build.mjs --check
+
+echo "verify: ok"

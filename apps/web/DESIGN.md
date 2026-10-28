@@ -1,6 +1,6 @@
 ---
 name: "Murmur judge page"
-brand: ../BRAND.md
+brand: ../../docs/brand/BRAND.md
 ---
 
 # Murmur judge page: DESIGN.md

@@ -25,7 +25,7 @@ const SPK_LEN = 32, EPK_LEN = 32, NONCE_LEN = 12, TAG_LEN = 16;
 const HEADER_LEN = 1 + SPK_LEN + EPK_LEN;
 
 function kdf(ephemeral, senderStatic, spk, epk) {
-  return sha(Buffer.concat([Buffer.from('zmesh-v2'), ephemeral, senderStatic, spk, epk]));
+  return sha(Buffer.concat([Buffer.from('zmesh-v2') /* protocol label of blob format v2; kept for wire compatibility, not a product name */, ephemeral, senderStatic, spk, epk]));
 }
 
 // seal(recipientPub, plaintext, sender) -> blob

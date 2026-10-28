@@ -1,26 +1,28 @@
 #!/usr/bin/env node
-// zmesh CLI: listen | msg | pay | pubkey. Output is one JSON object per line on
+// murmur CLI: listen | msg | pay | pubkey. Output is one JSON object per line on
 // stdout; diagnostics go to stderr. main() returns the exit code so tests can
 // run it in-process. Exit codes: 0 ok, 1 usage, 2 policy denied, 3 no ack
 // before --wait-ms, 4 bridge failure.
+import { realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
-import { seal } from './mesh.js';
-import { loadOrCreateIdentity, startDevice } from './runner.js';
-import { buildOfflineTx, broadcastTx, PolicyDenied, BridgeError } from './bridge.js';
-import { encode as encodeRequest, parse as parseRequest } from './zip321.js';
+import { seal } from '../src/mesh.js';
+import { loadOrCreateIdentity, startDevice } from '../src/runner.js';
+import { buildOfflineTx, broadcastTx, PolicyDenied, BridgeError } from '../src/bridge.js';
+import { encode as encodeRequest, parse as parseRequest } from '../src/zip321.js';
 
 const USAGE = `usage:
-  zmesh request --address ADDR --amount ZAT [--memo TEXT]
-  zmesh pubkey --identity FILE
-  zmesh pubkey --identity FILE
-  zmesh listen --port N --identity FILE [--peer HOST:PORT ...] [--ack]
+  murmur request --address ADDR --amount ZAT [--memo TEXT]
+  murmur pubkey --identity FILE
+  murmur pubkey --identity FILE
+  murmur listen --port N --identity FILE [--peer HOST:PORT ...] [--ack]
                [--gateway --devtool PATH --wallet DIR [--server NAME]]
-  zmesh msg    --recipient-pub HEX --peer HOST:PORT --identity FILE --text TEXT
+  murmur msg    --recipient-pub HEX --peer HOST:PORT --identity FILE --text TEXT
                [--port N] [--wait-ms N]
-  zmesh broadcast --tx FILE --devtool PATH --wallet DIR [--server NAME]
-  zmesh pay    --to ADDRESS --amount ZAT --recipient-pub HEX --peer HOST:PORT
+  murmur broadcast --tx FILE --devtool PATH --wallet DIR [--server NAME]
+  murmur pay    --to ADDRESS --amount ZAT --recipient-pub HEX --peer HOST:PORT
                --identity FILE --wallet DIR --wallet-key FILE --devtool PATH
                [--port N] [--message TEXT] [--wait-ms N] [--save-tx FILE]
                [--max-per-payment ZAT] [--max-offline-total ZAT] [--spent ZAT]
@@ -197,6 +199,6 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
   main(process.argv.slice(2)).then((code) => { process.exitCode = code; });
 }

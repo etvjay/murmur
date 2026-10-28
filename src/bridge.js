@@ -85,7 +85,7 @@ export async function buildOfflineTx({ devtool, walletDir, identityFile, address
   });
   if (!decision.allowed) throw new PolicyDenied(decision.reasons);
 
-  const tmp = await mkdtemp(path.join(os.tmpdir(), 'zmesh-bridge-'));
+  const tmp = await mkdtemp(path.join(os.tmpdir(), 'murmur-bridge-'));
   const file = (name) => path.join(tmp, name);
   try {
     const createArgs = ['pczt', '-w', walletDir, 'create', '--address', address, '--value', String(valueZat), '--output', file('created.pczt')];

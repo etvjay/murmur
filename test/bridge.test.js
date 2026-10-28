@@ -1,18 +1,18 @@
 // Bridge tests. The "stub" tests exercise bridge.js against a tiny fake devtool
 // shell script that records its arguments and emits canned bytes — it never
 // touches key material, wallet databases, or the network. The end-to-end test
-// shells out to the real zcash-devtool and only runs when ZMESH_E2E=1.
+// shells out to the real zcash-devtool and only runs when MURMUR_E2E=1.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { buildOfflineTx, broadcastTx, BridgeError, PolicyDenied } from '../bridge.js';
+import { buildOfflineTx, broadcastTx, BridgeError, PolicyDenied } from '../src/bridge.js';
 
 const STUB_TXID = 'ab'.repeat(32);
 
 function makeStub({ failAt } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'zmesh-stub-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'murmur-stub-'));
   const log = path.join(dir, 'invocations.log');
   const whoami = path.join(dir, 'wallet'); // served as walletDir in the test
   fs.mkdirSync(whoami);
@@ -190,12 +190,12 @@ test('stub: broadcastTx failure surfaces a BridgeError naming the step', async (
   }
 });
 
-test('real devtool builds a tx (ZMESH_E2E=1 only)', { skip: !process.env.ZMESH_E2E ? 'set ZMESH_E2E=1 with the e2e env vars to run' : false }, async () => {
-  const { ZMESH_E2E_DEVTOOL, ZMESH_E2E_WALLET, ZMESH_E2E_IDENTITY, ZMESH_E2E_ADDRESS } = process.env;
-  assert.ok(ZMESH_E2E_DEVTOOL && ZMESH_E2E_WALLET && ZMESH_E2E_IDENTITY && ZMESH_E2E_ADDRESS, 'run scripts/e2e-env.sh first or export ZMESH_E2E_*');
+test('real devtool builds a tx (MURMUR_E2E=1 only)', { skip: !process.env.MURMUR_E2E ? 'set MURMUR_E2E=1 with the e2e env vars to run' : false }, async () => {
+  const { MURMUR_E2E_DEVTOOL, MURMUR_E2E_WALLET, MURMUR_E2E_IDENTITY, MURMUR_E2E_ADDRESS } = process.env;
+  assert.ok(MURMUR_E2E_DEVTOOL && MURMUR_E2E_WALLET && MURMUR_E2E_IDENTITY && MURMUR_E2E_ADDRESS, 'run scripts/e2e-env.sh first or export MURMUR_E2E_*');
   const result = await buildOfflineTx({
-    devtool: ZMESH_E2E_DEVTOOL, walletDir: ZMESH_E2E_WALLET, identityFile: ZMESH_E2E_IDENTITY,
-    address: ZMESH_E2E_ADDRESS, valueZat: 1000,
+    devtool: MURMUR_E2E_DEVTOOL, walletDir: MURMUR_E2E_WALLET, identityFile: MURMUR_E2E_IDENTITY,
+    address: MURMUR_E2E_ADDRESS, valueZat: 1000,
     policy: { maxPerPaymentZat: 1000, maxOfflineTotalZat: 1000, spentZat: 0, minExpiryHeight: 0 },
     spentZat: 0,
   });
