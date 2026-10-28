@@ -36,7 +36,7 @@ Status values: `ENFORCED` (a test or a script fails if it breaks), `TESTED` (cov
 
 | ID | Invariant | Status | Enforced by | Evidence |
 |---|---|---|---|---|
-| I-14 | Testnet only. No mainnet keys, addresses or funds. | POLICY | Wallets are created with `-n test`; documented everywhere. **No code-level guard rejects a mainnet address yet.** | gap GAP-001 |
+| I-14 | Testnet only. No mainnet keys, addresses or funds. | ENFORCED (addresses) / POLICY (keys, funds) | `test/zip321.test.js`: "refuses mainnet and regtest addresses in encode and parse, and says why"; `test/cli.test.js`: "request refuses a mainnet address...", "stub: pay refuses a mainnet --to address: exit 1 and the devtool never runs", "stub: pay refuses a mainnet address inside a zcash: URI". Wallets are created with `-n test`. Keys and funds are not machine-checked | closes GAP-001 |
 | I-15 | No secret enters the repository. | ENFORCED | `.gitignore` (`wallets/`, `*.key`, `*.identity`); `scripts/scan-secrets.mjs` in `scripts/verify` and CI | |
 | I-16 | Every headline claim has a ledger entry whose evidence paths exist, and a claim never sits above the state its evidence supports. | ENFORCED | `scripts/check-foundry.mjs` validates `foundry/claims.jsonl` | |
 | I-17 | Anything simulated is labeled as a simulation where it is shown. | POLICY | Judge page review; `scripts/demo.js` prints its label | The page labels the relay "simulation" in the heading and a badge |

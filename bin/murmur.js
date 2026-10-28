@@ -11,7 +11,7 @@ import fs from 'node:fs';
 import { seal } from '../src/mesh.js';
 import { loadOrCreateIdentity, startDevice } from '../src/runner.js';
 import { buildOfflineTx, broadcastTx, PolicyDenied, BridgeError } from '../src/bridge.js';
-import { encode as encodeRequest, parse as parseRequest } from '../src/zip321.js';
+import { encode as encodeRequest, parse as parseRequest, assertTestnetAddress } from '../src/zip321.js';
 
 const USAGE = `usage:
   murmur request --address ADDR --amount ZAT [--memo TEXT]
@@ -151,6 +151,8 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
         return fail(1, `bad --to payment request: ${e.message}\n${USAGE}`);
       }
     }
+    // Invariant I-14: testnet only. A raw --to address is checked here; a URI was checked by parseRequest.
+    try { assertTestnetAddress(to); } catch (e) { return fail(1, `${e.message}\n${USAGE}`); }
     if (v.account !== undefined && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v.account)) return fail(1, '--account must be an account UUID (see `wallet list-accounts`)');
     if (!Number.isInteger(valueZat) || valueZat <= 0) return fail(1, '--amount must be a positive integer of zatoshis (or a zcash: URI with amount)');
     try {

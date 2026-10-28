@@ -199,3 +199,40 @@ test('pay exits 1 and explains a malformed URI', async () => {
   assert.equal(code, 1);
   assert.match(c.err.join(''), /amount/);
 });
+
+// Invariant I-14: testnet only. The CLI refuses mainnet and regtest addresses before doing anything.
+const MAIN_SAPLING = 'zs1' + 'q'.repeat(70);
+
+test('request refuses a mainnet address: exit 1, explains testnet only, prints no URI', async () => {
+  const c = capture();
+  const code = await main(['request', '--address', MAIN_SAPLING, '--amount', '25000'], c);
+  assert.equal(code, 1);
+  assert.match(c.err.join(''), /testnet/i);
+  assert.equal(c.out.join('').includes('zcash:'), false, 'no request URI for a mainnet address');
+});
+
+test('stub: pay refuses a mainnet --to address: exit 1 and the devtool never runs', async () => {
+  const dir = tmp(); const { file, log } = stubDevtool(dir);
+  const c = capture();
+  const code = await main([
+    'pay', '--to', MAIN_SAPLING, '--amount', '1000', '--recipient-pub', 'ab'.repeat(32),
+    '--peer', '127.0.0.1:9', '--identity', path.join(dir, 'id.json'), '--wallet', dir,
+    '--wallet-key', path.join(dir, 'k'), '--devtool', file,
+  ], c);
+  assert.equal(code, 1);
+  assert.match(c.err.join(''), /testnet/i);
+  assert.equal(fs.existsSync(log), false, 'devtool must not run for a mainnet address');
+});
+
+test('stub: pay refuses a mainnet address inside a zcash: URI', async () => {
+  const dir = tmp(); const { file, log } = stubDevtool(dir);
+  const c = capture();
+  const code = await main([
+    'pay', '--to', `zcash:${MAIN_SAPLING}?amount=0.00001`, '--recipient-pub', 'ab'.repeat(32),
+    '--peer', '127.0.0.1:9', '--identity', path.join(dir, 'id.json'), '--wallet', dir,
+    '--wallet-key', path.join(dir, 'k'), '--devtool', file,
+  ], c);
+  assert.equal(code, 1);
+  assert.match(c.err.join(''), /testnet/i);
+  assert.equal(fs.existsSync(log), false, 'devtool must not run for a mainnet address');
+});

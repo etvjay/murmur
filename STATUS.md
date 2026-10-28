@@ -17,7 +17,7 @@
 | Devtool patch | `patches/` | applies cleanly to base `0b3436b` |
 | Judge page | `apps/web/` | `IMPLEMENTED`; deployed to production at `https://murmurz.vercel.app` (checked 2026-10-28: HTTP 200, security headers, no console or CSP errors, all views working at desktop and phone width) |
 | Evidence | `evidence/01` to `05` | immutable run packages |
-| Ledgers | `foundry/` | 15 claims, 11 gaps, consistency-checked |
+| Ledgers | `foundry/` | 16 claims, 11 gaps, consistency-checked |
 
 ## Real runs (testnet)
 
@@ -31,11 +31,11 @@ Details and caveats: `docs/submission/EVIDENCE_INDEX.md`.
 
 ## Gates
 
-`sh scripts/verify` runs: 53 tests (52 pass, 1 skipped), ledger and link consistency, the secret scan and the judge-page build check. CI runs the same on Node 20 and 22.
+`sh scripts/verify` runs: 58 tests (57 pass, 1 skipped), ledger and link consistency, the secret scan and the judge-page build check. CI runs the same on Node 20 and 22.
 
 ## Open gaps by severity
 
-High 1 (no real radio test; needs the owner's devices). Medium 4. Low 3. Three more are accepted limits. See `foundry/gaps.jsonl`.
+High 1 (no real radio test; needs the owner's devices). Medium 3. Low 3. Three more are accepted limits. One gap (mainnet addresses) was closed. See `foundry/gaps.jsonl`.
 
 ## Not claimed
 
@@ -46,4 +46,3 @@ Real radio or phone-to-phone transfer; real multi-hop; a delivered memo; spendin
 1. Run the two-device test and retain the output (GAP-002).
 2. Check the deployed judge page on a real laptop and phone (GAP-009).
 3. Decide whether to fix the devtool's change-note signing (GAP-004) and resolve the memo (GAP-005).
-4. Add the mainnet-address guard with a failing test first (GAP-001).

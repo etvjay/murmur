@@ -22,11 +22,11 @@ Legend: [x] done and verified, [ ] not done, [~] partly done. Items that need th
 
 ## Code and gates
 
-- [x] `npm test`: 53 tests, 52 pass, 1 skipped.
+- [x] `npm test`: 58 tests, 57 pass, 1 skipped.
 - [x] The devtool patch applies cleanly to its base commit.
 - [x] `scripts/scan-secrets.mjs` finds no key material in tracked files.
-- [x] Clean-clone verification: `sh scripts/verify` passes from a fresh clone (53 tests, ledgers, secret scan, page build).
-- [ ] A mainnet-address guard (GAP-001).
+- [x] Clean-clone verification: `sh scripts/verify` passes from a fresh clone (58 tests, ledgers, secret scan, page build).
+- [x] A mainnet-address guard: request, pay and ZIP 321 refuse mainnet and regtest addresses (GAP-001 closed; tests first).
 
 ## Licenses
 

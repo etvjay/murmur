@@ -71,7 +71,7 @@ Every claim and its evidence ceiling: [`docs/submission/CLAIMS_AND_LIMITS.md`](d
 Needs Node 18.3 or newer. No dependencies.
 
 ```sh
-npm test                    # 53 tests: 52 pass, 1 skipped (the real-devtool test needs MURMUR_E2E=1 and a funded wallet)
+npm test                    # 58 tests: 57 pass, 1 skipped (the real-devtool test needs MURMUR_E2E=1 and a funded wallet)
 npm run demo                # 6-node relay simulation at 30% loss (a simulation, not radio)
 sh scripts/verify           # tests, ledger consistency, secret scan, web build check
 node bin/murmur.js pubkey --identity ~/id.json

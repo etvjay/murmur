@@ -53,3 +53,23 @@ test('rejects missing fields: no address at all, duplicate params, big memo, par
 test('parse accepts a bare-address URI without params (optional amount)', () => {
   assert.deepEqual(parse(`zcash:${SAP}`), { address: SAP });
 });
+
+// Invariant I-14: testnet only. A mainnet or regtest address must be refused, not accepted.
+const NON_TESTNET = {
+  'mainnet sapling': 'zs1' + 'q'.repeat(70),
+  'mainnet unified': 'u1' + 'q'.repeat(100),
+  'mainnet transparent': 't1' + 'q'.repeat(30),
+  'regtest sapling': 'zregtestsapling1' + 'q'.repeat(60),
+};
+
+test('refuses mainnet and regtest addresses in encode and parse, and says why', () => {
+  for (const [label, addr] of Object.entries(NON_TESTNET)) {
+    assert.throws(() => encode({ address: addr, amountZat: 1 }), /testnet/i, `encode must refuse a ${label} address`);
+    assert.throws(() => parse(`zcash:${addr}?amount=1`), /testnet/i, `parse must refuse a ${label} address`);
+  }
+});
+
+test('still accepts testnet Sapling, unified and transparent addresses', () => {
+  assert.equal(parse(encode({ address: SAP, amountZat: 5 })).address, SAP);
+  assert.doesNotThrow(() => parse(`zcash:${UA}?amount=1`));
+});

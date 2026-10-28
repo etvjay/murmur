@@ -8,7 +8,7 @@ The current verified state of the project, with the boundaries that do not move.
 - Network: Zcash **testnet** only.
 - Language: Node.js 18.3+, standard library only (no npm dependencies).
 - Wallet: a patched `zcash/zcash-devtool` (base `0b3436b`, patch in `patches/`).
-- Tests: 53 in total, 52 passing, 1 skipped (the real-devtool test, which needs `MURMUR_E2E=1` and a funded wallet).
+- Tests: 58 in total, 57 passing, 1 skipped (the real-devtool test, which needs `MURMUR_E2E=1` and a funded wallet).
 - Control plane: `PRD.md`, `STATUS.md`, `foundry/`.
 
 ## Frozen semantic boundaries
@@ -53,7 +53,6 @@ Run C pays from a separate account because the devtool's PCZT path cannot sign f
 - The memo in a payment request reaching the merchant (not observed in Run C).
 - Spending change notes through the PCZT path.
 - Setting a later expiry on an offline transaction (an offline build expires about 50 minutes after the wallet's last sync: 120 blocks at the post-NU7 25-second spacing).
-- A code-level guard against mainnet addresses.
 - Bluetooth.
 - An independent audit of the sealed-box construction.
 
@@ -65,4 +64,4 @@ Murmur does not claim: trustless offline settlement, anonymous routing, radio ra
 
 ## Current frontier
 
-Run the two-device test; decide whether to fix the devtool's change-note signing; resolve the memo question; add the mainnet-address guard.
+Run the two-device test; decide whether to fix the devtool's change-note signing; and resolve the memo question.

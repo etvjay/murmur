@@ -3,13 +3,29 @@
 // A bare `zcash:<address>` is valid; amount and memo are optional on parse.
 
 const SCHEME = 'zcash:';
-const ADDR_RE = /^(ztestsapling1|utest1|zs1|zregtestsapling1|tm)[a-z0-9]{20,}$/;
+// Testnet only (invariant I-14). Mainnet and regtest addresses are refused, not accepted.
+const ADDR_RE = /^(ztestsapling1|utest1|tm)[a-z0-9]{20,}$/;
+const NON_TESTNET_PREFIX = /^(zs1|u1|t1|t3|tex1|zregtestsapling1|uregtest1)/;
+const TESTNET_PREFIX = /^(ztestsapling1|utest1|tm)/;
+
+// Throws if an address is a known mainnet or regtest form. Use for any address the CLI is handed.
+export function assertTestnetAddress(address) {
+  if (typeof address === 'string' && NON_TESTNET_PREFIX.test(address)) {
+    throw new Error(`address "${address.slice(0, 14)}..." is a mainnet or regtest address; Murmur is testnet only`);
+  }
+}
+
+// True for the testnet address forms Murmur works with (prefix check; full shape is checked by encode and parse).
+export function isTestnetAddress(address) {
+  return typeof address === 'string' && TESTNET_PREFIX.test(address);
+}
 const AMOUNT_RE = /^\d+(\.\d{1,8})?$/;
 
 const b64url = (buf) => Buffer.from(buf).toString('base64url');
 const unb64url = (s) => { const buf = Buffer.from(s, 'base64url'); if (buf.length > 512) throw new Error('memo exceeds 512 bytes'); return buf; };
 
 export function encode({ address, amountZat, memo } = {}) {
+  assertTestnetAddress(address);
   if (typeof address !== 'string' || !ADDR_RE.test(address)) {
     throw new Error(`bad address "${address ?? ''}"`);
   }
@@ -32,6 +48,7 @@ export function parse(uri) {
     throw new Error('bad scheme: only zcash: URIs are accepted');
   }
   const [addr, query = ''] = uri.slice(SCHEME.length).split('?');
+  assertTestnetAddress(addr);
   if (!addr || !ADDR_RE.test(addr)) {
     throw new Error(`bad address "${addr.slice(0, 24)}"`);
   }
