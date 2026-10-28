@@ -7,7 +7,7 @@ brand: ../BRAND.md
 
 ## Overview
 
-Built from scratch on one source: the XBOW captures in the A1 Gallery (measured hero tokens, home page, and the about, blog, customer story, contact and docs page captures). No other reference. Four hash-routed views: Home (from the XBOW home and about pages), Evidence (from the customer story page), Simulation (from the contact page), Limits (from the testimonial grid). Our own words and data throughout.
+Built from scratch on one source: XBOW. Colors and type values come from the A1 Gallery's measured tokens; the layout mirrors the live xbow.com landing page section by section (captured with a headless browser on 2026-10-28, because A1's home capture is older than the live site). No other reference. Four hash-routed views: Home (from the XBOW home and about pages), Evidence (from the customer story page), Simulation (from the contact page), Limits (from the testimonial grid). Our own words and data throughout.
 
 ## Colors (measured from XBOW's hero unless noted)
 
