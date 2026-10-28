@@ -17,9 +17,9 @@ Goal: show a judge, in order, what Murmur is, what was really done, and what is 
 | Time | On screen | Say |
 |---|---|---|
 | 0:00 | Judge page: hero, then the three chat bubbles | "When the network goes dark, private money stops. Murmur carries a real shielded Zcash payment and a sealed note from device to device. Whoever reconnects first broadcasts it." |
-| 0:12 | Terminal: the offline-probe and uri.txt command | "This is a retained testnet run. The wallet built the payment inside a no-network namespace. This call fails with a DNS error, so there really was no network. The merchant's request is this ZIP 321 link." |
+| 0:12 | Terminal: the offline-probe and uri.txt command | "This is a retained run on a Zcash test network. The wallet built the payment inside a no-network namespace. This call fails with a DNS error, so there really was no network. The merchant's request is this ZIP 321 link." |
 | 0:27 | Terminal: the payer.jsonl and gateway-listener.jsonl command | "The payer sent 5,222 bytes over UDP. The gateway got the same hash, opened the sealed receipt, 3,000 zat, and broadcast once. The receipt and the ack carry the sender's key." |
-| 0:41 | Terminal: the grep command | "Mined in testnet block 4,550,881. A receipt isn't proof of payment. The chain is." |
+| 0:41 | Terminal: the grep command | "Mined in block 4,550,881 on the test network. A receipt isn't proof of payment. The chain is." |
 | 0:50 | Terminal A: `PUB=$(node bin/murmur.js pubkey --identity /tmp/a.json); node bin/murmur.js listen --port 47101 --identity /tmp/a.json --peer 127.0.0.1:47102 --ack`. Terminal B: `node bin/murmur.js msg --port 47102 --recipient-pub $PUB --peer 127.0.0.1:47101 --identity /tmp/b.json --text "Paid. Two bags, pickup at 5."` | "Live, on loopback: a sealed message crosses and the listener prints it with the sender's key. Loopback is not radio." |
 | 1:05 | Browser: the simulation. Press Send payment, then Run 200 times | "On the demo page this is a simulation, labeled as one. Six devices, packet loss you set. About 93% deliver at 30% loss. It is not evidence about radio." |
 | 1:20 | Browser: the Limits view | "Not proven: real radio or a second device, real multi-hop, and the memo. A payer can still double-spend before broadcast; the spend policy only caps the loss. An offline build lasts about 50 minutes. Testnet only." |
@@ -36,6 +36,8 @@ sender:   {"kind":"ack","of":"message","from":"<A pubkey>","sender":"<A pubkey>"
 
 - "works over Bluetooth", "works phone to phone", "real multi-hop", "trustless", "anonymous", "unstoppable", "production-ready", "audited".
 - That the memo was delivered.
+- That a public block explorer shows these transactions. The public testnet explorer follows a different chain (GAP-012); the proof is the chain-server lookup: `zcash-devtool inspect -l <txid>`.
+- "The Zcash testnet" as if there were one network. Say "a Zcash test network" or "the testnet.zec.rocks network".
 - That the page's relay is the real carrier.
 
 ## If something fails on camera
