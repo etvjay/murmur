@@ -42,4 +42,4 @@ Cut to the retained evidence. Never re-run a payment live: the payer account's o
 
 ## Closing card
 
-Judge page: https://murmurz.vercel.app · Repository: (add the URL once it is public) · Testnet only.
+Judge page: https://murmurz.vercel.app · Repository: https://github.com/etvjay/murmur · Testnet only.

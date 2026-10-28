@@ -4,7 +4,7 @@
 
 Murmur carries a real shielded Zcash transaction and sealed private notes from device to device with no internet. Whoever reconnects first broadcasts the transaction, and the payment confirms on chain.
 
-> Built for ZECATHON, Shielded Payments track. Zcash **testnet only**. Judge page: <https://murmurz.vercel.app> (the static site in `apps/web`; deploy notes in [`docs/operations/DEPLOY_WEB.md`](docs/operations/DEPLOY_WEB.md)).
+> Repository: <https://github.com/etvjay/murmur>. Built for ZECATHON, Shielded Payments track. Zcash **testnet only**. Judge page: <https://murmurz.vercel.app> (the static site in `apps/web`; deploy notes in [`docs/operations/DEPLOY_WEB.md`](docs/operations/DEPLOY_WEB.md)).
 
 Murmur is for people who still need to pay and message each other privately when a network is down or shut off: a market stall in a blackout, a clinic after a storm, a team in a region with shutdowns. It is a transport and a spend boundary. It is not a wallet, not a new currency, not a bridge, and not anonymous routing.
 

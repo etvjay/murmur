@@ -6,7 +6,7 @@ Legend: [x] done and verified, [ ] not done, [~] partly done. Items that need th
 
 - [ ] **(owner)** Confirm the ZECATHON cutoff time and time zone.
 - [ ] **(owner)** Confirm what the submission form asks for (repo link, video, description, demo link).
-- [ ] **(owner)** Decide the public repository location and account, then publish. Nothing has been pushed.
+- [x] Public repository: https://github.com/etvjay/murmur (published by the owner's decision; `main`; CI passes on Node 20 and 22).
 - [ ] **(owner)** Record the demo video from `DEMO_SCRIPT.md`.
 - [ ] **(owner)** Submit on the hackathon site.
 
