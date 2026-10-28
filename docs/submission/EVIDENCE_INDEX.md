@@ -28,7 +28,7 @@ Read the run C folder in this order: `SUMMARY.txt`, `request.jsonl` and `uri.txt
 
 ```sh
 zcash-devtool inspect -l 0efad38fd3d577779817d949caa695e4391adc4329b0700b6a4b37c5b66f96d7
-sh scripts/verify-on-chain.sh <txid> [<txid> ...]     # prints "Mined in testnet block N" or "not found"
+sh scripts/verify-on-chain.sh <txid> [<txid> ...]     # prints "Mined in testnet block N", or "not a transaction"; exit 2 if the tool cannot run
 ```
 
 Limits: one server (`testnet.zec.rocks`). The public explorer `testnet.zcashexplorer.app` follows a different chain (block hashes differ at shared heights: `evidence/08-chain-comparison/`), so it does not show these transactions and no explorer links are given (GAP-012).
