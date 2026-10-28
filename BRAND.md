@@ -126,9 +126,12 @@ Approved, evidenced:
 - "A real shielded Zcash testnet transaction was built with the network cut off." Evidence: `evidence/03-acceptance-a/`.
 - "A payment crossed the carrier and was confirmed on the Zcash testnet in block 4,550,000." Evidence: `evidence/04-e2e-loopback/`. Note: loopback only, no radio.
 
+- "A ZIP 321 payment request was paid on the Zcash testnet: every devtool step ran in a no-network namespace, the hand-over was loopback UDP, one gateway broadcast, mined in block 4,550,881." Evidence: `evidence/05-zip321-e2e/`. Note: loopback only, no radio.
+- "Sealed notes are authenticated to the sender's key; a forged sender and old-format packets are rejected." Evidence: `test/mesh.test.js`, and the `sender` field in `evidence/05-zip321-e2e/payer.jsonl`.
+
 Draft, not approved (do not publish):
+- That the memo in a payment request reaches the merchant. It was not observed in either wallet's view of the confirmed transaction.
 - Any statement about phone-to-phone radio performance, range, or multi-hop delivery on real devices.
-- Any statement that receipts are authenticated.
 
 ### Accessibility Commitments
 
