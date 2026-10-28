@@ -537,6 +537,9 @@ main { overflow-x: clip; }
       <p>The carrier has no dependencies and needs Node 18.3 or newer. From the project folder:</p>
       <pre class="cmd" id="c1">node --test test/*.test.js</pre>
       <div><button class="cp" type="button" data-copy="c1">Copy</button></div>
+      <p>To check that a transaction is on the testnet, independent of our wallet, ask the chain server for it by id. The four broadcast transactions above come back at the blocks shown; transactions that were built but never broadcast come back as not found. One server was used, and a public block explorer was not confirmed.</p>
+      <pre class="cmd" id="c2">zcash-devtool inspect -l 0efad38fd3d577779817d949caa695e4391adc4329b0700b6a4b37c5b66f96d7</pre>
+      <div><button class="cp" type="button" data-copy="c2">Copy</button></div>
     </article>
     <aside class="toc" aria-label="On this page"><h3><svg aria-hidden="true"><use href="#g-doc"/></svg>On this page</h3><a href="#run-a" data-sec="run-a">Run A: built offline</a><a href="#run-b" data-sec="run-b">Run B: carry and chain</a><a href="#run-c" data-sec="run-c">Run C: payment request</a><a href="#context" data-sec="context">Context</a><a href="#reproduce" data-sec="reproduce">Reproduce</a></aside>
   </div>

@@ -43,6 +43,7 @@ scripts/demo.js        6-node relay simulation (a simulation, not radio)
 scripts/run-zip321-e2e.sh   the real payment-request run (testnet, needs sudo for an offline namespace)
 scripts/acceptance-a.sh     the offline-build run that produced evidence/03
 scripts/wallet-setup.sh     create a testnet wallet
+scripts/verify-on-chain.sh  ask the chain server for transaction ids (found, or not found)
 ```
 
 Live runners declare their target and outputs. They are not product logic.
@@ -55,6 +56,7 @@ evidence/02-sync/           wallet sync
 evidence/03-acceptance-a/   Run A: shielded transaction built with the network cut
 evidence/04-e2e-loopback/   Run B: carried across the carrier and confirmed
 evidence/05-zip321-e2e/     Run C: ZIP 321 request paid end to end, plus attempts and findings
+evidence/07-chain-readback/ each cited transaction looked up on the chain server, with negative controls
 ```
 
 Each run gets a new directory. Keys never enter the repository. Old runs are not rewritten.

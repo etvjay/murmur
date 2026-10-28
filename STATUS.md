@@ -16,8 +16,8 @@
 | ZIP 321 requests | `src/zip321.js` | `TESTED`, `LIVE_TESTNET` (Run C) |
 | Devtool patch | `patches/` | applies cleanly to base `0b3436b` |
 | Judge page | `apps/web/` | `IMPLEMENTED`; deployed to production at `https://murmurz.vercel.app` (checked 2026-10-28: HTTP 200, security headers, no console or CSP errors, all views working at desktop and phone width) |
-| Evidence | `evidence/01` to `05` | immutable run packages |
-| Ledgers | `foundry/` | 16 claims, 11 gaps, consistency-checked |
+| Evidence | `evidence/01` to `05`, `07` | immutable run packages; `07` is the chain read-back |
+| Ledgers | `foundry/` | 17 claims, 12 gaps, consistency-checked |
 
 ## Real runs (testnet)
 
@@ -35,7 +35,7 @@ Details and caveats: `docs/submission/EVIDENCE_INDEX.md`.
 
 ## Open gaps by severity
 
-High 1 (no real radio test; needs the owner's devices). Medium 3. Low 3. Three more are accepted limits. One gap (mainnet addresses) was closed. See `foundry/gaps.jsonl`.
+High 1 (no real radio test; needs the owner's devices). Medium 3. Low 4. Three more are accepted limits. One gap (mainnet addresses) was closed. See `foundry/gaps.jsonl`.
 
 ## Not claimed
 

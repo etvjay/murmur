@@ -1,0 +1,52 @@
+### faucet funding (1 TAZ)
+$ zcash-devtool inspect -l e5ecdc13b8520a7b4d0fa25664388c1bb540bb53953a07ccd758ab961993cb3d
+Zcash transaction
+ - ID: e5ecdc13b8520a7b4d0fa25664388c1bb540bb53953a07ccd758ab961993cb3d
+ - Mined in testnet block 4549978
+ - Version: V6
+ - Consensus branch ID: Nu7
+ - Sighash for shielded signatures: 3dcb931996ab58d7cc073a9553bb40b51b8c386456a20f4d7b0a52b813dcece5
+ - 2 Sapling Output(s)
+
+### Run B: carried transaction
+$ zcash-devtool inspect -l 5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43
+Zcash transaction
+ - ID: 5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43
+ - Mined in testnet block 4550000
+ - Version: V6
+ - Consensus branch ID: Nu7
+ - Sighash for shielded signatures: 43fdc8a4483ee1f7090b36bd7959d5702cda2d89116dfb32541e64bd58a41051
+ - 1 Sapling Spend(s)
+
+### Run C payer funding (native send)
+$ zcash-devtool inspect -l 4d0ddfe59015b3317613deba431d67944bcd64de2bd74cd0f29302a21d62b35a
+Zcash transaction
+ - ID: 4d0ddfe59015b3317613deba431d67944bcd64de2bd74cd0f29302a21d62b35a
+ - Mined in testnet block 4550789
+ - Version: V6
+ - Consensus branch ID: Nu7
+ - Sighash for shielded signatures: 5ab3621da20293f2d04cd72bde64cd4b94671d43bade137631b31590e5df0d4d
+ - 3 Sapling Spend(s)
+
+### Run C: ZIP 321 payment
+$ zcash-devtool inspect -l 0efad38fd3d577779817d949caa695e4391adc4329b0700b6a4b37c5b66f96d7
+Zcash transaction
+ - ID: 0efad38fd3d577779817d949caa695e4391adc4329b0700b6a4b37c5b66f96d7
+ - Mined in testnet block 4550881
+ - Version: V6
+ - Consensus branch ID: Nu7
+ - Sighash for shielded signatures: d7966fb6c5374b6a0b70b02943dc1a39e495a6ca49d917987777d5d38fd3fa0e
+ - 1 Sapling Spend(s)
+
+### CONTROL: built offline, never broadcast (attempt 2)
+$ zcash-devtool inspect -l 5bee8c9217e11474ebd0cbaca90f5b4454daabd70deeeb95760b96c135cb13da
+This is most likely a hash of some sort, or maybe a commitment or nullifier.
+
+### CONTROL: Run A transaction, never broadcast
+$ zcash-devtool inspect -l 904164e11804fec28ea296176764d5de85cacf73ad94c0ae536c22a3f14ce86b
+This is most likely a hash of some sort, or maybe a commitment or nullifier.
+
+### CONTROL: a made-up id
+$ zcash-devtool inspect -l 0000000000000000000000000000000000000000000000000000000000000001
+This is most likely a hash of some sort, or maybe a commitment or nullifier.
+

@@ -64,6 +64,8 @@ Runs B and C used loopback UDP on one machine. **No real radio, phone-to-phone o
 - The memo in a ZIP 321 request was not observed in either wallet's view of Run C.
 - Sealed-note authentication binds keys, not people. The cryptography has not been independently audited.
 
+Check any transaction yourself, independent of our wallet: `zcash-devtool inspect -l <txid>` (or `sh scripts/verify-on-chain.sh <txid>`). Results are in [`evidence/07-chain-readback`](evidence/07-chain-readback).
+
 Every claim and its evidence ceiling: [`docs/submission/CLAIMS_AND_LIMITS.md`](docs/submission/CLAIMS_AND_LIMITS.md), [`foundry/claims.jsonl`](foundry/claims.jsonl), [`STATUS.md`](STATUS.md). Open gaps: [`foundry/gaps.jsonl`](foundry/gaps.jsonl).
 
 ## Quick start
