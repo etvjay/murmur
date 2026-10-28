@@ -156,3 +156,46 @@ test('broadcast exits 1 when the tx file is missing', async () => {
   const c = capture();
   assert.equal(await main(['broadcast', '--tx', '/nonexistent/x.tx', '--devtool', 'd', '--wallet', 'w'], c), 1);
 });
+
+test('request prints the ZIP-321 request URI for --address --amount', async () => {
+  const c = capture();
+  const SAP = 'ztestsapling1cvge2ycqhv40jrdgr82qd7nv8q57urzeg83nkw07e20uwzf7j4h4nm344mmrht07nhfvx5uwlnc';
+  const code = await main(['request', '--address', SAP, '--amount', '25000', '--memo', 'bags at 5'], c);
+  assert.equal(code, 0);
+  const req = json(c).find((m) => m.kind === 'request');
+  assert.equal(req.uri.startsWith(`zcash:${SAP}?amount=0.00025`), true);
+  const { parse } = await import('../zip321.js');
+  assert.equal(parse(req.uri).memo, 'bags at 5');
+});
+
+test('stub: pay accepts a zcash: URI as --to, taking the address and amount from it', async () => {
+  const dir = tmp(); const { file, log } = stubDevtool(dir); const [pm, pp] = await grabPorts(2);
+  const pub = capture(); await main(['pubkey', '--identity', path.join(dir, 'm.json')], pub);
+  const ac = new AbortController(); const lc = capture();
+  const listening = main(['listen', '--port', String(pm), '--identity', path.join(dir, 'm.json'), '--peer', `127.0.0.1:${pp}`, '--gateway', '--devtool', file, '--wallet', dir, '--ack'], { ...lc, signal: ac.signal });
+  await settle(100);
+  const SAP = 'ztestsapling1cvge2ycqhv40jrdgr82qd7nv8q57urzeg83nkw07e20uwzf7j4h4nm344mmrht07nhfvx5uwlnc';
+  const code = await main([
+    'pay', '--to', `zcash:${SAP}?amount=0.00005&memo=c3R1Yi1tZW1v`, '--recipient-pub', pub.out.join('').trim(),
+    '--port', String(pp), '--peer', `127.0.0.1:${pm}`, '--identity', path.join(dir, 'p.json'),
+    '--wallet', dir, '--wallet-key', path.join(dir, 'k'), '--devtool', file, '--wait-ms', '1500',
+  ], capture());
+  await settle(100); ac.abort(); await listening;
+  assert.equal(code, 0);
+  assert.equal(json(lc).find((m) => m.kind === 'receipt').amountZat, 5000, 'amount of 0.00005 ZEC parsed from the URI');
+  const calls = fs.readFileSync(log, 'utf8');
+  assert.match(calls, /--value 5000/, 'bridge create got the parsed zatoshis');
+  assert.match(calls, /--memo /, 'URI memo reached the bridge');
+});
+
+test('pay exits 1 and explains a malformed URI', async () => {
+  const dir = tmp(); const { file } = stubDevtool(dir);
+  const c = capture();
+  const code = await main([
+    'pay', '--to', 'zcash:ztestsapling1abc?amount=1.123456789', '--amount', '5000', '--recipient-pub', 'ab'.repeat(32),
+    '--peer', '127.0.0.1:9', '--identity', path.join(dir, 'id.json'), '--wallet', dir,
+    '--wallet-key', path.join(dir, 'k'), '--devtool', file,
+  ], c);
+  assert.equal(code, 1);
+  assert.match(c.err.join(''), /amount/);
+});

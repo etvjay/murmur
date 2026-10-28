@@ -9,8 +9,11 @@ import fs from 'node:fs';
 import { seal } from './mesh.js';
 import { loadOrCreateIdentity, startDevice } from './runner.js';
 import { buildOfflineTx, broadcastTx, PolicyDenied, BridgeError } from './bridge.js';
+import { encode as encodeRequest, parse as parseRequest } from './zip321.js';
 
 const USAGE = `usage:
+  zmesh request --address ADDR --amount ZAT [--memo TEXT]
+  zmesh pubkey --identity FILE
   zmesh pubkey --identity FILE
   zmesh listen --port N --identity FILE [--peer HOST:PORT ...] [--ack]
                [--gateway --devtool PATH --wallet DIR [--server NAME]]
@@ -31,6 +34,7 @@ const OPTIONS = {
   amount: { type: 'string' }, message: { type: 'string' }, 'wait-ms': { type: 'string' },
   'max-per-payment': { type: 'string' }, 'max-offline-total': { type: 'string' }, spent: { type: 'string' },
   'min-expiry': { type: 'string' }, tx: { type: 'string' }, 'save-tx': { type: 'string' },
+  address: { type: 'string' }, memo: { type: 'string' },
 };
 
 const HEX64 = /^[0-9a-f]{64}$/;
@@ -54,12 +58,22 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
   const emit = (obj) => stdout.write(JSON.stringify(obj) + '\n');
   const fail = (code, msg) => { stderr.write(msg + '\n'); return code; };
   const [cmd, ...rest] = argv;
-  if (!['pubkey', 'listen', 'msg', 'pay', 'broadcast'].includes(cmd)) return fail(1, USAGE);
+  if (!['pubkey', 'listen', 'msg', 'pay', 'broadcast', 'request'].includes(cmd)) return fail(1, USAGE);
   let v;
   try {
     v = parseArgs({ args: rest, options: OPTIONS, strict: true }).values;
   } catch (e) {
     return fail(1, `${e.message}\n${USAGE}`);
+  }
+  if (cmd === 'request') {
+    // Merchant side of the flow: share a ZIP 321 payment request for the payer.
+    try {
+      const uri = encodeRequest({ address: v.address, amountZat: int(v.amount), memo: v.memo });
+      emit({ kind: 'request', uri });
+    } catch (e) {
+      return fail(1, `${e.message}\n${USAGE}`);
+    }
+    return 0;
   }
   if (cmd === 'broadcast') {
     for (const k of ['tx', 'devtool', 'wallet']) if (!v[k]) return fail(1, `--${k} is required\n${USAGE}`);
@@ -116,15 +130,29 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
 
   let txArtifact = null;
   if (cmd === 'pay') {
-    for (const k of ['to', 'amount', 'wallet', 'wallet-key', 'devtool']) {
+    for (const k of ['to', 'wallet', 'wallet-key', 'devtool']) {
       if (!v[k]) return fail(1, `--${k} is required\n${USAGE}`);
     }
-    const valueZat = int(v.amount);
-    if (!Number.isInteger(valueZat) || valueZat <= 0) return fail(1, '--amount must be a positive integer of zatoshis');
+    // --to accepts either a raw address (then --amount is required) or a
+    // ZIP 321 request URI (address + amount + memo come from it).
+    let to = v.to;
+    let uriMemo;
+    let valueZat = int(v.amount);
+    if (v.to.startsWith('zcash:')) {
+      try {
+        const req = parseRequest(v.to);
+        to = req.address;
+        uriMemo = req.memo;
+        if (v.amount === undefined) valueZat = req.amountZat;
+      } catch (e) {
+        return fail(1, `bad --to payment request: ${e.message}\n${USAGE}`);
+      }
+    }
+    if (!Number.isInteger(valueZat) || valueZat <= 0) return fail(1, '--amount must be a positive integer of zatoshis (or a zcash: URI with amount)');
     try {
       txArtifact = await buildOfflineTx({
-        devtool: v.devtool, walletDir: v.wallet, identityFile: v['wallet-key'], address: v.to, valueZat,
-        memo: undefined,
+        devtool: v.devtool, walletDir: v.wallet, identityFile: v['wallet-key'], address: to, valueZat,
+        memo: uriMemo ?? undefined,
         policy: {
           maxPerPaymentZat: int(v['max-per-payment'], 1000000), maxOfflineTotalZat: int(v['max-offline-total'], 5000000),
           spentZat: 0, minExpiryHeight: int(v['min-expiry'], 0),
@@ -148,17 +176,17 @@ export async function main(argv, { stdout = process.stdout, stderr = process.std
     onSealed: (msg) => { emit(msg); if (msg.kind === 'ack') acked(true); },
   });
   try {
-    const to = v['recipient-pub'];
+    const recipientPub = v['recipient-pub'];
     if (txArtifact) {
       device.send({ kind: 'tx', body: txArtifact.tx });
       if (v['save-tx']) fs.writeFileSync(v['save-tx'], txArtifact.tx);
       emit({ kind: 'sent', txid: txArtifact.txid, bytes: txArtifact.tx.length, sha256: sha256(txArtifact.tx) });
-      device.send({ kind: 'sealed', body: sealJson(to, {
+      device.send({ kind: 'sealed', body: sealJson(recipientPub, {
         kind: 'receipt', amountZat: txArtifact.valueZat, policyHash: txArtifact.policyHash, txid: txArtifact.txid, from: myPub,
       }, identity) });
-      if (v.message) device.send({ kind: 'sealed', body: sealJson(to, { kind: 'message', text: v.message, from: myPub }, identity) });
+      if (v.message) device.send({ kind: 'sealed', body: sealJson(recipientPub, { kind: 'message', text: v.message, from: myPub }, identity) });
     } else {
-      device.send({ kind: 'sealed', body: sealJson(to, { kind: 'message', text: v.text, from: myPub }, identity) });
+      device.send({ kind: 'sealed', body: sealJson(recipientPub, { kind: 'message', text: v.text, from: myPub }, identity) });
     }
     const timeout = new Promise((resolve) => setTimeout(() => resolve(false), waitMs));
     return (await Promise.race([gotAck, timeout])) ? 0 : 3;
