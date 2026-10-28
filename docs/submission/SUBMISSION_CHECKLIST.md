@@ -25,7 +25,7 @@ Legend: [x] done and verified, [ ] not done, [~] partly done. Items that need th
 - [x] `npm test`: 53 tests, 52 pass, 1 skipped.
 - [x] The devtool patch applies cleanly to its base commit.
 - [x] `scripts/scan-secrets.mjs` finds no key material in tracked files.
-- [~] Clean-clone verification: run `sh scripts/verify` from a fresh clone before submitting.
+- [x] Clean-clone verification: `sh scripts/verify` passes from a fresh clone (53 tests, ledgers, secret scan, page build).
 - [ ] A mainnet-address guard (GAP-001).
 
 ## Licenses
@@ -39,7 +39,7 @@ Legend: [x] done and verified, [ ] not done, [~] partly done. Items that need th
 
 - [x] Responsive and checked in a headless browser at desktop and phone width.
 - [x] Single static file; build script wraps it for hosting.
-- [~] Deployed to https://murmurz.vercel.app (see `docs/operations/DEPLOY_WEB.md`).
+- [x] Deployed to https://murmurz.vercel.app (production). Checked in a headless browser: HTTP 200, security headers, all fonts load, no console or CSP errors, views and anchors work, the simulation runs (`docs/operations/DEPLOY_WEB.md`).
 - [ ] **(owner)** Check it on a real laptop and a real phone.
 
 ## Competition

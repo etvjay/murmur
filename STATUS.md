@@ -15,7 +15,7 @@
 | Spend policy and devtool bridge | `src/policy.js`, `src/bridge.js` | `TESTED` |
 | ZIP 321 requests | `src/zip321.js` | `TESTED`, `LIVE_TESTNET` (Run C) |
 | Devtool patch | `patches/` | applies cleanly to base `0b3436b` |
-| Judge page | `apps/web/` | `IMPLEMENTED`; deploy target `https://murmurz.vercel.app` |
+| Judge page | `apps/web/` | `IMPLEMENTED`; deployed to production at `https://murmurz.vercel.app` (checked 2026-10-28: HTTP 200, security headers, no console or CSP errors, all views working at desktop and phone width) |
 | Evidence | `evidence/01` to `05` | immutable run packages |
 | Ledgers | `foundry/` | 15 claims, 11 gaps, consistency-checked |
 

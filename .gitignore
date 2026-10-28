@@ -4,3 +4,4 @@ wallets/
 node_modules/
 dist/
 *.tgz
+.vercel
