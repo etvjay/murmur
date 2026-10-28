@@ -1,0 +1,76 @@
+Transactions:
+e5ecdc13b8520a7b4d0fa25664388c1bb540bb53953a07ccd758ab961993cb3d
+     Mined: 4549978 (2026-10-28 6:10:32.0 +00:00:00)
+    Amount:   1.00000000 TAZ
+  Fee paid: Unknown
+  Sent 0 notes, received 1 notes, 0 memos
+  Output 0 (Sapling)
+    Value:   1.00000000 TAZ
+    Received by account: e7e5c8b7-6382-4103-a6dd-3635f252e41e (zmesh)
+    To: utest1w3q7zl0ql8flxc5j8hka4sr9mnhq2x23fd2r8jrr2trxzvvfzmhv5te4vz5kjydvr3z8ukhnfgx7nctlnwz7pee20ust5jdt3cfv5904
+5110a458bd641e5432fb6d11892dda2c70d55979bd360b09f7e13e48a4c8fd43
+     Mined: 4550000 (2026-10-28 6:21:42.0 +00:00:00)
+    Amount:   0.00025000 TAZ
+  Fee paid: Unknown
+  Sent 0 notes, received 0 notes, 0 memos
+  Output 0 (Sapling)
+    Value:   0.24993500 TAZ (Change)
+  Output 1 (Sapling)
+    Value:   0.24993500 TAZ (Change)
+  Output 2 (Sapling)
+    Value:   0.24993500 TAZ (Change)
+  Output 3 (Sapling)
+    Value:   0.00001000 TAZ (Change)
+    To: utest1w3q7zl0ql8flxc5j8hka4sr9mnhq2x23fd2r8jrr2trxzvvfzmhv5te4vz5kjydvr3z8ukhnfgx7nctlnwz7pee20ust5jdt3cfv5904
+  Output 4 (Sapling)
+    Value:   0.24993500 TAZ (Change)
+99d90368414cda87ce8b939079acdd13ff7793aeb5ebf924e200330f1dea55d4
+   Expired (expiry height: 4550721)
+    Amount:   0.50015000 TAZ
+  Fee paid:   0.00015000 TAZ
+  Sent 1 notes, received 0 notes, 1 memos
+  Output 0 (Sapling)
+    Value:   0.12482750 TAZ (Change)
+    Memo: Memo::Empty
+  Output 1 (Sapling)
+    Value:   0.50000000 TAZ
+    Sent from account: e7e5c8b7-6382-4103-a6dd-3635f252e41e (zmesh)
+    To: ztestsapling16j2v97cxx5cl5hezjvnzw9mtscx9j6sspfedey57geg72agp8fpfn820nartl6gyfju2k6ueuvm
+    Memo: Memo::Text("murmur fund")
+  Output 2 (Sapling)
+    Value:   0.12482750 TAZ (Change)
+    Memo: Memo::Empty
+4d0ddfe59015b3317613deba431d67944bcd64de2bd74cd0f29302a21d62b35a
+     Mined: 4550789 (2026-10-28 11:44:47.0 +00:00:00)
+    Amount:   0.50015000 TAZ
+  Fee paid:   0.00015000 TAZ
+  Sent 1 notes, received 0 notes, 0 memos
+  Output 0 (Sapling)
+    Value:   0.12482750 TAZ (Change)
+    Memo: Memo::Empty
+  Output 1 (Sapling)
+    Value:   0.12482750 TAZ (Change)
+    Memo: Memo::Empty
+  Output 2 (Sapling)
+    Value:   0.50000000 TAZ (Wallet Internal Transfer)
+    Received by account: dbeb032a-8f1b-471b-824f-5f22979b7c97 (murmur-pay)
+    Sent from account: e7e5c8b7-6382-4103-a6dd-3635f252e41e (zmesh)
+    To: ztestsapling16j2v97cxx5cl5hezjvnzw9mtscx9j6sspfedey57geg72agp8fpfn820nartl6gyfju2k6ueuvm
+    Memo: Memo::Text("murmur fund")
+0efad38fd3d577779817d949caa695e4391adc4329b0700b6a4b37c5b66f96d7
+     Mined: 4550881 (2026-10-28 12:20:12.0 +00:00:00)
+    Amount:   0.00003000 TAZ
+  Fee paid: Unknown
+  Sent 0 notes, received 1 notes, 0 memos
+  Output 0 (Sapling)
+    Value:   0.12493000 TAZ (Change)
+  Output 1 (Sapling)
+    Value:   0.12493000 TAZ (Change)
+  Output 2 (Sapling)
+    Value:   0.00003000 TAZ
+    Received by account: e7e5c8b7-6382-4103-a6dd-3635f252e41e (zmesh)
+    To: utest1w3q7zl0ql8flxc5j8hka4sr9mnhq2x23fd2r8jrr2trxzvvfzmhv5te4vz5kjydvr3z8ukhnfgx7nctlnwz7pee20ust5jdt3cfv5904
+  Output 3 (Sapling)
+    Value:   0.12493000 TAZ (Change)
+  Output 4 (Sapling)
+    Value:   0.12493000 TAZ (Change)

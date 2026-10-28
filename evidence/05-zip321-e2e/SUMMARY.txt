@@ -1,0 +1,22 @@
+Run C: a ZIP 321 payment request, built with every devtool step offline, carried over loopback UDP, broadcast once, confirmed.
+Testnet only. Run on 2026-10-28. Reproduce with scripts/run-zip321-e2e.sh <payer-account> <merchant-sapling-address>.
+
+What happened (files in this folder):
+  request.jsonl, uri.txt          the merchant's ZIP 321 request (address, amount 0.00003 = 3000 zat, memo param)
+  offline-probe.txt               a devtool call inside the no-network namespace fails with a DNS error (so the namespace had no network)
+  payer.jsonl                     sent: txid 0efad38f...96d7, 5222 bytes, sha256 ad973801...; then an ack of the receipt carrying the sender key
+  gateway-listener.jsonl          tx received (same sha256), receipt opened (3000 zat, policyHash b94caa29...), then broadcast ok
+  offline.tx                      the raw transaction that was carried (5222 bytes, public)
+  list-tx-*-confirmed.txt         both accounts' wallet views after confirmation
+Result: transaction 0efad38fd3d577779817d949caa695e4391adc4329b0700b6a4b37c5b66f96d7 mined in testnet block 4,550,881
+        (2026-10-28 12:20:12 UTC). The merchant account received 0.00003000 TAZ.
+
+What this does NOT show:
+  - Radio: the hand-over was loopback UDP on one machine.
+  - The memo: neither wallet's view of the confirmed transaction shows a memo for this output (a memo sent with the
+    native `wallet send`, tx 4d0ddfe5..., is displayed). Whether the PCZT path drops the memo or the wallet does not
+    display it was not determined. Treat the memo as NOT verified.
+
+Why a separate payer account: the PCZT path in this devtool build cannot sign internal-scope change notes
+(attempt-1-change-note-sign-failure/). The payer account holds an externally received note funded by tx 4d0ddfe5...
+Attempt 2 (attempt-2-offline-build-not-carried/) built a transaction offline but never delivered or broadcast it.

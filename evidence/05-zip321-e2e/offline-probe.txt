@@ -1,0 +1,7 @@
+[2m2026-10-28T12:19:20.989984Z[0m [32m INFO[0m [2mzcash_devtool::remote[0m[2m:[0m Connecting to testnet.zec.rocks:443
+Error: transport error
+
+Caused by:
+    0: dns error
+    1: dns error
+    2: failed to lookup address information: Temporary failure in name resolution
