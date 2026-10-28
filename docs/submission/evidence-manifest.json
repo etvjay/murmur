@@ -112,6 +112,15 @@
         "evidence/07-chain-readback/readback.txt",
         "evidence/07-chain-readback/README.txt"
       ]
+    },
+    {
+      "id": "F-6",
+      "title": "Chain server and public explorer follow different chains",
+      "directory": "evidence/08-chain-comparison",
+      "files": [
+        "evidence/08-chain-comparison/README.txt",
+        "evidence/08-chain-comparison/getblock.mjs"
+      ]
     }
   ]
 }
