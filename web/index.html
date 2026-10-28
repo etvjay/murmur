@@ -2,7 +2,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Silkscreen&display=swap">
 <style>
 /* Mirrors the live xbow.com landing page section by section: dark bands with a lime top glow,
    a dark nav pill, a left headline with a product window, horizon glows into light bands, a light footer
@@ -12,9 +12,10 @@
   --sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --ink: #00080B; --ink-2: #020F15; --ink-3: #061820; --black: #000;
   --text: #AAB3B7; --bright: #F0F6FA; --dim: #7D878B;
-  --lime: #CDFF00; --sky: #8FC8FF; --red: #FF7468; --amber: #FFB547;
+  --blue: #2433FF; --blue-2: #4A5BFF; --blue-tx: #9AA8FF; --lime: var(--blue-tx); --sky: #9AA8FF; --red: #FF7468; --amber: #FFB547;
+  --serif: "Instrument Serif", ui-serif, Georgia, serif; --pixel: "Silkscreen", "Geist Mono", ui-monospace, monospace;
   --line: rgba(170,179,183,.16); --line-2: rgba(170,179,183,.32);
-  --paper: #F3F6F9; --paper-card: #FFFFFF; --paper-text: #33414A; --paper-bright: #0B1418; --paper-muted: #5B6770; --paper-line: rgba(11,20,24,.12);
+  --paper: #00080B; --paper-card: #020F15; --paper-text: #AAB3B7; --paper-bright: #F0F6FA; --paper-muted: #98A3A8; --paper-line: rgba(170,179,183,.2);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -23,14 +24,16 @@ body { margin: 0; background: var(--ink); color: var(--text); font-family: var(-
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 70; background: var(--ink); }
 .in { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
-h1, h2 { font-family: var(--mono); color: var(--bright); letter-spacing: -.05em; }
-h1 { font-size: clamp(2.4rem, 5.4vw, 4.25rem); line-height: 1.04; }
+h1 { font-family: var(--serif); color: var(--bright); letter-spacing: -.02em; }
+h2 { font-family: var(--sans); font-weight: 500; color: var(--bright); letter-spacing: -.035em; }
+h1 { font-size: clamp(3rem, 6.6vw, 5.6rem); line-height: .98; }
 h2 { font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.08; }
-h3 { font-family: var(--mono); font-size: clamp(1.35rem, 2.4vw, 1.9rem); line-height: 1.12; letter-spacing: -.045em; color: var(--bright); }
+h3 { font-family: var(--sans); font-weight: 500; font-size: clamp(1.35rem, 2.4vw, 1.9rem); line-height: 1.15; letter-spacing: -.03em; color: var(--bright); }
 p { margin: 0; }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; border-radius: 6px; }
 [tabindex="-1"]:focus { outline: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .skip { position: absolute; left: 12px; top: -80px; z-index: 90; background: var(--lime); color: var(--ink); padding: 8px 14px; border-radius: 8px; font-family: var(--mono); font-size: .8125rem; }
 .skip:focus { top: calc(env(safe-area-inset-top, 0px) + 10px); }
 .eyebrow { font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text); }
@@ -42,11 +45,11 @@ a { color: inherit; }
 .btn-white:hover { background: #fff; }
 .btn-ghost { background: var(--ink-2); color: var(--bright); border-color: var(--line-2); }
 .btn-ghost:hover { border-color: var(--lime); }
-.btn-dark { background: var(--paper-bright); color: #fff; }
-.btn-dark:hover { background: #22303a; }
+.btn-dark, .btn-blue { background: var(--blue); color: #fff; }
+.btn-dark:hover, .btn-blue:hover { background: var(--blue-2); }
 .btn[disabled] { opacity: .45; cursor: not-allowed; }
 .chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em; text-transform: uppercase; border: 1px solid var(--line-2); border-radius: 4px; padding: 2px 6px; color: var(--bright); white-space: nowrap; }
-.chip.lime { color: var(--lime); border-color: rgba(205,255,0,.6); }
+.chip.lime { color: var(--lime); border-color: rgba(74,91,255,.6); }
 .chip.red { color: var(--red); border-color: rgba(255,116,104,.6); }
 .chip.amber { color: var(--amber); border-color: rgba(255,181,71,.6); }
 .chip svg { width: 11px; height: 11px; }
@@ -54,7 +57,7 @@ a { color: inherit; }
 .ico svg { width: 16px; height: 16px; }
 
 /* 0. announcement bar */
-.announce { position: relative; border-bottom: 1px solid rgba(205,255,0,.55); background: var(--ink); }
+.announce { position: relative; border-bottom: 1px solid rgba(74,91,255,.55); background: var(--ink); }
 .announce .in { display: flex; justify-content: center; align-items: center; gap: 12px; min-height: 44px; flex-wrap: wrap; padding-block: 8px; }
 .announce a { font-family: var(--mono); font-size: .8125rem; color: var(--bright); text-decoration: none; display: inline-flex; gap: 12px; align-items: center; text-align: center; }
 .announce .tag { background: #2a3238; color: #dfe6ea; border-radius: 3px; padding: 2px 6px; font-size: .6875rem; letter-spacing: .04em; }
@@ -63,7 +66,7 @@ a { color: inherit; }
 /* top glow + 1. dark nav pill */
 .top { position: relative; isolation: isolate; overflow: clip; }
 .top::before { content: ""; position: absolute; z-index: -1; left: 50%; top: -60px; width: min(1200px, 120vw); height: 420px; transform: translateX(-50%); pointer-events: none;
-  background: radial-gradient(50% 45% at 50% 16%, rgba(205,255,0,.5), rgba(205,255,0,0) 72%), radial-gradient(70% 70% at 50% 30%, rgba(35,85,105,.55), rgba(0,8,11,0) 70%); filter: blur(10px); }
+  background: radial-gradient(50% 45% at 50% 16%, rgba(74,91,255,.5), rgba(74,91,255,0) 72%), radial-gradient(70% 70% at 50% 30%, rgba(35,85,105,.55), rgba(0,8,11,0) 70%); filter: blur(10px); }
 .navwrap { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 60; padding-top: 14px; }
 .nav { background: rgba(2,10,14,.92); border: 1px solid var(--line-2); border-radius: 10px; padding: 8px 8px 8px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; box-shadow: 0 10px 40px rgba(0,0,0,.45); }
 .logo { display: inline-flex; align-items: center; gap: 8px; font-family: var(--sans); font-weight: 400; font-size: 1.5rem; letter-spacing: .02em; color: var(--bright); text-decoration: none; margin-right: auto; }
@@ -73,8 +76,8 @@ a { color: inherit; }
 .nav-links a:hover { background: rgba(240,246,250,.07); }
 .nav-links a[aria-current="page"] { background: rgba(240,246,250,.1); }
 .nav-links svg { width: 10px; height: 10px; opacity: .8; }
-.nav .btn-white { margin-left: auto; }
-@media (max-width: 860px) { .nav-links { order: 3; width: 100%; justify-content: flex-start; } .nav .btn-white { margin-left: 0; } }
+.nav .btn-blue { margin-left: auto; }
+@media (max-width: 860px) { .nav-links { order: 3; width: 100%; justify-content: flex-start; } .nav .btn-blue { margin-left: 0; } }
 
 /* 2. hero */
 .hero { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: 48px; align-items: center; padding: clamp(56px, 9vw, 120px) 0 clamp(56px, 8vw, 110px); }
@@ -83,7 +86,7 @@ a { color: inherit; }
 .hero .lede { font-size: clamp(1.1rem, 1.6vw, 1.3rem); color: var(--text); line-height: 1.32; max-width: 30em; }
 .field { display: flex; align-items: center; gap: 8px; min-width: 0; width: 100%; border: 1px solid var(--line-2); border-radius: 8px; background: rgba(2,15,21,.6); padding: 6px 6px 6px 16px; max-width: 460px; }
 .field .val { flex: 1; min-width: 0; font-family: var(--mono); font-size: .875rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.window { position: relative; border: 1px solid var(--line-2); border-radius: 12px; background: #050B0E; box-shadow: -1px -1px 0 0 rgba(205,255,0,.55), 0 30px 80px rgba(0,0,0,.6);
+.window { position: relative; border: 1px solid var(--line-2); border-radius: 12px; background: #050B0E; box-shadow: -1px -1px 0 0 rgba(74,91,255,.55), 0 30px 80px rgba(0,0,0,.6);
   -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%); mask-image: linear-gradient(to bottom, #000 72%, transparent 100%); overflow: hidden; min-height: 400px; }
 .window .bar { display: flex; gap: 6px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
 .window .bar i { width: 9px; height: 9px; border-radius: 50%; background: #3a4449; display: block; }
@@ -115,8 +118,8 @@ a { color: inherit; }
 .stats-block::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(170,179,183,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(170,179,183,.05) 1px, transparent 1px); background-size: 7px 7px; pointer-events: none; -webkit-mask-image: radial-gradient(70% 80% at 50% 50%, #000, transparent); mask-image: radial-gradient(70% 80% at 50% 50%, #000, transparent); }
 .stats-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; padding-inline: clamp(0px, 3vw, 28px); }
 .card { border: 1px solid var(--line-2); border-radius: 12px; background: rgba(2,15,21,.85); }
-.big-card { padding: 32px 28px 24px; display: grid; gap: 14px; align-content: start; border-color: rgba(205,255,0,.35); }
-.huge { font-family: var(--mono); color: var(--lime); font-size: clamp(3rem, 7.5vw, 6rem); letter-spacing: -.06em; line-height: .95; font-variant-numeric: tabular-nums; }
+.big-card { padding: 32px 28px 24px; display: grid; gap: 14px; align-content: start; border-color: rgba(74,91,255,.35); }
+.huge { font-family: var(--serif); color: var(--lime); font-size: clamp(3.4rem, 8.5vw, 7rem); letter-spacing: -.02em; line-height: .95; font-variant-numeric: tabular-nums; }
 .big-card h3 { font-family: var(--sans); font-size: 1.35rem; letter-spacing: -.02em; }
 .mini { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line-2); margin-top: 12px; padding-top: 18px; }
 .mini div { display: grid; gap: 4px; padding-right: 12px; }
@@ -124,7 +127,7 @@ a { color: inherit; }
 .mini b { font-family: var(--mono); font-weight: 400; color: var(--bright); font-size: 1.6rem; letter-spacing: -.05em; }
 .side-cards { display: grid; gap: 20px; }
 .side { padding: 26px 24px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 22px; align-items: center; }
-.side .n { font-family: var(--mono); color: var(--lime); font-size: clamp(2.6rem, 5vw, 3.8rem); letter-spacing: -.06em; line-height: 1; min-width: 2.2ch; }
+.side .n { font-family: var(--serif); color: var(--lime); font-size: clamp(3rem, 6vw, 4.4rem); letter-spacing: -.02em; line-height: 1; min-width: 2.2ch; }
 .side strong { display: block; font-weight: 400; color: var(--bright); font-size: 1.1rem; margin-bottom: 4px; }
 .side p { font-size: .95rem; }
 @media (max-width: 900px) { .stats-grid { grid-template-columns: minmax(0, 1fr); } .mini { grid-template-columns: minmax(0, 1fr); gap: 12px; } .mini div + div { border-left: 0; padding-left: 0; } }
@@ -152,14 +155,14 @@ a { color: inherit; }
 .stage small { font-family: var(--mono); font-size: .6875rem; letter-spacing: .06em; color: var(--dim); transition: color .4s; }
 .stage strong { display: block; font-weight: 400; color: var(--bright); font-size: 1.05rem; }
 .stage p { font-size: .9rem; }
-.stage.on { border-color: rgba(205,255,0,.55); box-shadow: 0 0 50px rgba(205,255,0,.08); }
+.stage.on { border-color: rgba(74,91,255,.55); box-shadow: 0 0 50px rgba(74,91,255,.08); }
 .stage.on .ring { color: var(--lime); border-color: var(--lime); }
 .stage.on small { color: var(--lime); }
 .reads { padding-bottom: 112px; display: grid; gap: 28px; }
 .reads > p { color: var(--bright); font-size: 1.25rem; max-width: 24em; }
 .articles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .article-card { border: 1px solid var(--line); border-radius: 12px; background: var(--ink-2); padding: 16px; display: grid; gap: 16px; text-decoration: none; transition: border-color .3s; }
-.article-card:hover { border-color: rgba(205,255,0,.5); }
+.article-card:hover { border-color: rgba(74,91,255,.5); }
 .article-card .meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .article-card .meta .date { margin-left: auto; font-family: var(--mono); font-size: .6875rem; letter-spacing: .04em; text-transform: uppercase; color: var(--text); }
 .article-card .art { aspect-ratio: 2.1 / 1; max-width: 100%; border-radius: 6px; background: radial-gradient(90% 120% at 50% 100%, #0e2a33, #02090c 70%); display: grid; place-items: center; overflow: hidden; }
@@ -168,10 +171,13 @@ a { color: inherit; }
 .article-card .by { font-family: var(--mono); font-size: .75rem; color: var(--text); }
 @media (max-width: 860px) { .proven { grid-template-columns: minmax(0, 1fr); } .articles { grid-template-columns: minmax(0, 1fr); } }
 
-/* horizon glows between dark and light bands */
+/* blue stripe bands (from Agentcard) */
+.stripes { height: 40px; margin: 24px 0; background: linear-gradient(to bottom, transparent 0 4px, rgba(154,168,255,.3) 4px 8px, transparent 8px 12px, rgba(74,91,255,.5) 12px 17px, transparent 17px 21px, rgba(74,91,255,.8) 21px 27px, transparent 27px 30px, #2433FF 30px 40px); }
+.stripes.rev { transform: scaleY(-1); }
+/* (old horizon styles kept unused) */
 .horizon { height: 220px; position: relative; overflow: hidden; }
 .horizon::before { content: ""; position: absolute; left: -10%; right: -10%; top: 50%; height: 120px; transform: translateY(-50%); filter: blur(28px);
-  background: linear-gradient(to right, transparent 5%, rgba(110,150,255,.55) 25%, rgba(205,255,0,.95) 50%, rgba(110,150,255,.55) 75%, transparent 95%); }
+  background: linear-gradient(to right, transparent 5%, rgba(110,150,255,.55) 25%, rgba(74,91,255,.95) 50%, rgba(110,150,255,.55) 75%, transparent 95%); }
 .horizon.down { background: linear-gradient(to bottom, var(--ink) 0%, var(--ink) 30%, var(--paper) 70%, var(--paper) 100%); }
 .horizon.up { background: linear-gradient(to bottom, var(--paper) 0%, var(--paper) 30%, var(--ink) 70%, var(--ink) 100%); }
 
@@ -189,36 +195,36 @@ a { color: inherit; }
 .ctl { display: grid; gap: 4px; min-width: 180px; flex: 1; }
 .ctl label { font-size: .8125rem; color: var(--paper-bright); display: flex; justify-content: space-between; gap: 8px; }
 .ctl output { font-family: var(--mono); }
-.ctl input[type=range] { width: 100%; accent-color: #6d8f00; min-height: 28px; }
+.ctl input[type=range] { width: 100%; accent-color: #4A5BFF; min-height: 28px; }
 .chk { display: flex; gap: 8px; align-items: center; font-size: .875rem; color: var(--paper-bright); padding-bottom: 6px; }
-.chk input { width: 18px; height: 18px; accent-color: #6d8f00; }
+.chk input { width: 18px; height: 18px; accent-color: #4A5BFF; }
 .sim-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-.paper .btn-ghost { background: #fff; color: var(--paper-bright); border-color: var(--paper-line); }
+.paper .btn-ghost { background: var(--ink-2); color: var(--paper-bright); border-color: var(--line-2); }
 .paper .btn-ghost:hover { border-color: var(--paper-bright); }
-.stage-svg { border: 1px solid var(--paper-line); border-radius: 12px; background: #FBFCFD; }
+.stage-svg { border: 1px solid var(--paper-line); border-radius: 12px; background: #031118; }
 .stage-svg svg { width: 100%; height: auto; display: block; }
-.edge { stroke: #c4ccd2; stroke-width: 1.5; }
+.edge { stroke: rgba(170,179,183,.35); stroke-width: 1.4; }
 .edge.cut { stroke-dasharray: 3 6; }
-.nd circle { fill: #fff; stroke: #9aa6ae; stroke-width: 1.5; }
-.nd text { font-family: var(--mono); font-size: 11px; fill: var(--paper-bright); text-anchor: middle; pointer-events: none; }
-.nd text.lbl { font-size: 10px; fill: var(--paper-muted); }
+.nd .wc { fill: #031118; stroke: rgba(170,179,183,.35); stroke-width: 1.2; }
+.nd text { font-family: var(--mono); font-size: 11px; fill: var(--bright); text-anchor: middle; pointer-events: none; }
+.nd text.lbl { font-size: 8.5px; fill: #E6E9FF; }
 .nd { cursor: pointer; }
-.nd.sel circle { stroke: var(--paper-bright); stroke-width: 2.5; }
-.nd.off circle { stroke: #c0392b; stroke-dasharray: 3 3; }
-.nd:focus-visible circle { stroke: var(--paper-bright); stroke-width: 3; }
-.pk-tx { fill: #9BC400; stroke: #4d6300; stroke-width: 1; } .pk-sealed { fill: #2F6FD0; } .pk-lost { fill: #D2402F; }
+.nd.sel .wc { stroke: var(--blue-tx); stroke-width: 2.2; }
+.nd.off .wc { stroke: var(--red); stroke-dasharray: 3 3; }
+.nd:focus-visible .wc { stroke: var(--blue-tx); stroke-width: 2.6; }
+.pk-tx { fill: #F0F6FA; stroke: #2433FF; stroke-width: 2; } .pk-sealed { fill: #4A5BFF; } .pk-lost { fill: #FF7468; }
 .legend { display: flex; gap: 16px; flex-wrap: wrap; font-family: var(--mono); font-size: .6875rem; color: var(--paper-muted); }
 .legend i { display: inline-block; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
 .phases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding-top: 6px; }
 .phase { display: grid; gap: 8px; justify-items: center; text-align: center; padding: 10px; }
-.phase .sq { width: 34px; height: 34px; border-radius: 6px; border: 1px solid var(--paper-line); display: grid; place-items: center; background: #fff; color: var(--paper-muted); transition: all .3s; }
+.phase .sq { width: 34px; height: 34px; border-radius: 6px; border: 1px solid var(--paper-line); display: grid; place-items: center; background: var(--ink-2); color: var(--paper-muted); transition: all .3s; }
 .phase .sq svg { width: 16px; height: 16px; }
-.phase h4 { margin: 0; font-family: var(--mono); font-weight: 400; font-size: clamp(1.3rem, 2.4vw, 1.7rem); letter-spacing: -.05em; color: #6b767d; transition: color .3s; }
+.phase h4 { margin: 0; font-family: var(--sans); font-weight: 500; font-size: clamp(1.3rem, 2.4vw, 1.7rem); letter-spacing: -.03em; color: var(--dim); transition: color .3s; }
 .phase p { font-size: .875rem; color: var(--paper-muted); max-width: 26ch; }
-.phase.on .sq { background: var(--lime); border-color: #a7cf00; color: var(--ink); }
+.phase.on .sq { background: var(--lime); border-color: #4A5BFF; color: var(--ink); }
 .phase.on h4 { color: var(--paper-bright); }
 .sim-out { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
-.out-box { border: 1px solid var(--paper-line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; background: #FBFCFD; align-content: start; }
+.out-box { border: 1px solid var(--paper-line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; background: #031118; align-content: start; }
 .out-box h4 { margin: 0; font-family: var(--mono); font-weight: 400; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--paper-muted); }
 .out-box .res { color: var(--paper-bright); font-size: .95rem; }
 .out-box pre { margin: 0; font-family: var(--mono); font-size: .75rem; color: var(--paper-bright); white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -226,14 +232,14 @@ a { color: inherit; }
 
 .rules { padding: 64px 0 96px; display: grid; gap: 40px; scroll-margin-top: 100px; }
 .rules-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: center; }
-.policy { border: 1px solid var(--paper-line); border-radius: 10px; background: #FBFCFD; overflow: hidden; font-size: .8125rem; }
+.policy { border: 1px solid var(--paper-line); border-radius: 10px; background: #031118; overflow: hidden; font-size: .8125rem; }
 .policy .bar { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--paper-line); }
-.policy .bar i { width: 9px; height: 9px; border-radius: 50%; background: #c9d1d6; display: block; }
+.policy .bar i { width: 9px; height: 9px; border-radius: 50%; background: #3a4449; display: block; }
 .policy .body { padding: 14px; display: grid; gap: 10px; }
-.prow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; border: 1px solid var(--paper-line); border-radius: 6px; padding: 8px 10px; background: #fff; }
+.prow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; border: 1px solid var(--paper-line); border-radius: 6px; padding: 8px 10px; background: var(--ink-3); }
 .prow span { color: var(--paper-text); }
 .prow b { font-family: var(--mono); font-weight: 400; color: var(--paper-bright); font-size: .78rem; }
-.pnote { border: 1px solid #eacb7a; background: #fff8e3; border-radius: 6px; padding: 10px; color: #5c470f; font-size: .78rem; }
+.pnote { border: 1px solid rgba(255,181,71,.45); background: rgba(255,181,71,.08); border-radius: 6px; padding: 10px; color: #FFD08A; font-size: .78rem; }
 .rules-copy { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; justify-items: start; }
 .feats4 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; padding: 8px 6px 0; }
 .feats4 div { display: grid; gap: 8px; }
@@ -253,9 +259,9 @@ a { color: inherit; }
 .steps .ring { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--ink); display: grid; place-items: center; font-family: var(--mono); color: var(--dim); position: relative; z-index: 1; transition: all .4s; }
 .steps .tick { height: 1px; background: var(--line-2); }
 .steps .box { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; color: var(--dim); background: rgba(2,15,21,.6); transition: all .4s; }
-.steps li.on .ring { color: var(--lime); border-color: var(--lime); box-shadow: 0 0 30px rgba(205,255,0,.25); }
-.steps li.on .box { color: var(--bright); border-color: var(--line-2); background: #04141B; box-shadow: 0 0 60px rgba(205,255,0,.08); }
-.chart { border: 1px solid var(--line-2); border-radius: 12px; background: #04090C; box-shadow: -1px -1px 0 0 rgba(205,255,0,.55); overflow: hidden; }
+.steps li.on .ring { color: var(--lime); border-color: var(--lime); box-shadow: 0 0 30px rgba(74,91,255,.25); }
+.steps li.on .box { color: var(--bright); border-color: var(--line-2); background: #04141B; box-shadow: 0 0 60px rgba(74,91,255,.08); }
+.chart { border: 1px solid var(--line-2); border-radius: 12px; background: #04090C; box-shadow: -1px -1px 0 0 rgba(74,91,255,.55); overflow: hidden; }
 .chart .bar { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
 .chart .bar i { width: 9px; height: 9px; border-radius: 50%; background: #3a4449; display: block; }
 .chart-body { padding: 16px 18px 18px; display: grid; gap: 12px; }
@@ -266,7 +272,7 @@ a { color: inherit; }
 .brow .lab { color: var(--text); }
 .brow .trk { height: 9px; border-radius: 4px; background: #0e1a1f; position: relative; }
 .brow .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: #5c7a8a; width: 0; transition: width 1s cubic-bezier(.2,.7,.2,1); }
-.brow.key .fill { background: var(--lime); box-shadow: 0 0 14px rgba(205,255,0,.5); }
+.brow.key .fill { background: var(--lime); box-shadow: 0 0 14px rgba(74,91,255,.5); }
 .brow .pct { color: var(--bright); text-align: right; }
 .brow.key .lab, .brow.key .pct { color: var(--lime); }
 .chart-foot { font-family: var(--mono); font-size: .66rem; color: var(--text); }
@@ -276,7 +282,10 @@ a { color: inherit; }
 .logs { padding: 24px 0 112px; display: grid; gap: 36px; scroll-margin-top: 100px; }
 .logs-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
 .log-grid { columns: 3 300px; column-gap: 20px; }
-.logc { break-inside: avoid; margin: 0 0 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--ink-2); padding: 20px; display: grid; gap: 14px; }
+.logc { break-inside: avoid; margin: 0 0 20px; border: 1px solid rgba(74,91,255,.7); border-radius: 10px; background: var(--ink-2); overflow: hidden; }
+.wbar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 5px 10px; background: linear-gradient(to bottom, #4A5BFF, #2433FF); color: #E6E9FF; font-family: var(--mono); font-size: .6875rem; }
+.wbar .fname { text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lbody { padding: 18px 20px 20px; display: grid; gap: 14px; }
 .logc .glyph { width: 52px; height: 52px; border-radius: 6px; background: linear-gradient(140deg, #0f2f3a, #04161d); display: grid; place-items: center; color: var(--lime); }
 .logc .glyph svg { width: 22px; height: 22px; }
 .logc q { quotes: none; font-family: var(--mono); color: var(--bright); font-size: .95rem; line-height: 1.45; overflow-wrap: anywhere; }
@@ -338,10 +347,64 @@ a { color: inherit; }
 .dark-foot a { color: var(--bright); text-decoration: none; }
 .dark-foot span { margin-right: auto; }
 
+/* hero additions (from Agentcard) */
+.badge { display: inline-flex; align-items: center; gap: 8px; font-size: .8125rem; color: var(--text); justify-self: start; }
+.badge i { width: 12px; height: 12px; border-radius: 3px; background: var(--blue); display: inline-block; }
+h1 em { font-style: italic; color: var(--blue-tx); }
+.cta-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; min-width: 0; }
+.pill { display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; background: #F0F6FA; color: var(--ink); border-radius: 999px; padding: 5px 5px 5px 16px; }
+.pill code { font-family: var(--mono); font-size: .8125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.pill .cp { color: var(--ink); border-color: rgba(0,8,11,.25); border-radius: 999px; }
+.pill .cp:hover { color: var(--blue); border-color: var(--blue); }
+/* chat bubbles */
+.chat { display: grid; gap: 12px; padding: 8px 0 104px; }
+.chat .who { font-family: var(--mono); font-size: .75rem; color: var(--text); margin-top: 10px; }
+.bub { font-family: var(--serif); font-size: clamp(1.7rem, 4.2vw, 3rem); line-height: 1.08; padding: .22em .75em .3em; border-radius: 28px; width: fit-content; max-width: 100%; }
+.bub.l { background: #1A2126; color: var(--bright); }
+.who.m, .bub.m { justify-self: center; }
+.bub.m { font-family: var(--mono); font-size: clamp(.9rem, 2vw, 1.15rem); letter-spacing: .08em; color: var(--dim); border: 1px dashed var(--line-2); background: transparent; }
+.who.r, .bub.r { justify-self: end; }
+.bub.r { background: var(--blue); color: #fff; }
+.chat-note { font-size: .8125rem; color: var(--text); justify-self: center; text-align: center; margin-top: 14px; }
+/* tabs + code window */
+.tabs-sec { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 40px; align-items: center; padding: 96px 0 40px; scroll-margin-top: 100px; }
+.tabs-copy { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+.tablist { display: grid; gap: 8px; margin-top: 8px; }
+.tablist button { display: flex; gap: 12px; align-items: center; text-align: left; font: inherit; font-size: .95rem; color: var(--text); background: var(--ink-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; cursor: pointer; }
+.tablist button .ti { width: 22px; height: 22px; border-radius: 4px; display: grid; place-items: center; font-family: var(--mono); font-size: .75rem; background: var(--ink-3); color: var(--bright); }
+.tablist button[aria-selected="true"] { color: var(--bright); border-color: var(--blue-2); background: rgba(36,51,255,.14); box-shadow: inset 0 0 0 1px rgba(74,91,255,.35); }
+.tablist button[aria-selected="true"] .ti { background: var(--blue); color: #fff; }
+.codewin { border: 1px solid var(--line-2); border-radius: 12px; background: #04090C; box-shadow: -1px -1px 0 0 rgba(74,91,255,.7); overflow: hidden; min-width: 0; }
+.codewin .bar { display: flex; gap: 6px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.codewin .bar i { width: 9px; height: 9px; border-radius: 50%; background: #3a4449; display: block; }
+.codewin .bar span { margin-left: 8px; font-family: var(--mono); font-size: .6875rem; color: var(--text); }
+.codewin pre { margin: 0; padding: 18px; font-family: var(--mono); font-size: .8rem; line-height: 1.65; color: var(--bright); white-space: pre-wrap; overflow-wrap: anywhere; min-height: 260px; }
+.codewin pre .c { color: var(--dim); } .codewin pre .o { color: var(--blue-tx); }
+@media (max-width: 900px) { .tabs-sec { grid-template-columns: minmax(0, 1fr); } }
+/* blue footer (from Agentcard) */
+.bluefoot { background: radial-gradient(120% 90% at 50% 0%, #2433FF 0%, #0B16C9 75%); color: #E6E9FF; padding-top: 56px; overflow: hidden; margin-top: 0; }
+.bf-cols { display: grid; grid-template-columns: minmax(180px, 1.2fr) repeat(3, minmax(0, 1fr)); gap: 28px; font-size: .875rem; }
+.bf-cols h5 { margin: 0 0 10px; font-weight: 500; font-size: .875rem; color: rgba(230,233,255,.75); }
+.bf-cols a { display: block; color: #fff; text-decoration: none; padding: 3px 0; }
+.bf-cols a:hover { text-decoration: underline; }
+.bf-brand { display: grid; gap: 10px; align-content: start; }
+.bf-brand .eyebrow { color: rgba(230,233,255,.75); }
+.bf-logo { display: inline-flex; gap: 8px; align-items: center; font-size: 1.6rem; font-weight: 500; letter-spacing: -.04em; color: #fff; }
+.bf-logo svg { width: 22px; height: 22px; color: #fff; }
+.bf-brand p { color: #E6E9FF; max-width: 26ch; }
+.bluefoot :focus-visible { outline-color: #fff; }
+.ticker { margin-top: 56px; border-top: 1px solid rgba(255,255,255,.25); border-bottom: 1px solid rgba(255,255,255,.25); overflow: hidden; }
+.tk { display: flex; gap: 28px; width: max-content; animation: slide 40s linear infinite; padding: 10px 0; font-size: .8125rem; white-space: nowrap; color: #fff; }
+.giant { font-family: var(--pixel); font-size: clamp(4.2rem, 21vw, 18rem); line-height: .95; text-align: center; letter-spacing: .02em; padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+  background-image: repeating-linear-gradient(to bottom, #F3F5FF 0 7px, rgba(243,245,255,.28) 7px 10px); -webkit-background-clip: text; background-clip: text; color: transparent; user-select: none;
+  box-shadow: inset 0 0 0 0 transparent; }
+.giant-wrap { background-image: repeating-linear-gradient(to right, rgba(255,255,255,.14) 0 1px, transparent 1px 160px); }
+@media (max-width: 760px) { .bf-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
 /* motion helpers */
 .w { transition: color .6s ease; }
 .pre .w { color: var(--dim); }
-.paper .pre .w { color: #8a959c; }
+.paper .pre .w { color: var(--dim); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .track { flex-wrap: wrap; width: auto; justify-content: center; } .track [aria-hidden="true"] { display: none; } }
 </style>
 
@@ -379,7 +442,7 @@ a { color: inherit; }
         <a href="#try" data-nav="try">Simulation</a>
         <a href="#limits" data-nav="limits">Limits</a>
       </nav>
-      <a class="btn btn-white" href="#evidence">See the proof</a>
+      <a class="btn btn-blue" href="#evidence">See the proof</a>
     </header>
   </div></div>
 
@@ -390,10 +453,11 @@ a { color: inherit; }
     <div class="in">
       <section class="hero" aria-labelledby="home-h">
         <div class="hero-copy">
-          <h1 id="home-h" tabindex="-1">Pay and talk when the network won't.</h1>
+          <span class="badge"><i aria-hidden="true"></i>Built for ZECATHON &middot; Shielded Payments</span>
+          <h1 id="home-h" tabindex="-1">Pay and talk when the network <em>won't.</em></h1>
           <p class="lime-line">Private Zcash, carried device to device.</p>
           <p class="lede">Murmur moves a real shielded Zcash transaction and a sealed note from phone to phone with no internet. Whoever reconnects first broadcasts it, and the payment confirms on chain.</p>
-          <div class="field"><span class="val" title="Transaction id">txid 5110a458bd641e54&hellip;48a4c8fd43</span><a class="btn btn-white" href="#evidence">See the proof<svg aria-hidden="true"><use href="#g-chev"/></svg></a></div>
+          <div class="cta-row"><div class="pill"><code id="cmd-hero">node cli.js pay --to ztestsapling1&hellip; --save-tx offline.tx</code><button class="cp" type="button" data-copy="cmd-hero">Copy</button></div><a class="btn btn-blue" href="#evidence">See the proof<svg aria-hidden="true"><use href="#g-chev"/></svg></a></div>
         </div>
         <div class="window" role="img" aria-label="Murmur run record: a shielded testnet payment built offline, carried, broadcast once and confirmed in block 4,550,000.">
           <div class="bar"><i></i><i></i><i></i></div>
@@ -414,26 +478,18 @@ a { color: inherit; }
       </section>
     </div>
 
-    <!-- 3. tooling strip -->
-    <section class="strip" aria-label="Built on open Zcash tooling">
-      <p class="eyebrow">Built on open Zcash tooling</p>
-      <div class="marquee"><div class="track">
-        <div class="logo-card">Zcash testnet<span>shielded pool</span></div>
-        <div class="logo-card">zcash-devtool<span>PCZT build</span></div>
-        <div class="logo-card">librustzcash<span>transaction code</span></div>
-        <div class="logo-card">lightwalletd<span>testnet.zec.rocks</span></div>
-        <div class="logo-card">X25519<span>key agreement</span></div>
-        <div class="logo-card">ChaCha20-Poly1305<span>sealed notes</span></div>
-        <div class="logo-card">Node.js<span>zero dependencies</span></div>
-        <div class="logo-card" aria-hidden="true">Zcash testnet<span>shielded pool</span></div>
-        <div class="logo-card" aria-hidden="true">zcash-devtool<span>PCZT build</span></div>
-        <div class="logo-card" aria-hidden="true">librustzcash<span>transaction code</span></div>
-        <div class="logo-card" aria-hidden="true">lightwalletd<span>testnet.zec.rocks</span></div>
-        <div class="logo-card" aria-hidden="true">X25519<span>key agreement</span></div>
-        <div class="logo-card" aria-hidden="true">ChaCha20-Poly1305<span>sealed notes</span></div>
-        <div class="logo-card" aria-hidden="true">Node.js<span>zero dependencies</span></div>
-      </div></div>
-    </section>
+    <!-- chat (from Agentcard) -->
+    <div class="in"><section class="chat" aria-label="Illustration of one exchange during a blackout">
+      <p class="who">Payer:</p>
+      <p class="bub l">no signal here</p>
+      <p class="bub l">paid. two bags, pickup at 5</p>
+      <p class="who m">A relay in between:</p>
+      <p class="bub m" aria-label="unreadable ciphertext">9f3a c71e 04b2 e8d1 5a60 b7f2</p>
+      <p class="who r">Merchant:</p>
+      <p class="bub r">got it, receipt opened</p>
+      <p class="bub r">confirmed in block 4,550,000</p>
+      <p class="chat-note">Illustration of one exchange. The block number is real; the words and the ciphertext are not from a log.</p>
+    </section></div>
 
     <!-- 4. stats -->
     <div class="in"><div class="dotted"><section class="stats-block" id="proof" aria-label="Proof in numbers"><div class="stats-grid">
@@ -470,12 +526,12 @@ a { color: inherit; }
           <rect x="314" y="58" width="90" height="7" rx="3" fill="#2b3a40"/><rect x="314" y="72" width="60" height="6" rx="3" fill="#2b3a40"/>
           <circle cx="375" cy="128" r="7" fill="#FF7468"/><text x="375" y="152" text-anchor="middle" font-family="Geist Mono, monospace" font-size="10" fill="#FF7468">NO CONNECTION</text>
           <path d="M375 102v19" stroke="#FF7468" stroke-dasharray="3 3"/>
-          <rect x="60" y="150" width="150" height="70" rx="8" fill="#061820" stroke="rgba(205,255,0,.55)"/>
+          <rect x="60" y="150" width="150" height="70" rx="8" fill="#061820" stroke="rgba(74,91,255,.55)"/>
           <text x="76" y="174" font-family="Geist Mono, monospace" font-size="11" fill="#F0F6FA">wallet</text>
           <text x="76" y="194" font-family="Geist Mono, monospace" font-size="10" fill="#AAB3B7">create prove sign</text>
           <text x="76" y="208" font-family="Geist Mono, monospace" font-size="10" fill="#AAB3B7">combine extract</text>
-          <path d="M210 185 H330 a12 12 0 0 1 12 12 V230" stroke="#CDFF00" fill="none"/><circle cx="342" cy="236" r="4" fill="#CDFF00"/>
-          <text x="352" y="240" font-family="Geist Mono, monospace" font-size="10" fill="#CDFF00">raw tx · 20,986 B</text>
+          <path d="M210 185 H330 a12 12 0 0 1 12 12 V230" stroke="#9AA8FF" fill="none"/><circle cx="342" cy="236" r="4" fill="#9AA8FF"/>
+          <text x="352" y="240" font-family="Geist Mono, monospace" font-size="10" fill="#9AA8FF">raw tx · 20,986 B</text>
         </svg></div>
       </div>
       <div class="feat rev">
@@ -496,12 +552,12 @@ a { color: inherit; }
         </div>
         <div class="diagram" aria-hidden="true"><svg viewBox="0 0 520 200">
           <line x1="20" y1="100" x2="500" y2="100" stroke="rgba(170,179,183,.32)" stroke-dasharray="2 6"/>
-          <line x1="70" y1="100" x2="431" y2="100" stroke="#CDFF00" stroke-width="1.4" id="tl-line" style="stroke-dasharray:361;stroke-dashoffset:var(--dash,0)"/>
+          <line x1="70" y1="100" x2="431" y2="100" stroke="#9AA8FF" stroke-width="1.4" id="tl-line" style="stroke-dasharray:361;stroke-dashoffset:var(--dash,0)"/>
           <g font-family="Geist Mono, monospace" font-size="10" fill="#AAB3B7" text-anchor="middle">
             <circle cx="70" cy="100" r="6" fill="#00080B" stroke="#AAB3B7"/><text x="70" y="78">built</text>
             <circle cx="190" cy="100" r="6" fill="#00080B" stroke="#AAB3B7"/><text x="190" y="78">relayed</text>
             <circle cx="310" cy="100" r="6" fill="#00080B" stroke="#AAB3B7"/><text x="310" y="78">broadcast</text>
-            <circle cx="440" cy="100" r="9" fill="#CDFF00"/><text x="440" y="78" fill="#CDFF00">block 4,550,000</text>
+            <circle cx="440" cy="100" r="9" fill="#9AA8FF"/><text x="440" y="78" fill="#9AA8FF">block 4,550,000</text>
             <text x="440" y="132" fill="#F0F6FA">confirmed</text>
           </g>
         </svg></div>
@@ -526,19 +582,19 @@ a { color: inherit; }
       <div class="articles">
         <a class="article-card" href="#run-a">
           <div class="meta"><span class="chip">evidence</span><span class="chip">offline</span><span class="date">Oct 28, 2026</span></div>
-          <div class="art" aria-hidden="true"><svg viewBox="0 0 420 200"><line x1="20" y1="100" x2="400" y2="100" stroke="rgba(240,246,250,.5)"/><circle cx="210" cy="100" r="62" fill="none" stroke="#CDFF00"/><circle cx="210" cy="100" r="40" fill="none" stroke="rgba(205,255,0,.5)"/><circle cx="210" cy="100" r="14" fill="#00080B" stroke="#F0F6FA"/><circle cx="64" cy="100" r="5" fill="none" stroke="#CDFF00"/><circle cx="356" cy="100" r="5" fill="none" stroke="#CDFF00"/></svg></div>
+          <div class="art" aria-hidden="true"><svg viewBox="0 0 420 200"><line x1="20" y1="100" x2="400" y2="100" stroke="rgba(240,246,250,.5)"/><circle cx="210" cy="100" r="62" fill="none" stroke="#9AA8FF"/><circle cx="210" cy="100" r="40" fill="none" stroke="rgba(74,91,255,.5)"/><circle cx="210" cy="100" r="14" fill="#00080B" stroke="#F0F6FA"/><circle cx="64" cy="100" r="5" fill="none" stroke="#9AA8FF"/><circle cx="356" cy="100" r="5" fill="none" stroke="#9AA8FF"/></svg></div>
           <h4>Run A: a shielded transaction built with the network cut</h4><span class="by">evidence/03-acceptance-a</span>
         </a>
         <a class="article-card" href="#run-b">
           <div class="meta"><span class="chip">evidence</span><span class="chip">testnet</span><span class="date">Oct 28, 2026</span></div>
-          <div class="art" aria-hidden="true"><svg viewBox="0 0 420 200"><g stroke="#CDFF00" fill="none"><path d="M210 30 120 170M210 30 165 170M210 30 210 170M210 30 255 170M210 30 300 170"/></g><circle cx="210" cy="30" r="5" fill="#F0F6FA"/><path d="M110 170h200" stroke="rgba(240,246,250,.5)"/><g fill="#CDFF00"><circle cx="120" cy="170" r="3"/><circle cx="165" cy="170" r="3"/><circle cx="210" cy="170" r="3"/><circle cx="255" cy="170" r="3"/><circle cx="300" cy="170" r="3"/></g></svg></div>
+          <div class="art" aria-hidden="true"><svg viewBox="0 0 420 200"><g stroke="#9AA8FF" fill="none"><path d="M210 30 120 170M210 30 165 170M210 30 210 170M210 30 255 170M210 30 300 170"/></g><circle cx="210" cy="30" r="5" fill="#F0F6FA"/><path d="M110 170h200" stroke="rgba(240,246,250,.5)"/><g fill="#9AA8FF"><circle cx="120" cy="170" r="3"/><circle cx="165" cy="170" r="3"/><circle cx="210" cy="170" r="3"/><circle cx="255" cy="170" r="3"/><circle cx="300" cy="170" r="3"/></g></svg></div>
           <h4>Run B: across the carrier and into block 4,550,000</h4><span class="by">evidence/04-e2e-loopback</span>
         </a>
       </div>
     </section></div>
 
     <!-- light band: simulation and rules -->
-    <div class="horizon down" aria-hidden="true"></div>
+    <div class="stripes" aria-hidden="true"></div>
     <div class="paper"><div class="in">
       <section aria-labelledby="try-h" id="try">
         <div class="paper-head"><span class="chip">simulation</span><h2 id="try-h" class="reveal">Murmur pays. Devices relay. The chain confirms.</h2><p>Six devices in your browser, with the packet loss you choose. Same flooding, hop limit, duplicate drop and retransmit rules as the real carrier, rewritten for this page.</p></div>
@@ -550,7 +606,7 @@ a { color: inherit; }
             <div class="sim-btns"><button class="btn btn-dark" id="b-send" type="submit">Send payment<svg aria-hidden="true"><use href="#g-chev"/></svg></button><button class="btn btn-ghost" id="b-again" type="button" disabled>Replay</button><button class="btn btn-ghost" id="b-many" type="button">Run 200 times</button></div>
           </div>
           <div class="stage-svg"><svg id="mesh" viewBox="0 0 680 290" role="group" aria-label="Six devices: payer, three relays, gateway, merchant. Select one to see what it can read."></svg></div>
-          <div class="legend" aria-hidden="true"><span><i style="width:12px;height:12px;background:#9BC400"></i>transaction (large)</span><span><i style="width:8px;height:8px;background:#2F6FD0"></i>sealed note (small)</span><span><i style="width:8px;height:8px;background:#D2402F"></i>lost: stops and fades</span></div>
+          <div class="legend" aria-hidden="true"><span><i style="width:12px;height:12px;background:#F0F6FA;border:2px solid #2433FF"></i>transaction (large)</span><span><i style="width:8px;height:8px;background:#4A5BFF"></i>sealed note (small)</span><span><i style="width:8px;height:8px;background:#FF7468"></i>lost: stops and fades</span></div>
           <div class="phases" id="phases">
             <div class="phase on" data-p="0"><span class="sq"><svg aria-hidden="true"><use href="#g-send"/></svg></span><h4>Pay.</h4><p>The payer sends the transaction and a sealed note.</p></div>
             <div class="phase" data-p="1"><span class="sq"><svg aria-hidden="true"><use href="#g-relay"/></svg></span><h4>Relay.</h4><p>Devices forward with a hop limit and retransmit lost packets.</p></div>
@@ -561,6 +617,22 @@ a { color: inherit; }
             <div class="out-box" aria-live="polite"><h4 id="i-title">Inspector</h4><p class="res" id="i-text">Select a device to see what it can read.</p><pre id="i-pre" hidden></pre></div>
           </div>
         </form>
+      </section>
+
+      <section class="tabs-sec" aria-labelledby="run-h" id="run">
+        <div class="tabs-copy">
+          <h2 id="run-h">Run it yourself.</h2>
+          <p>Three commands. The carrier needs only Node; payments also need the patched zcash-devtool. Testnet only.</p>
+          <div class="tablist" role="tablist" aria-label="Commands">
+            <button role="tab" id="tab-pay" aria-selected="true" aria-controls="code-win" data-tab="pay" type="button"><span class="ti">P</span>Pay, with the network cut</button>
+            <button role="tab" id="tab-listen" aria-selected="false" aria-controls="code-win" data-tab="listen" tabindex="-1" type="button"><span class="ti">L</span>Listen as the gateway</button>
+            <button role="tab" id="tab-bc" aria-selected="false" aria-controls="code-win" data-tab="bc" tabindex="-1" type="button"><span class="ti">B</span>Broadcast later</button>
+          </div>
+        </div>
+        <div class="codewin" id="code-win" role="tabpanel" aria-labelledby="tab-pay" tabindex="0">
+          <div class="bar"><i></i><i></i><i></i><span id="code-name">payer &middot; terminal</span></div>
+          <pre id="code-pre"></pre>
+        </div>
       </section>
 
       <section class="rules" aria-labelledby="rules-h" id="rules">
@@ -593,7 +665,7 @@ a { color: inherit; }
         </div>
       </section>
     </div></div>
-    <div class="horizon up" aria-hidden="true"></div>
+    <div class="stripes rev" aria-hidden="true"></div>
 
     <!-- 11. traced -->
     <div class="in"><section class="traced" aria-labelledby="traced-h">
@@ -631,38 +703,42 @@ a { color: inherit; }
     <section class="logs" aria-labelledby="logs-h" id="logs">
       <div class="logs-head"><h2 id="logs-h">What the logs say.</h2><a class="btn btn-ghost" href="#evidence">See the evidence</a></div>
       <div class="log-grid">
-        <figure class="logc"><span class="glyph" aria-hidden="true"><svg><use href="#g-send"/></svg></span><q>{"kind":"sent","txid":"5110a458&hellip;","bytes":5222}</q><figcaption class="who"><b>Payer</b><span>evidence/04 · payer.jsonl</span></figcaption></figure>
-        <figure class="logc"><span class="glyph" aria-hidden="true"><svg><use href="#g-block"/></svg></span><q>Mined: 4550000 (2026-10-28 6:21:42)</q><figcaption class="who"><b>Wallet sync</b><span>evidence/04 · wallet-list-tx</span></figcaption></figure>
-        <figure class="logc"><span class="glyph" aria-hidden="true"><svg><use href="#g-relay"/></svg></span><q>{"kind":"broadcast","ok":true}</q><figcaption class="who"><b>Gateway</b><span>evidence/04 · gateway-listener.jsonl</span></figcaption></figure>
-        <figure class="logc"><span class="glyph" aria-hidden="true"><svg><use href="#g-shield"/></svg></span><q>probe offline ok · create offline ok · prove offline ok · sign offline ok · combine offline ok · extract offline ok</q><figcaption class="who"><b>Network namespace</b><span>evidence/03 · steps.status</span></figcaption></figure>
-        <figure class="logc"><span class="glyph" aria-hidden="true"><svg><use href="#g-x"/></svg></span><q>Failed to sign Sapling spend 0: MissingProofGenerationKey</q><figcaption class="who"><b>An early failure, fixed</b><span>signing now uses the proven file</span></figcaption></figure>
-        <figure class="logc"><span class="glyph" aria-hidden="true"><svg><use href="#g-lock"/></svg></span><q>{"kind":"receipt","amountZat":1000,"policyHash":"b94caa29&hellip;"}</q><figcaption class="who"><b>Merchant, sealed receipt opened</b><span>evidence/04 · gateway-listener.jsonl</span></figcaption></figure>
+        <figure class="logc"><div class="wbar" aria-hidden="true"><span>&#8627;</span><span class="fname">payer.jsonl</span><span>[&#9632;]</span></div><div class="lbody"><q>{"kind":"sent","txid":"5110a458&hellip;","bytes":5222}</q><figcaption class="who"><b>Payer</b><span>evidence/04 · payer.jsonl</span></figcaption></div></figure>
+        <figure class="logc"><div class="wbar" aria-hidden="true"><span>&#8627;</span><span class="fname">wallet-list-tx-confirmed.txt</span><span>[&#9632;]</span></div><div class="lbody"><q>Mined: 4550000 (2026-10-28 6:21:42)</q><figcaption class="who"><b>Wallet sync</b><span>evidence/04 · wallet-list-tx</span></figcaption></div></figure>
+        <figure class="logc"><div class="wbar" aria-hidden="true"><span>&#8627;</span><span class="fname">gateway-listener.jsonl</span><span>[&#9632;]</span></div><div class="lbody"><q>{"kind":"broadcast","ok":true}</q><figcaption class="who"><b>Gateway</b><span>evidence/04 · gateway-listener.jsonl</span></figcaption></div></figure>
+        <figure class="logc"><div class="wbar" aria-hidden="true"><span>&#8627;</span><span class="fname">steps.status</span><span>[&#9632;]</span></div><div class="lbody"><q>probe offline ok · create offline ok · prove offline ok · sign offline ok · combine offline ok · extract offline ok</q><figcaption class="who"><b>Network namespace</b><span>evidence/03 · steps.status</span></figcaption></div></figure>
+        <figure class="logc"><div class="wbar" aria-hidden="true"><span>&#8627;</span><span class="fname">sign.offline (earlier run)</span><span>[&#9632;]</span></div><div class="lbody"><q>Failed to sign Sapling spend 0: MissingProofGenerationKey</q><figcaption class="who"><b>An early failure, fixed</b><span>signing now uses the proven file</span></figcaption></div></figure>
+        <figure class="logc"><div class="wbar" aria-hidden="true"><span>&#8627;</span><span class="fname">gateway-listener.jsonl</span><span>[&#9632;]</span></div><div class="lbody"><q>{"kind":"receipt","amountZat":1000,"policyHash":"b94caa29&hellip;"}</q><figcaption class="who"><b>Merchant, sealed receipt opened</b><span>evidence/04 · gateway-listener.jsonl</span></figcaption></div></figure>
       </div>
     </section></div>
 
-    <!-- 13. light call to action and footer -->
-    <div class="horizon down" aria-hidden="true"></div>
-    <div class="paper"><div class="in">
+    <!-- 13. call to action and blue footer -->
+    <div class="stripes" aria-hidden="true"></div>
+    <div class="in">
       <section class="cta" aria-labelledby="cta-h">
         <h2 id="cta-h">Send a payment across six devices.</h2>
         <p>Run the simulation, then look up the real transaction on the testnet.</p>
-        <a class="btn btn-dark" href="#try">Try the simulation</a>
+        <a class="btn btn-blue" href="#try">Try the simulation</a>
         <svg class="net" viewBox="0 0 720 220" aria-hidden="true">
-          <g fill="none" stroke="#c7cfd4"><path d="M100 60h80c20 0 20 50 40 50h80M100 110h200M100 160h80c20 0 20-50 40-50h80"/><path d="M620 60h-80c-20 0-20 50-40 50h-80M620 110H420M620 160h-80c-20 0-20-50-40-50h-80"/><path d="M360 20v50M360 150v50"/></g>
-          <g fill="#9BC400"><circle cx="180" cy="60" r="5"/><circle cx="180" cy="110" r="5"/><circle cx="180" cy="160" r="5"/><circle cx="300" cy="110" r="5"/><circle cx="540" cy="60" r="5"/><circle cx="540" cy="110" r="5"/><circle cx="540" cy="160" r="5"/><circle cx="420" cy="110" r="5"/></g>
-          <circle cx="360" cy="110" r="44" fill="#fff" stroke="#c7cfd4"/><circle cx="360" cy="110" r="52" fill="none" stroke="rgba(205,255,0,.55)" stroke-width="6"/>
-          <g stroke="#9BC400" stroke-width="3" stroke-linecap="round" fill="none"><circle cx="360" cy="110" r="10"/><path d="M360 82v14M360 124v14M332 110h14M374 110h14"/></g>
+          <g fill="none" stroke="rgba(170,179,183,.35)"><path d="M100 60h80c20 0 20 50 40 50h80M100 110h200M100 160h80c20 0 20-50 40-50h80"/><path d="M620 60h-80c-20 0-20 50-40 50h-80M620 110H420M620 160h-80c-20 0-20-50-40-50h-80"/><path d="M360 20v50M360 150v50"/></g>
+          <g fill="#9AA8FF"><circle cx="180" cy="60" r="5"/><circle cx="180" cy="110" r="5"/><circle cx="180" cy="160" r="5"/><circle cx="300" cy="110" r="5"/><circle cx="540" cy="60" r="5"/><circle cx="540" cy="110" r="5"/><circle cx="540" cy="160" r="5"/><circle cx="420" cy="110" r="5"/></g>
+          <circle cx="360" cy="110" r="44" fill="#020F15" stroke="rgba(170,179,183,.35)"/><circle cx="360" cy="110" r="52" fill="none" stroke="rgba(74,91,255,.6)" stroke-width="6"/>
+          <g stroke="#9AA8FF" stroke-width="3" stroke-linecap="round" fill="none"><circle cx="360" cy="110" r="10"/><path d="M360 82v14M360 124v14M332 110h14M374 110h14"/></g>
         </svg>
       </section>
-      <footer class="foot">
-        <div><svg aria-hidden="true"><use href="#g-mark"/></svg><p class="copy">&copy; 2026 Murmur. Built for ZECATHON, Shielded Payments track. Zcash testnet only.</p></div>
-        <div><h5>Product</h5><a href="#how">How it works</a><a href="#try">Simulation</a><a href="#rules">Spend policy</a></div>
+    </div>
+    <div class="stripes" aria-hidden="true" style="margin-bottom:0"></div>
+    <footer class="bluefoot">
+      <div class="in bf-cols">
+        <div class="bf-brand"><span class="eyebrow">Built for ZECATHON</span><span class="bf-logo"><svg aria-hidden="true"><use href="#g-mark"/></svg>murmur</span><p>Pay and talk when the network won't. Zcash testnet only.</p></div>
+        <div><h5>Product</h5><a href="#how">How it works</a><a href="#try">Simulation</a><a href="#run">Run it yourself</a><a href="#rules">Spend policy</a></div>
         <div><h5>Proof</h5><a href="#run-a">Run A: offline build</a><a href="#run-b">Run B: carry and confirm</a><a href="#context">Context</a></div>
         <div><h5>Honesty</h5><a href="#limits">Limits</a><a href="#logs">What the logs say</a></div>
-      </footer>
-    </div>
-    <div class="wordmark" aria-hidden="true"><div>MURMUR</div></div>
-    </div>
+      </div>
+      <p class="sr">Built on the Zcash testnet, zcash-devtool, librustzcash, lightwalletd, X25519, ChaCha20-Poly1305 and Node.js.</p>
+      <div class="ticker" aria-hidden="true"><div class="tk"><span>Zcash testnet</span><span>&#10035;</span><span>zcash-devtool</span><span>&#10035;</span><span>librustzcash</span><span>&#10035;</span><span>lightwalletd</span><span>&#10035;</span><span>X25519</span><span>&#10035;</span><span>ChaCha20-Poly1305</span><span>&#10035;</span><span>Node.js</span><span>&#10035;</span><span>Zcash testnet</span><span>&#10035;</span><span>zcash-devtool</span><span>&#10035;</span><span>librustzcash</span><span>&#10035;</span><span>lightwalletd</span><span>&#10035;</span><span>X25519</span><span>&#10035;</span><span>ChaCha20-Poly1305</span><span>&#10035;</span><span>Node.js</span><span>&#10035;</span></div></div>
+      <div class="giant-wrap" aria-hidden="true"><div class="giant">MURMUR</div></div>
+    </footer>
   </div>
 
   <!-- ============ EVIDENCE ============ -->
@@ -787,10 +863,10 @@ if (typeof module !== "undefined") module.exports = { relay: relay };
   /* grid art for the "carried" feature row */
   (function () {
     var s = q("#gridart"); if (!s) return; var lit = { "3,1": 1, "4,1": 1, "5,1": 1, "2,2": 1, "3,2": 1, "5,2": 1, "6,2": 1, "2,3": 1, "6,3": 1, "3,4": 1, "4,4": 1, "5,4": 1 };
-    s.appendChild(mk("circle", { cx: 236, cy: 140, r: 110, fill: "rgba(205,255,0,.05)" }));
+    s.appendChild(mk("circle", { cx: 236, cy: 140, r: 110, fill: "rgba(74,91,255,.05)" }));
     for (var x = 0; x < 9; x++) for (var y = 0; y < 6; y++) {
       var on = lit[x + "," + y], c = (x === 4 && y === 2);
-      s.appendChild(mk("rect", { x: 30 + x * 46, y: 40 + y * 36, width: 34, height: 28, rx: 3, fill: c ? "#0b2a33" : "#030f14", stroke: on || c ? "rgba(205,255,0,.8)" : "rgba(170,179,183,.2)" }));
+      s.appendChild(mk("rect", { x: 30 + x * 46, y: 40 + y * 36, width: 34, height: 28, rx: 3, fill: c ? "#0b2a33" : "#030f14", stroke: on || c ? "rgba(74,91,255,.8)" : "rgba(170,179,183,.2)" }));
     }
     var g = mk("g", { stroke: "#F0F6FA", "stroke-width": 1.4, fill: "none" }); g.appendChild(mk("circle", { cx: 231, cy: 126, r: 5 })); g.appendChild(mk("path", { d: "M231 115v4M231 133v4M220 126h4M238 126h4" })); s.appendChild(g);
     var lbl = mk("text", { x: 30, y: 26, "font-family": "Geist Mono, monospace", "font-size": 11, fill: "#AAB3B7" }); lbl.textContent = "6 devices · 3 packets · notes unreadable in transit"; s.appendChild(lbl);
@@ -849,7 +925,7 @@ if (typeof module !== "undefined") module.exports = { relay: relay };
   });
 
   /* simulation */
-  var at = [[60, 145], [175, 70], [290, 220], [405, 70], [520, 145], [624, 145]];
+  var at = [[64, 145], [180, 62], [292, 226], [404, 62], [516, 145], [622, 145]];
   var svg = q("#mesh"), edges = [], nodes = [], layer, sel = -1, offline = -1, lastSeed = 0, timers = [], key = null, sealed = null, txb = null;
   var NOTE = "Paid. Two bags, pickup at 5.";
   function setPhase(p) { qa("#phases .phase").forEach(function (el) { el.classList.toggle("on", +el.dataset.p === p); }); }
@@ -858,9 +934,12 @@ if (typeof module !== "undefined") module.exports = { relay: relay };
     layer = mk("g", {}); svg.appendChild(layer);
     DEVICES.forEach(function (name, i) {
       var g = mk("g", { class: "nd", tabindex: "0", role: "button", "aria-label": name + ". Show what this device can read." });
-      g.appendChild(mk("circle", { cx: at[i][0], cy: at[i][1], r: 22 }));
-      var t = mk("text", { x: at[i][0], y: at[i][1] + 4 }); t.textContent = ["P", "R1", "R2", "R3", "GW", "M"][i]; g.appendChild(t);
-      var l = mk("text", { x: at[i][0], y: at[i][1] + 42, class: "lbl" }); l.textContent = name.toLowerCase(); g.appendChild(l);
+      var cx = at[i][0], cy = at[i][1], tint = ["#4A5BFF", "rgba(95,209,160,.55)", "rgba(255,181,71,.55)", "rgba(255,116,104,.55)", "rgba(143,200,255,.55)", "#4A5BFF"][i];
+      g.appendChild(mk("rect", { x: cx - 50, y: cy - 27, width: 100, height: 54, rx: 7, class: "wc" }));
+      g.appendChild(mk("rect", { x: cx - 50, y: cy - 27, width: 100, height: 14, rx: 7, fill: tint }));
+      g.appendChild(mk("rect", { x: cx - 50, y: cy - 20, width: 100, height: 7, fill: tint }));
+      var l = mk("text", { x: cx, y: cy - 17, class: "lbl" }); l.textContent = ["payer", "relay-1", "relay-2", "relay-3", "gateway", "merchant"][i] + ".device"; g.appendChild(l);
+      var t = mk("text", { x: cx, y: cy + 11 }); t.textContent = name; g.appendChild(t);
       g.addEventListener("click", function () { inspect(i); });
       g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); inspect(i); } });
       svg.appendChild(g); nodes.push(g);
@@ -921,6 +1000,24 @@ if (typeof module !== "undefined") module.exports = { relay: relay };
     });
     timers.push(setTimeout(function () { report(r); }, ks.length * ms + 200));
   }
+  /* tabs + code window */
+  var CODE = {
+    pay: { name: "payer \u00b7 terminal", text: "<span class=\"c\">$</span> node cli.js pay --to ztestsapling1\u2026 --amount 1000 \\\n    --recipient-pub &lt;merchant key&gt; --peer HOST:47001 --port 47002 \\\n    --identity ~/payer.json --wallet &lt;dir&gt; --wallet-key &lt;key&gt; \\\n    --devtool &lt;patched zcash-devtool&gt; --save-tx offline.tx\n\n<span class=\"o\">{\"kind\":\"sent\",\"txid\":\"5110a458\u2026c8fd43\",\"bytes\":5222,\"sha256\":\"cbc99ff1\u2026\"}</span>\n<span class=\"o\">{\"kind\":\"ack\",\"of\":\"receipt\",\"from\":\"802226f1\u2026\"}</span>\n\n<span class=\"c\"># real output, evidence/04-e2e-loopback/payer.jsonl</span>" },
+    listen: { name: "gateway \u00b7 terminal", text: "<span class=\"c\">$</span> node cli.js listen --port 47001 --identity ~/merchant.json \\\n    --peer HOST:47002 --gateway --ack \\\n    --devtool &lt;patched zcash-devtool&gt; --wallet &lt;dir&gt;\n\n<span class=\"o\">{\"kind\":\"tx\",\"bytes\":5222,\"sha256\":\"cbc99ff1\u2026\"}</span>\n<span class=\"o\">{\"kind\":\"receipt\",\"amountZat\":1000,\"policyHash\":\"b94caa29\u2026\"}</span>\n<span class=\"o\">{\"kind\":\"broadcast\",\"ok\":true}</span>\n\n<span class=\"c\"># real output, evidence/04-e2e-loopback/gateway-listener.jsonl</span>" },
+    bc: { name: "payer, back online \u00b7 terminal", text: "<span class=\"c\">$</span> node cli.js broadcast --tx offline.tx \\\n    --devtool &lt;patched zcash-devtool&gt; --wallet &lt;dir&gt;\n\n<span class=\"c\"># prints one line when the server accepts it:</span>\n<span class=\"o\">{\"kind\":\"broadcast\",\"ok\":true,\"bytes\":&lt;n&gt;,\"sha256\":\"&lt;hash&gt;\"}</span>\n\n<span class=\"c\"># output format; Run B used the gateway above instead</span>" }
+  };
+  var tabs = qa(".tablist [role=tab]");
+  function showTab(btn, focus) {
+    tabs.forEach(function (t) { var on = t === btn; t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1; });
+    var c = CODE[btn.dataset.tab]; q("#code-pre").innerHTML = c.text; q("#code-name").textContent = c.name; q("#code-win").setAttribute("aria-labelledby", btn.id);
+    if (focus) btn.focus();
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener("click", function () { showTab(t); });
+    t.addEventListener("keydown", function (e) { var d = e.key === "ArrowDown" || e.key === "ArrowRight" ? 1 : e.key === "ArrowUp" || e.key === "ArrowLeft" ? -1 : 0; if (d) { e.preventDefault(); showTab(tabs[(i + d + tabs.length) % tabs.length], true); } });
+  });
+  if (tabs.length) showTab(tabs[0]);
+
   build(); paint();
   q("#f-loss").addEventListener("input", function () { q("#o-loss").textContent = this.value + "%"; });
   q("#f-rounds").addEventListener("input", function () { q("#o-rounds").textContent = this.value; });
